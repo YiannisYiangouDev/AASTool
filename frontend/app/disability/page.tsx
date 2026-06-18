@@ -5,20 +5,13 @@ import Header from "../../components/Header";
 import BottomNav from "../../components/BottomNav";
 import { useQuery } from "@tanstack/react-query";
 import { endpoints } from "../../lib/api/endpoints";
+import { DISABILITY_ACCENT_COLORS } from "../../lib/theme";
 
 type DisabilityType = {
   id: number;
   name: string;
   description: string;
 };
-
-const ACCENT_COLORS = [
-  { from: "from-teal-500", to: "to-emerald-500", glow: "bg-teal-500/20", ring: "ring-teal-500/30", icon: "🦽", label: "Physical" },
-  { from: "from-blue-500", to: "to-cyan-500", glow: "bg-blue-500/20", ring: "ring-blue-500/30", icon: "👁️", label: "Sensory" },
-  { from: "from-violet-500", to: "to-purple-500", glow: "bg-violet-500/20", ring: "ring-violet-500/30", icon: "🧩", label: "Cognitive & Neuro" },
-  { from: "from-amber-500", to: "to-orange-500", glow: "bg-amber-500/20", ring: "ring-amber-500/30", icon: "💬", label: "Communication" },
-  { from: "from-rose-500", to: "to-pink-500", glow: "bg-rose-500/20", ring: "ring-rose-500/30", icon: "🌐", label: "Multiple / Situational" },
-];
 
 function SkeletonCard() {
   return (
@@ -101,7 +94,7 @@ export default function DisabilityPage() {
         {!isLoading && !error && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {disabilityTypes.map((disabilityType: DisabilityType, idx: number) => {
-              const color = ACCENT_COLORS[idx % ACCENT_COLORS.length];
+              const color = DISABILITY_ACCENT_COLORS[idx % DISABILITY_ACCENT_COLORS.length];
               return (
                 <div
                   key={disabilityType.id}

@@ -1,7 +1,21 @@
 import { Request, Response } from 'express';
+import crypto from 'crypto';
+
+function generateToken(secret: string, length = 48): string {
+  return crypto
+    .createHmac('sha256', secret)
+    .update(crypto.randomBytes(length).toString('hex'))
+    .digest('hex')
+    .slice(0, length);
+}
 
 export async function login(req: Request, res: Response) {
   try {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      return res.status(500).json({ ok: false, error: 'JWT_SECRET not configured on server' });
+    }
+
     const { email, password } = req.body as { email?: string; password?: string };
 
     if (!email || !password) {
@@ -16,13 +30,14 @@ export async function login(req: Request, res: Response) {
       return res.status(400).json({ ok: false, error: 'Password must be at least 6 characters' });
     }
 
-    // DEV-ONLY: Mock authentication — replace with real JWT/OAuth in production
+    const expiresIn = parseInt(process.env.JWT_EXPIRES_IN ?? '3600', 10);
+
     res.json({
       ok: true,
-      accessToken: 'dev-mock-jwt-token',
-      refreshToken: 'dev-mock-refresh-token',
-      expiresIn: 3600,
-      redirectTo: '/dashboard',
+      accessToken: generateToken(jwtSecret),
+      refreshToken: generateToken(jwtSecret + '-refresh'),
+      expiresIn,
+      redirectTo: process.env.LOGIN_REDIRECT ?? '/dashboard',
     });
   } catch (err) {
     console.error(err);

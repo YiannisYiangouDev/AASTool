@@ -10,73 +10,16 @@ import React, {
 
 import Header from "../../components/Header";
 import BottomNav from "../../components/BottomNav";
-import api from "../../lib/api/client";
-
-import {
-  BuildingType,
-  BUILDING_TYPES,
-  BUILDING_TYPE_LABELS,
-  DEFAULT_BUILDING_TYPE,
-} from "../../types/building-types";
+import { useQuery } from "@tanstack/react-query";
+import { endpoints } from "../../lib/api/endpoints";
+import { DT_COLORS, AD_COLORS } from "../../lib/theme";
+import { loadState, saveState, STORAGE_KEY, CERTIFICATION_KEY } from "../../lib/storage";
 
 import type { EvaluationResult, Criterion } from "../../types";
 import { useMetadata } from "../../lib/hooks/useMetadata";
 
-const DT_COLORS: Record<number, string> = {
-  1: "from-teal-500/10 to-cyan-500/10 text-teal-300 border-teal-500/20",
-  2: "from-blue-500/10 to-indigo-500/10 text-blue-300 border-blue-500/20",
-  3: "from-violet-500/10 to-purple-500/10 text-purple-300 border-purple-500/20",
-  4: "from-amber-500/10 to-orange-500/10 text-orange-300 border-amber-500/20",
-  5: "from-rose-500/10 to-pink-500/10 text-pink-300 border-rose-500/20",
-};
-
-const AD_COLORS: Record<number, string> = {
-  1: "from-teal-500/10 to-emerald-500/10 text-emerald-300 border-emerald-500/20",
-  2: "from-sky-500/10 to-blue-500/10 text-sky-300 border-sky-500/20",
-  3: "from-indigo-500/10 to-violet-500/10 text-indigo-300 border-indigo-500/20",
-  4: "from-orange-500/10 to-amber-500/10 text-amber-300 border-amber-500/20",
-  5: "from-pink-500/10 to-rose-500/10 text-rose-300 border-rose-500/20",
-};
-
 type CriterionScore = Criterion & { score: number; is: number };
 type FilterMode = "all" | `dt${1 | 2 | 3 | 4 | 5}` | `ad${1 | 2 | 3 | 4 | 5}` | `ec${1 | 2 | 3 | 4 | 5}`;
-
-const STORAGE_KEY = "certification-state";
-const DASHBOARD_KEY = "accessibility-assessment-state";
-
-async function fetchEvaluate(
-  buildingType: string,
-  scores?: Record<string, number>,
-): Promise<EvaluationResult> {
-  const res = await api.post("/evaluate", {
-    buildingType,
-    scores: scores && Object.keys(scores).length > 0 ? scores : undefined,
-  });
-  const data = res.data as any;
-  return data?.result || data;
-}
-
-function saveState(
-  buildingType: BuildingType,
-  scores: Record<string, number>,
-) {
-  const payload = JSON.stringify({ buildingType, scores });
-  localStorage.setItem(STORAGE_KEY, payload);
-  localStorage.setItem(DASHBOARD_KEY, payload);
-}
-
-function loadState(): {
-  buildingType: BuildingType;
-  scores: Record<string, number>;
-} | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(DASHBOARD_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
 
 const RefreshIcon = () => (
   <svg
@@ -112,9 +55,14 @@ const SearchIcon = () => (
 
 export default function CertificationPage() {
   const { dtLabels, adLabels } = useMetadata();
-  const [buildingType, setBuildingType] = useState<BuildingType>(
-    DEFAULT_BUILDING_TYPE,
-  );
+
+  // Fetch building types from API — no hardcoded list
+  const { data: buildingTypes = [] } = useQuery({
+    queryKey: ["building-types"],
+    queryFn: () => endpoints.getBuildingTypes(),
+  });
+
+  const [buildingType, setBuildingType] = useState<string>("");
   const [criteria, setCriteria] = useState<CriterionScore[]>([]);
   const [filterMode, setFilterMode] = useState<FilterMode>("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -131,19 +79,32 @@ export default function CertificationPage() {
     avgRawScoreByAD: {},
     strengths: [],
     weaknesses: [],
-    tisByDT: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 },
-    cisByAD: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 },
+    tisByDT: {},
+    cisByAD: {},
     criteria: [],
   });
 
+  // Derive building type labels from API data
+  const buildingTypeLabels = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const bt of buildingTypes) {
+      if (bt?.name) map[bt.name] = bt.name;
+    }
+    return map;
+  }, [buildingTypes]);
+
   useEffect(() => {
+    if (buildingTypes.length === 0) return;
     const saved = loadState();
-    const bt = saved?.buildingType ?? DEFAULT_BUILDING_TYPE;
+    const defaultBt = buildingTypes[0]?.name ?? "";
+    const bt = saved?.buildingType && buildingTypes.some((b: any) => b.name === saved.buildingType)
+      ? saved.buildingType
+      : defaultBt;
     const scores = saved?.scores ?? {};
     setBuildingType(bt);
 
-    fetchEvaluate(bt, scores)
-      .then((r) => {
+    endpoints.evaluate({ buildingType: bt, scores })
+      .then((r: EvaluationResult) => {
         setCriteria(r.criteria as CriterionScore[]);
         setResults(r);
       })
@@ -151,10 +112,11 @@ export default function CertificationPage() {
         console.error("Failed to load evaluation from backend:", err);
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [buildingTypes]);
 
   useEffect(() => {
     if (!criteria || criteria.length === 0) return;
+    if (!buildingType) return;
     const scores: Record<string, number> = {};
     for (const c of criteria) scores[c.code] = c.score;
     saveState(buildingType, scores);
@@ -163,13 +125,13 @@ export default function CertificationPage() {
   useEffect(() => {
     function onStorage(e: StorageEvent) {
       if (!e.newValue) return;
-      if (e.key !== STORAGE_KEY && e.key !== DASHBOARD_KEY) return;
+      if (e.key !== STORAGE_KEY && e.key !== CERTIFICATION_KEY) return;
       try {
         const saved = JSON.parse(e.newValue);
         setBuildingType((prev) =>
           prev !== saved.buildingType ? saved.buildingType : prev,
         );
-        fetchEvaluate(saved.buildingType, saved.scores).then((r) => {
+        endpoints.evaluate({ buildingType: saved.buildingType, scores: saved.scores }).then((r: EvaluationResult) => {
           setCriteria(r.criteria as CriterionScore[]);
           setResults(r);
         });
@@ -194,8 +156,8 @@ export default function CertificationPage() {
       scores[code] = score;
       saveState(buildingType, scores);
 
-      fetchEvaluate(buildingType, scores)
-        .then((r) => {
+      endpoints.evaluate({ buildingType, scores })
+        .then((r: EvaluationResult) => {
           setCriteria(r.criteria as CriterionScore[]);
           setResults(r);
         })
@@ -207,7 +169,7 @@ export default function CertificationPage() {
   );
 
   const resetScores = useCallback(() => {
-    fetchEvaluate(buildingType, {}).then((r) => {
+    endpoints.evaluate({ buildingType, scores: {} }).then((r: EvaluationResult) => {
       setCriteria(r.criteria as CriterionScore[]);
       setResults(r);
     });
@@ -339,19 +301,19 @@ export default function CertificationPage() {
               value={buildingType}
               title="Building profile type"
               onChange={(e) => {
-                const bt = e.target.value as BuildingType;
+                const bt = e.target.value;
                 setBuildingType(bt);
                 const saved = loadState();
-                fetchEvaluate(bt, saved?.scores ?? {}).then((r) => {
+                endpoints.evaluate({ buildingType: bt, scores: saved?.scores ?? {} }).then((r: EvaluationResult) => {
                   setCriteria(r.criteria as CriterionScore[]);
                   setResults(r);
                 });
               }}
               className="w-full bg-slate-900 border border-slate-700/80 rounded-2xl px-4 py-3.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all"
             >
-              {BUILDING_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {BUILDING_TYPE_LABELS[type]}
+              {buildingTypes.map((type: any) => (
+                <option key={type.id ?? type.name} value={type.name}>
+                  {type.name}
                 </option>
               ))}
             </select>

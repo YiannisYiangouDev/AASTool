@@ -3,6 +3,8 @@ import AppDataSource from '../data-source';
 import { BuildingType } from '../entities/BuildingType';
 import { Evaluation } from '../entities/Evaluation';
 
+const ASSESSMENT_STATUS = process.env.ASSESSMENT_STATUS ?? 'Completed';
+
 export async function getBuildings(_req: Request, res: Response) {
   try {
     const btRepo = AppDataSource.getRepository(BuildingType);
@@ -16,7 +18,7 @@ export async function getBuildings(_req: Request, res: Response) {
         .filter(e => e.building_type === bt.name)
         .map(e => ({
           id: e.id,
-          status: 'Completed',
+          status: ASSESSMENT_STATUS,
           created_at: e.created_at,
         }));
       return {
@@ -52,7 +54,7 @@ export async function getBuilding(req: Request, res: Response) {
 
     const assessments = evals.map(e => ({
       id: e.id,
-      status: 'Completed',
+      status: ASSESSMENT_STATUS,
       created_at: e.created_at,
     }));
 

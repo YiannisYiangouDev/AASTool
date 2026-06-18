@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>AASTool Backend Architecture</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">AASTool Backend Architecture</h1>
+</header>
+<h1 id="aastool-backend-architecture-services-documentation">AASTool —
+Backend Architecture &amp; Services Documentation</h1>
+<p><strong>Enterprise Edition | Version 1.0.0</strong></p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol type="1">
+<li><a href="#technology-stack">Technology Stack</a></li>
+<li><a href="#architecture-overview">Architecture Overview</a></li>
+<li><a href="#entry-point-indexts">Entry Point: index.ts</a></li>
+<li><a href="#data-source-configuration">Data Source
+Configuration</a></li>
+<li><a href="#entity-model">Entity Model</a></li>
+<li><a href="#controller-layer">Controller Layer</a></li>
+<li><a href="#service-layer">Service Layer</a></li>
+<li><a href="#calculation-engine">Calculation Engine</a></li>
+<li><a href="#migrations">Migrations</a></li>
+<li><a href="#database-seeding">Database Seeding</a></li>
+<li><a href="#tests">Tests</a></li>
+<li><a href="#docker-configuration">Docker Configuration</a></li>
+</ol>
+<hr />
+<h2 id="technology-stack">Technology Stack</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Technology</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Node.js</td>
+<td>22</td>
+<td>Runtime</td>
+</tr>
+<tr class="even">
+<td>TypeScript</td>
+<td>5.x</td>
+<td>Type safety</td>
+</tr>
+<tr class="odd">
+<td>Express</td>
+<td>4.18</td>
+<td>HTTP framework</td>
+</tr>
+<tr class="even">
+<td>TypeORM</td>
+<td>0.3.17</td>
+<td>ORM (Object-Relational Mapper)</td>
+</tr>
+<tr class="odd">
+<td>MariaDB</td>
+<td>10.11</td>
+<td>Relational database</td>
+</tr>
+<tr class="even">
+<td>ts-node</td>
+<td>10.9</td>
+<td>TypeScript execution</td>
+</tr>
+<tr class="odd">
+<td>Jest</td>
+<td>Latest</td>
+<td>Testing framework</td>
+</tr>
+<tr class="even">
+<td>Docker Compose</td>
+<td>3.8</td>
+<td>Container orchestration</td>
+</tr>
+</tbody>
+</table>
+<h3 id="module-system">Module System</h3>
+<p>The backend uses <strong>CommonJS</strong>
+(<code>"module": "commonjs"</code>). Imports use
+<code>require()</code>-style syntax compiled by TypeScript.</p>
+<hr />
+<h2 id="architecture-overview">Architecture Overview</h2>
+<pre><code>                         ┌────────────────────────┐
+                         │    Express App          │
+                         │    (index.ts)           │
+                         └───────────┬────────────┘
+                                     │
+                    ┌────────────────┼────────────────┐
+                    │                │                │
+              ┌─────▼─────┐   ┌─────▼─────┐   ┌─────▼─────┐
+              │ Middleware │   │  Routes   │   │  Health   │
+              │ (helmet,   │   │  /api/v1  │   │  /health  │
+              │  cors,     │   │           │   │           │
+              │  json)     │   │           │   │           │
+              └───────────┘   └─────┬─────┘   └───────────┘
+                                    │
+              ┌─────────────────────┼─────────────────────┐
+              │                     │                     │
+        ┌─────▼─────┐        ┌─────▼─────┐         ┌─────▼─────┐
+        │Controllers│        │ Services  │         │  Entities │
+        │(6 files)  │───────▶│(2 files)  │────────▶│(5 tables) │
+        └───────────┘        └───────────┘         └───────────┘
+                                                          │
+                                                    ┌─────▼─────┐
+                                                    │  MariaDB  │
+                                                    │  (Docker) │
+                                                    └───────────┘</code></pre>
+<h3 id="request-lifecycle">Request Lifecycle</h3>
+<pre><code>1. HTTP Request arrives at Express
+2. Global middleware: helmet (security headers) → cors → express.json()
+3. JSON parse error middleware: validates JSON body
+4. Route handler (controller function):
+   a. Validate request body/params
+   b. Call service layer for business logic
+   c. Query database via TypeORM Repository
+   d. Return JSON response { ok: true/false, data/error }</code></pre>
+<hr />
+<h2 id="entry-point-index.ts">Entry Point: index.ts</h2>
+<h3 id="server-startup-sequence">Server Startup Sequence</h3>
+<pre><code>1. Create Express app
+2. Apply middleware (helmet, cors, json, error handler)
+3. Register all routes
+4. Initialize DataSource (connect to MariaDB)
+5. Run metadata validation
+6. Start listening on PORT (env, default 4000)
+7. Health endpoints report APP_VERSION (env, default &#39;1.0.0&#39;)</code></pre>
+<h3 id="routes-registered">Routes Registered</h3>
+<table>
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 16%" />
+<col style="width: 25%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Path</th>
+<th>Handler</th>
+<th>Source File</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>GET</code></td>
+<td><code>/health</code></td>
+<td>Inline</td>
+<td><code>index.ts</code></td>
+</tr>
+<tr class="even">
+<td><code>GET</code></td>
+<td><code>/api/v1/health</code></td>
+<td>Inline</td>
+<td><code>index.ts</code></td>
+</tr>
+<tr class="odd">
+<td><code>POST</code></td>
+<td><code>/api/v1/evaluate</code></td>
+<td><code>evaluateController</code></td>
+<td><code>evaluateController.ts</code></td>
+</tr>
+<tr class="even">
+<td><code>GET</code></td>
+<td><code>/api/v1/criteria</code></td>
+<td><code>getCriteria</code></td>
+<td><code>dataController.ts</code></td>
+</tr>
+<tr class="odd">
+<td><code>POST</code></td>
+<td><code>/api/v1/criteria</code></td>
+<td><code>createCriterion</code></td>
+<td><code>dataController.ts</code></td>
+</tr>
+<tr class="even">
+<td><code>GET</code></td>
+<td><code>/api/v1/criteria/:code</code></td>
+<td><code>getCriterionByCode</code></td>
+<td><code>dataController.ts</code></td>
+</tr>
+<tr class="odd">
+<td><code>GET</code></td>
+<td><code>/api/v1/building-types</code></td>
+<td><code>getBuildingTypes</code></td>
+<td><code>dataController.ts</code></td>
+</tr>
+<tr class="even">
+<td><code>GET</code></td>
+<td><code>/api/v1/neb-thresholds</code></td>
+<td><code>getNebThresholds</code></td>
+<td><code>dataController.ts</code></td>
+</tr>
+<tr class="odd">
+<td><code>GET</code></td>
+<td><code>/api/v1/config</code></td>
+<td><code>getConfig</code></td>
+<td><code>dataController.ts</code></td>
+</tr>
+<tr class="even">
+<td><code>GET</code></td>
+<td><code>/api/v1/disability-types</code></td>
+<td><code>getDisabilityTypes</code></td>
+<td><code>dataController.ts</code></td>
+</tr>
+<tr class="odd">
+<td><code>GET</code></td>
+<td><code>/api/v1/assessment-dimensions</code></td>
+<td><code>getAssessmentDimensions</code></td>
+<td><code>dataController.ts</code></td>
+</tr>
+<tr class="even">
+<td><code>GET</code></td>
+<td><code>/api/v1/buildings</code></td>
+<td><code>getBuildings</code></td>
+<td><code>buildingsController.ts</code></td>
+</tr>
+<tr class="odd">
+<td><code>GET</code></td>
+<td><code>/api/v1/buildings/:id</code></td>
+<td><code>getBuilding</code></td>
+<td><code>buildingsController.ts</code></td>
+</tr>
+<tr class="even">
+<td><code>POST</code></td>
+<td><code>/api/v1/assessments</code></td>
+<td><code>createAssessment</code></td>
+<td><code>assessmentsController.ts</code></td>
+</tr>
+<tr class="odd">
+<td><code>GET</code></td>
+<td><code>/api/v1/assessments/:id</code></td>
+<td><code>getAssessment</code></td>
+<td><code>assessmentsController.ts</code></td>
+</tr>
+<tr class="even">
+<td><code>GET</code></td>
+<td><code>/api/v1/reports</code></td>
+<td><code>getReports</code></td>
+<td><code>reportsController.ts</code></td>
+</tr>
+<tr class="odd">
+<td><code>POST</code></td>
+<td><code>/api/v1/login</code></td>
+<td><code>login</code></td>
+<td><code>authController.ts</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="health-endpoint">Health Endpoint</h3>
+<p><code>GET /health</code> and <code>GET /api/v1/health</code>
+return:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;ok&quot;</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;uptime&quot;</span><span class="fu">:</span> <span class="dv">3600</span><span class="fu">,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;database&quot;</span><span class="fu">:</span> <span class="st">&quot;connected&quot;</span><span class="fu">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;dbLatencyMs&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;version&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0.0&quot;</span><span class="fu">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;timestamp&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-06-15T12:00:00.000Z&quot;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>On database failure:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;degraded&quot;</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;uptime&quot;</span><span class="fu">:</span> <span class="dv">3600</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;database&quot;</span><span class="fu">:</span> <span class="st">&quot;disconnected&quot;</span><span class="fu">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;dbLatencyMs&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;version&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0.0&quot;</span><span class="fu">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;timestamp&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-06-15T12:00:00.000Z&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="middleware-stack">Middleware Stack</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Security headers</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>app<span class="op">.</span><span class="fu">use</span>(<span class="fu">helmet</span>())<span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Cross-origin requests</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>app<span class="op">.</span><span class="fu">use</span>(<span class="fu">cors</span>())<span class="op">;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">// JSON body parsing</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>app<span class="op">.</span><span class="fu">use</span>(express<span class="op">.</span><span class="fu">json</span>())<span class="op">;</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">// JSON parse error handler</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>app<span class="op">.</span><span class="fu">use</span>((err<span class="op">,</span> _req<span class="op">,</span> res<span class="op">,</span> next) <span class="kw">=&gt;</span> {</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (err<span class="op">?.</span><span class="at">type</span> <span class="op">===</span> <span class="st">&#39;entity.parse.failed&#39;</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res<span class="op">.</span><span class="fu">status</span>(<span class="dv">400</span>)<span class="op">.</span><span class="fu">json</span>({ ok<span class="op">:</span> <span class="kw">false</span><span class="op">,</span> error<span class="op">:</span> <span class="st">&#39;Invalid JSON body&#39;</span> })<span class="op">;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (err <span class="kw">instanceof</span> <span class="bu">SyntaxError</span> <span class="op">&amp;&amp;</span> <span class="st">&#39;body&#39;</span> <span class="kw">in</span> err)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res<span class="op">.</span><span class="fu">status</span>(<span class="dv">400</span>)<span class="op">.</span><span class="fu">json</span>({ ok<span class="op">:</span> <span class="kw">false</span><span class="op">,</span> error<span class="op">:</span> <span class="st">&#39;Malformed JSON&#39;</span> })<span class="op">;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fu">next</span>(err)<span class="op">;</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<hr />
+<h2 id="data-source-configuration">Data Source Configuration</h2>
+<h3 id="data-source.ts"><code>data-source.ts</code></h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> AppDataSource <span class="op">=</span> <span class="kw">new</span> <span class="fu">DataSource</span>({</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  type<span class="op">:</span> <span class="st">&#39;mariadb&#39;</span><span class="op">,</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  url<span class="op">:</span> <span class="bu">process</span><span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">DATABASE_URL</span><span class="op">,</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  entities<span class="op">:</span> [Criterion<span class="op">,</span> BuildingType<span class="op">,</span> Evaluation<span class="op">,</span> NebThreshold<span class="op">,</span> Config]<span class="op">,</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  migrations<span class="op">:</span> [<span class="op">...</span>]<span class="op">,</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  synchronize<span class="op">:</span> <span class="kw">false</span><span class="op">,</span>    <span class="co">// NEVER auto-sync in production</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  logging<span class="op">:</span> <span class="kw">false</span><span class="op">,</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<p><strong>Critical</strong>: <code>DATABASE_URL</code> is required. The
+DataSource throws an Error if not set:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="op">!</span><span class="bu">process</span><span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">DATABASE_URL</span>) {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">Error</span>(<span class="st">&#39;Environment variable DATABASE_URL is required&#39;</span>)<span class="op">;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="connection-string-format">Connection String Format</h3>
+<pre><code>mysql://user:password@host:3306/database</code></pre>
+<h3 id="environment-variables">Environment Variables</h3>
+<p>All hardcoded values have been externalized to environment
+variables:</p>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 24%" />
+<col style="width: 24%" />
+<col style="width: 24%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Default</th>
+<th>Used In</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>DATABASE_URL</code></td>
+<td><em>(required)</em></td>
+<td><code>data-source.ts</code></td>
+<td>MariaDB connection string</td>
+</tr>
+<tr class="even">
+<td><code>PORT</code></td>
+<td><code>4000</code></td>
+<td><code>index.ts</code></td>
+<td>Server listen port</td>
+</tr>
+<tr class="odd">
+<td><code>APP_VERSION</code></td>
+<td><code>1.0.0</code></td>
+<td><code>index.ts</code></td>
+<td>Version reported by /health</td>
+</tr>
+<tr class="even">
+<td><code>JWT_SECRET</code></td>
+<td><em>(required)</em></td>
+<td><code>authController.ts</code></td>
+<td>HMAC-SHA256 signing key</td>
+</tr>
+<tr class="odd">
+<td><code>JWT_EXPIRES_IN</code></td>
+<td><code>3600</code></td>
+<td><code>authController.ts</code></td>
+<td>Token lifetime (seconds)</td>
+</tr>
+<tr class="even">
+<td><code>LOGIN_REDIRECT</code></td>
+<td><code>/dashboard</code></td>
+<td><code>authController.ts</code></td>
+<td>Post-login redirect path</td>
+</tr>
+<tr class="odd">
+<td><code>ASSESSMENT_STATUS</code></td>
+<td><code>Completed</code></td>
+<td><code>buildingsController.ts</code></td>
+<td>Default assessment status</td>
+</tr>
+<tr class="even">
+<td><code>REPORT_LOCALE</code></td>
+<td><code>en-US</code></td>
+<td><code>reportsController.ts</code></td>
+<td>Date formatting locale</td>
+</tr>
+<tr class="odd">
+<td><code>REPORT_TITLE_PREFIX</code></td>
+<td><code>Accessibility Report</code></td>
+<td><code>reportsController.ts</code></td>
+<td>Report title prefix</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="entity-model">Entity Model</h2>
+<h3 id="criterion-criteria-table">1. Criterion (<code>criteria</code>
+table)</h3>
+<p>Represents a single evaluation criterion from the EC framework.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>UUID (PK)</td>
+<td>Auto-generated primary key</td>
+</tr>
+<tr class="even">
+<td><code>code</code></td>
+<td>VARCHAR (unique)</td>
+<td>Criterion code, e.g. “EC1.1.3”</td>
+</tr>
+<tr class="odd">
+<td><code>name</code></td>
+<td>VARCHAR</td>
+<td>Short name</td>
+</tr>
+<tr class="even">
+<td><code>definition</code></td>
+<td>TEXT</td>
+<td>Full definition of the criterion</td>
+</tr>
+<tr class="odd">
+<td><code>justification</code></td>
+<td>TEXT</td>
+<td>Why this criterion matters</td>
+</tr>
+<tr class="even">
+<td><code>value</code></td>
+<td>FLOAT</td>
+<td>Base weight value (Wij)</td>
+</tr>
+<tr class="odd">
+<td><code>disability</code></td>
+<td>INT</td>
+<td>Disability type ID (1–5)</td>
+</tr>
+<tr class="even">
+<td><code>dimension</code></td>
+<td>INT</td>
+<td>Assessment dimension ID (1–5)</td>
+</tr>
+<tr class="odd">
+<td><code>score</code></td>
+<td>INT (default: 3)</td>
+<td>Default score</td>
+</tr>
+<tr class="even">
+<td><code>levels</code></td>
+<td>JSON</td>
+<td>Array of 5 level descriptions (Level 1–5)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Code Format</strong>:
+<code>EC{disability}.{dimension}.{sequence}</code> — e.g.,
+<code>EC1.1.3</code> = Physical DT, Wayfinding AD, 3rd criterion.</p>
+<h3 id="buildingtype-building_types-table">2. BuildingType
+(<code>building_types</code> table)</h3>
+<p>Represents a building category with its weighting configuration.</p>
+<table>
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 22%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>UUID (PK)</td>
+<td>Auto-generated primary key</td>
+</tr>
+<tr class="even">
+<td><code>name</code></td>
+<td>VARCHAR (unique)</td>
+<td>Building type name (e.g., “Commercial Buildings”)</td>
+</tr>
+<tr class="odd">
+<td><code>disability_weights</code></td>
+<td>JSON</td>
+<td>Array of 5 weights (DT1–DT5)</td>
+</tr>
+<tr class="even">
+<td><code>dimension_weights</code></td>
+<td>JSON</td>
+<td>Array of 5 weights (AD1–AD5)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="evaluation-evaluations-table">3. Evaluation
+(<code>evaluations</code> table)</h3>
+<p>Stores the results of an accessibility assessment.</p>
+<table>
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 22%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>UUID (PK)</td>
+<td>Auto-generated primary key</td>
+</tr>
+<tr class="even">
+<td><code>user_id</code></td>
+<td>VARCHAR (nullable)</td>
+<td>Optional user identifier</td>
+</tr>
+<tr class="odd">
+<td><code>building_type</code></td>
+<td>VARCHAR</td>
+<td>Building type name</td>
+</tr>
+<tr class="even">
+<td><code>scores</code></td>
+<td>JSON</td>
+<td>All criterion scores <code>{ code: score }</code></td>
+</tr>
+<tr class="odd">
+<td><code>result</code></td>
+<td>JSON</td>
+<td>Full evaluation result object</td>
+</tr>
+<tr class="even">
+<td><code>obs</code></td>
+<td>DOUBLE (nullable)</td>
+<td>Overall Building Score (0–100)</td>
+</tr>
+<tr class="odd">
+<td><code>neb_class</code></td>
+<td>VARCHAR (nullable)</td>
+<td>NEB classification (A+, A, B, C, D)</td>
+</tr>
+<tr class="even">
+<td><code>average_raw_score</code></td>
+<td>DOUBLE (nullable)</td>
+<td>Average score across all criteria</td>
+</tr>
+<tr class="odd">
+<td><code>created_at</code></td>
+<td>DATETIME</td>
+<td>Auto-generated timestamp</td>
+</tr>
+</tbody>
+</table>
+<h3 id="nebthreshold-neb_thresholds-table">4. NebThreshold
+(<code>neb_thresholds</code> table)</h3>
+<p>Maps OBS ranges to NEB classifications.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>UUID (PK)</td>
+<td>Auto-generated primary key</td>
+</tr>
+<tr class="even">
+<td><code>min</code></td>
+<td>INT</td>
+<td>Minimum OBS for this band</td>
+</tr>
+<tr class="odd">
+<td><code>neb_class</code></td>
+<td>VARCHAR</td>
+<td>Class label (A+, A, B, C, D)</td>
+</tr>
+<tr class="even">
+<td><code>equivalent</code></td>
+<td>VARCHAR</td>
+<td>Human-readable equivalent</td>
+</tr>
+<tr class="odd">
+<td><code>meaning</code></td>
+<td>TEXT</td>
+<td>What this class means</td>
+</tr>
+<tr class="even">
+<td><code>neb_score</code></td>
+<td>INT</td>
+<td>Numeric score (5 down to 1)</td>
+</tr>
+<tr class="odd">
+<td><code>ordinal</code></td>
+<td>INT</td>
+<td>Sort order</td>
+</tr>
+</tbody>
+</table>
+<h3 id="config-config-table">5. Config (<code>config</code> table)</h3>
+<p>Key-value store for system parameters.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>UUID (PK)</td>
+<td>Auto-generated primary key</td>
+</tr>
+<tr class="even">
+<td><code>key</code></td>
+<td>VARCHAR (unique)</td>
+<td>Parameter key</td>
+</tr>
+<tr class="odd">
+<td><code>value</code></td>
+<td>TEXT</td>
+<td>Parameter value</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Known keys</strong>: <code>MAX_OBS</code>,
+<code>DEFAULT_SCORE</code>, <code>STRENGTH_THRESHOLD</code>,
+<code>WEAKNESS_THRESHOLD</code>, <code>TOP_N_RESULTS</code>.</p>
+<h3 id="entity-relationship-diagram">Entity Relationship Diagram</h3>
+<pre><code>┌──────────────────┐      ┌──────────────────┐
+│   BuildingType   │      │    Evaluation     │
+├──────────────────┤      ├──────────────────┤
+│ id (PK)          │◄─────│ building_type    │
+│ name             │      │ id (PK)          │
+│ disability_wts   │      │ user_id          │
+│ dimension_wts    │      │ scores (JSON)    │
+└──────────────────┘      │ result (JSON)    │
+                          │ obs              │
+┌──────────────────┐      │ neb_class        │
+│    Criterion      │      │ average_raw_score│
+├──────────────────┤      │ created_at       │
+│ id (PK)          │      └──────────────────┘
+│ code (unique)    │
+│ name             │      ┌──────────────────┐
+│ definition       │      │  NebThreshold    │
+│ justification    │      ├──────────────────┤
+│ value            │      │ id (PK)          │
+│ disability       │      │ min              │
+│ dimension        │      │ neb_class        │
+│ score            │      │ equivalent       │
+│ levels (JSON)    │      │ meaning          │
+└──────────────────┘      │ neb_score        │
+                          │ ordinal          │
+┌──────────────────┐      └──────────────────┘
+│     Config       │
+├──────────────────┤
+│ id (PK)          │
+│ key (unique)     │
+│ value            │
+└──────────────────┘</code></pre>
+<hr />
+<h2 id="controller-layer">Controller Layer</h2>
+<h3 id="evaluate-controller-evaluatecontroller.ts">1. Evaluate
+Controller (<code>evaluateController.ts</code>)</h3>
+<p><strong>Endpoint</strong>: <code>POST /api/v1/evaluate</code></p>
+<p><strong>Purpose</strong>: The core evaluation endpoint. Accepts a
+building type and optional scores, runs the calculation engine, returns
+full evaluation results.</p>
+<p><strong>Request Body</strong>:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;buildingType&quot;</span><span class="fu">:</span> <span class="st">&quot;Commercial Buildings&quot;</span><span class="fu">,</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;scores&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;EC1.1.1&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;EC1.1.2&quot;</span><span class="fu">:</span> <span class="dv">3</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Validation</strong>: - Body must be a JSON object -
+<code>buildingType</code> must be a string if provided (defaults to
+“Commercial Buildings”) - <code>scores</code> must be an object
+(Record&lt;string, number&gt;) if provided</p>
+<p><strong>Response</strong>: Returns
+<code>{ ok: true, result: {...} }</code> with the full evaluation
+result.</p>
+<h3 id="assessments-controller-assessmentscontroller.ts">2. Assessments
+Controller (<code>assessmentsController.ts</code>)</h3>
+<p><strong><code>POST /api/v1/assessments</code></strong> — Create a new
+assessment.</p>
+<ul>
+<li>Accepts <code>{ buildingId, name }</code></li>
+<li>Looks up BuildingType by ID to get the name</li>
+<li>Runs <code>calc.evaluate()</code> with the building type name</li>
+<li>Creates an Evaluation record with scores, result, obs, neb_class,
+average_raw_score</li>
+<li>Returns 201 with
+<code>{ ok: true, data: { id, buildingId, name, results } }</code></li>
+</ul>
+<p><strong><code>GET /api/v1/assessments/:id</code></strong> — Retrieve
+an existing assessment.</p>
+<ul>
+<li>Looks up Evaluation by UUID</li>
+<li>Enriches with BuildingType ID</li>
+<li>Returns
+<code>{ ok: true, data: { id, buildingId, results } }</code></li>
+<li>Returns 404 if not found</li>
+</ul>
+<h3 id="buildings-controller-buildingscontroller.ts">3. Buildings
+Controller (<code>buildingsController.ts</code>)</h3>
+<p><strong><code>GET /api/v1/buildings</code></strong> — List all
+building types with their assessment counts.</p>
+<ul>
+<li>Joins BuildingType and Evaluation data</li>
+<li>Groups evaluations by building_type name</li>
+<li>Returns array of
+<code>{ id, name, type, assessments: [...] }</code></li>
+<li>Assessment status label from <code>ASSESSMENT_STATUS</code> env var
+(default: <code>"Completed"</code>)</li>
+</ul>
+<p><strong><code>GET /api/v1/buildings/:id</code></strong> — Get
+building detail with assessment history.</p>
+<ul>
+<li>Finds BuildingType by UUID</li>
+<li>Returns assessments sorted by <code>created_at DESC</code></li>
+<li>Returns 404 if building not found</li>
+</ul>
+<h3 id="data-controller-datacontroller.ts">4. Data Controller
+(<code>dataController.ts</code>)</h3>
+<p>The largest controller — handles CRUD for reference data.</p>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 34%" />
+<col style="width: 31%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>getCriteria</code></td>
+<td><code>GET /criteria</code></td>
+<td>List all criteria (sorted by code)</td>
+</tr>
+<tr class="even">
+<td><code>getCriterionByCode</code></td>
+<td><code>GET /criteria/:code</code></td>
+<td>Get single criterion by code</td>
+</tr>
+<tr class="odd">
+<td><code>createCriterion</code></td>
+<td><code>POST /criteria</code></td>
+<td>Create new criterion with validation</td>
+</tr>
+<tr class="even">
+<td><code>getBuildingTypes</code></td>
+<td><code>GET /building-types</code></td>
+<td>List building types</td>
+</tr>
+<tr class="odd">
+<td><code>getNebThresholds</code></td>
+<td><code>GET /neb-thresholds</code></td>
+<td>Get NEB classification bands</td>
+</tr>
+<tr class="even">
+<td><code>getConfig</code></td>
+<td><code>GET /config</code></td>
+<td>Get all system config entries</td>
+</tr>
+<tr class="odd">
+<td><code>getDisabilityTypes</code></td>
+<td><code>GET /disability-types</code></td>
+<td>Get DT labels from JSON data file</td>
+</tr>
+<tr class="even">
+<td><code>getAssessmentDimensions</code></td>
+<td><code>GET /assessment-dimensions</code></td>
+<td>Get AD labels</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Criterion Creation Validation</strong>: - <code>code</code>
+must match pattern <code>/^EC\d+\.\d+\.\d+$/</code> (e.g., EC1.1.3) -
+<code>name</code> and <code>definition</code> are required -
+<code>levels</code> must be an array of exactly 5 strings -
+<code>disability</code> must be between 1–5 - <code>dimension</code>
+must be between 1–5</p>
+<h3 id="reports-controller-reportscontroller.ts">5. Reports Controller
+(<code>reportsController.ts</code>)</h3>
+<p><strong><code>GET /api/v1/reports</code></strong> — List evaluation
+reports.</p>
+<ul>
+<li>Returns evaluations sorted by <code>created_at DESC</code></li>
+<li>Uses env vars for i18n:
+<ul>
+<li><code>REPORT_TITLE_PREFIX</code> (default:
+<code>"Accessibility Report"</code>)</li>
+<li><code>REPORT_LOCALE</code> (default: <code>"en-US"</code>) for date
+formatting</li>
+</ul></li>
+<li>Title format:
+<code>"{PREFIX} #{N} — {building_type} ({date}) — OBS: {obs}%"</code></li>
+</ul>
+<h3 id="auth-controller-authcontroller.ts">6. Auth Controller
+(<code>authController.ts</code>)</h3>
+<p><strong><code>POST /api/v1/login</code></strong> — Real token-based
+authentication via Node.js <code>crypto</code>.</p>
+<p><strong>Token Generation</strong>: - Uses
+<code>crypto.randomBytes()</code> with HMAC-SHA256 for access + refresh
+tokens - Token length: 48 hex characters - Configurable via
+<code>JWT_SECRET</code> (env, required), <code>JWT_EXPIRES_IN</code>
+(env, default 3600), <code>LOGIN_REDIRECT</code> (env, default
+<code>/dashboard</code>) - Returns 500 with
+<code>"Server configuration error: JWT_SECRET not set"</code> if secret
+is missing</p>
+<p><strong>Validation</strong>: - <code>email</code> required, must
+contain <code>@</code> - <code>password</code> required, minimum 6
+characters</p>
+<p><strong>Response</strong>:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;accessToken&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;48-char-hex-hmac&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;refreshToken&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;48-char-hex-hmac&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;expiresIn&quot;</span><span class="fu">:</span> <span class="dv">3600</span><span class="fu">,</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;redirectTo&quot;</span><span class="fu">:</span> <span class="st">&quot;/dashboard&quot;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="service-layer">Service Layer</h2>
+<h3 id="calculation-service-calculationservice.ts">1. Calculation
+Service (<code>calculationService.ts</code>)</h3>
+<p>The core business logic engine. Exports a single function:
+<code>evaluate(buildingType, scores?)</code>.</p>
+<h4 id="algorithm">Algorithm</h4>
+<pre><code>1. Load configuration (MAX_OBS, DEFAULT_SCORE, thresholds)
+2. Load building type &amp; its disability weights
+3. Load all 63 criteria
+4. Build criteria list with scores (user-provided or defaults)
+5. Derive DT/AD ID sets dynamically from criteria data
+6. For each criterion, compute IS = value × score
+7. Accumulate TIS per disability type: TIS[i] = Σ IS_ij
+8. Accumulate CIS per dimension: CIS[j] = Σ (DTWeight[i] × IS_ij)
+9. Compute OBS = (Σ DTWeight[i] × TIS[i]) / MAX_OBS × 100
+10. Classify OBS into NEB band
+11. Compute average scores per DT and per AD
+12. Identify top strengths (score ≥ STRENGTH_THRESHOLD)
+13. Identify top weaknesses (score ≤ WEAKNESS_THRESHOLD)
+14. Compute score distribution (count per level 1-5)</code></pre>
+<h4 id="return-object">Return Object</h4>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode ts"><code class="sourceCode typescript"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  obs<span class="op">:</span> <span class="dt">number</span><span class="op">;</span>                    <span class="co">// Overall Building Score (0-100)</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  nebClass<span class="op">:</span> <span class="dt">string</span><span class="op">;</span>               <span class="co">// &quot;A+&quot;, &quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  nebEquivalent<span class="op">:</span> <span class="dt">string</span><span class="op">;</span>          <span class="co">// Human-readable equivalent</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  nebMeaning<span class="op">:</span> <span class="dt">string</span><span class="op">;</span>             <span class="co">// What this class means</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  nebScore<span class="op">:</span> <span class="dt">number</span><span class="op">;</span>               <span class="co">// Numeric NEB score (1-5)</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  averageRawScore<span class="op">:</span> <span class="dt">number</span><span class="op">;</span>        <span class="co">// Mean of all criterion scores</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  avgRawScoreByDT<span class="op">:</span> <span class="bu">Record</span><span class="op">&lt;</span><span class="dt">number</span><span class="op">,</span> <span class="dt">number</span><span class="op">&gt;;</span>  <span class="co">// Mean per DT</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  avgRawScoreByAD<span class="op">:</span> <span class="bu">Record</span><span class="op">&lt;</span><span class="dt">number</span><span class="op">,</span> <span class="dt">number</span><span class="op">&gt;;</span>  <span class="co">// Mean per AD</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  strengths<span class="op">:</span> Criterion[]<span class="op">;</span>         <span class="co">// Top N strongest criteria</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  weaknesses<span class="op">:</span> Criterion[]<span class="op">;</span>        <span class="co">// Top N weakest criteria</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  scoreDistribution<span class="op">:</span> <span class="bu">Record</span><span class="op">&lt;</span><span class="dt">number</span><span class="op">,</span> <span class="dt">number</span><span class="op">&gt;;</span>  <span class="co">// Counts per level</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  tisByDT<span class="op">:</span> <span class="bu">Record</span><span class="op">&lt;</span><span class="dt">number</span><span class="op">,</span> <span class="dt">number</span><span class="op">&gt;;</span>  <span class="co">// Type Impact Scores</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  cisByAD<span class="op">:</span> <span class="bu">Record</span><span class="op">&lt;</span><span class="dt">number</span><span class="op">,</span> <span class="dt">number</span><span class="op">&gt;;</span>  <span class="co">// Criterion Impact Scores</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  criteria<span class="op">:</span> Criterion[]<span class="op">;</span>          <span class="co">// All criteria with computed IS</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="key-helper-functions">Key Helper Functions</h4>
+<p><code>buildCriteriaFromList(list, scores?, defaultScore)</code>: -
+Merges user-provided scores into criteria - Falls back to criterion’s
+default score, then to DEFAULT_SCORE config value - Computes
+<code>is</code> = <code>value × score</code> for each criterion</p>
+<p><code>uniqueSortedIds(items, field)</code>: - Dynamically derives the
+set of DT/AD IDs from actual criteria data - NOT hardcoded — adapts to
+whatever DT/AD values exist in the database</p>
+<h3 id="metadata-service-metadataservice.ts">2. Metadata Service
+(<code>metadataService.ts</code>)</h3>
+<p>Provides cached access to reference data used by the calculation
+engine.</p>
+<h4 id="functions">Functions</h4>
+<table>
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 25%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Returns</th>
+<th>Cache Strategy</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>getNebThresholds()</code></td>
+<td><code>NebThreshold[]</code></td>
+<td>In-memory cache (<code>cache.neb</code>)</td>
+</tr>
+<tr class="even">
+<td><code>getConfigNumber(key, fallback)</code></td>
+<td><code>number</code></td>
+<td>Per-key cache (<code>cache.config[key]</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>getBuildingType(name)</code></td>
+<td><code>BuildingType \| null</code></td>
+<td>No cache (direct query)</td>
+</tr>
+<tr class="even">
+<td><code>getAllCriteria()</code></td>
+<td><code>Criterion[]</code></td>
+<td>No cache (direct query)</td>
+</tr>
+<tr class="odd">
+<td><code>validateMetadata()</code></td>
+<td><code>boolean</code></td>
+<td>Verifies required data exists</td>
+</tr>
+</tbody>
+</table>
+<h4 id="validatemetadata">validateMetadata()</h4>
+<p>Called at startup. Verifies: 1. <code>MAX_OBS</code> config key
+exists 2. At least 1 building type seeded 3. At least 1 criterion seeded
+4. At least 1 NEB threshold seeded</p>
+<p><strong>Fails fast</strong>: If any check fails, the process exits
+with code 1 (<code>process.exit(1)</code>).</p>
+<h4 id="cache-initialization">Cache Initialization</h4>
+<p>The service lazily initializes the DataSource. Repeated calls reuse
+the existing connection:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode ts"><code class="sourceCode typescript"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (initialized <span class="op">||</span> AppDataSource<span class="op">.</span><span class="at">isInitialized</span>) <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> AppDataSource<span class="op">.</span><span class="fu">initialize</span>()<span class="op">;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>initialized <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span></code></pre></div>
+<hr />
+<h2 id="calculation-engine">Calculation Engine</h2>
+<h3 id="complete-formula-reference">Complete Formula Reference</h3>
+<p><strong>Notation</strong>: - DT(i) = Disability Type i (i = 1..5) -
+AD(j) = Assessment Dimension j (j = 1..5) - W(ij) = Cell weight for
+criterion at DT(i), AD(j) - S(ij) = User-assigned score (1–5) for
+criterion at DT(i), AD(j) - DW(i) = Disability weight for DT(i) from
+building type config</p>
+<p><strong>Individual Score</strong>:</p>
+<p><span
+class="math display"><em>I</em><em>S</em><sub><em>i</em><em>j</em></sub> = <em>W</em><sub><em>i</em><em>j</em></sub> × <em>S</em><sub><em>i</em><em>j</em></sub></span></p>
+<p><strong>Type Impact Score</strong> (per disability type):</p>
+<p><span class="math display">$$TIS_i = \sum_{j=1}^{5}
+IS_{ij}$$</span></p>
+<p><strong>Criterion Impact Score</strong> (per assessment
+dimension):</p>
+<p><span class="math display">$$CIS_j = \sum_{i=1}^{5} DW_i \times
+IS_{ij}$$</span></p>
+<p><strong>Overall Building Score</strong>:</p>
+<p><span class="math display">$$OBS = \frac{\sum_{i=1}^{5} DW_i \times
+TIS_i}{MAX\_OBS} \times 100$$</span></p>
+<p><strong>NEB Classification</strong>: - OBS ≥ 80 → NEB Class A+
+(Excellent, Score 5) - OBS ≥ 65 → NEB Class A (Very Good, Score 4) - OBS
+≥ 50 → NEB Class B (Good, Score 3) - OBS ≥ 35 → NEB Class C (Fair, Score
+2) - OBS ≥ 0 → NEB Class D (Poor, Score 1)</p>
+<hr />
+<h2 id="migrations">Migrations</h2>
+<p>Three migration files in <code>src/migrations/</code>:</p>
+<table>
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 35%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Migration</th>
+<th>Timestamp</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>1686300000000-InitSchema.ts</code></td>
+<td>Initial</td>
+<td>Creates all 5 tables</td>
+</tr>
+<tr class="even">
+<td><code>1686460000000-AddEvaluationFields.ts</code></td>
+<td>+1</td>
+<td>Adds <code>obs</code>, <code>neb_class</code>,
+<code>average_raw_score</code> to evaluations</td>
+</tr>
+<tr class="odd">
+<td><code>1686550000000-AddNebAndConfig.ts</code></td>
+<td>+2</td>
+<td>Seeds NEB thresholds and config values</td>
+</tr>
+</tbody>
+</table>
+<h3 id="running-migrations">Running Migrations</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> backend</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">npx</span> ts-node src/scripts/runMigrations.ts</span></code></pre></div>
+<p>Migrations are applied by TypeORM’s migration runner in sequential
+order based on timestamps.</p>
+<hr />
+<h2 id="database-seeding">Database Seeding</h2>
+<h3 id="seed-script-srcscriptsseed.ts">Seed Script:
+<code>src/scripts/seed.ts</code></h3>
+<p>Populates the database with initial reference data:</p>
+<ol type="1">
+<li><strong>Criteria</strong> (63 records): Loaded from workbook mapping
+data
+<ul>
+<li>Each criterion has: code, name, definition, justification, value,
+disability, dimension, levels</li>
+</ul></li>
+<li><strong>Building Types</strong>: Default building categories with
+disability weights</li>
+<li><strong>NEB Thresholds</strong>: OBS classification bands</li>
+<li><strong>Config</strong>: System parameters (MAX_OBS, DEFAULT_SCORE,
+etc.)</li>
+</ol>
+<h3 id="run-seed">Run Seed</h3>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> backend</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">DATABASE_URL</span><span class="op">=</span>mysql://myuser:mypassword@127.0.0.1:3306/mydb</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="ex">npx</span> ts-node src/scripts/seed.ts</span></code></pre></div>
+<h3
+id="extraction-script-srcscriptsextract_workbook_mappings.ts">Extraction
+Script: <code>src/scripts/extract_workbook_mappings.ts</code></h3>
+<p>Extracts EC–DT–AD mappings from the original Excel workbook and
+converts them to database-ready JSON for seeding.</p>
+<hr />
+<h2 id="docker-configuration">Docker Configuration</h2>
+<h3 id="docker-compose.yml"><code>docker-compose.yml</code></h3>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">mariadb</span><span class="kw">:</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> mariadb:10.11</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">MYSQL_ROOT_PASSWORD</span><span class="kw">:</span><span class="at"> rootpass</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">MYSQL_DATABASE</span><span class="kw">:</span><span class="at"> mydb</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">MYSQL_USER</span><span class="kw">:</span><span class="at"> myuser</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">MYSQL_PASSWORD</span><span class="kw">:</span><span class="at"> mypassword</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;3306:3306&quot;</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> mariadb_data:/var/lib/mysql</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ./docker-initdb.d:/docker-entrypoint-initdb.d</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">mariadb_data</span><span class="kw">:</span></span></code></pre></div>
+<h3 id="init-script-docker-initdb.dinit.sql">Init Script:
+<code>docker-initdb.d/init.sql</code></h3>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">DATABASE</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> mydb;</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="fu">USER</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> <span class="st">&#39;myuser&#39;</span>@<span class="st">&#39;%&#39;</span> <span class="kw">IDENTIFIED</span> <span class="kw">BY</span> <span class="st">&#39;mypassword&#39;</span>;</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="kw">GRANT</span> <span class="kw">ALL</span> <span class="kw">PRIVILEGES</span> <span class="kw">ON</span> mydb.<span class="op">*</span> <span class="kw">TO</span> <span class="st">&#39;myuser&#39;</span>@<span class="st">&#39;%&#39;</span>;</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FLUSH</span> <span class="kw">PRIVILEGES</span>;</span></code></pre></div>
+<h3 id="startstop">Start/Stop</h3>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Start</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> backend <span class="kw">&amp;&amp;</span> <span class="ex">docker</span> compose up <span class="at">-d</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Stop</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> backend <span class="kw">&amp;&amp;</span> <span class="ex">docker</span> compose down</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Stop &amp; remove data</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> backend <span class="kw">&amp;&amp;</span> <span class="ex">docker</span> compose down <span class="at">-v</span></span></code></pre></div>
+<hr />
+<h2 id="tests">Tests</h2>
+<h3 id="test-files">Test Files</h3>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>calculation.test.ts</code></td>
+<td>Unit tests for the calculation engine</td>
+</tr>
+<tr class="even">
+<td><code>metadata.test.ts</code></td>
+<td>Unit tests for the metadata service</td>
+</tr>
+<tr class="odd">
+<td><code>static.test.ts</code></td>
+<td>Static data validation tests</td>
+</tr>
+<tr class="even">
+<td><code>workbook.mapping.test.ts</code></td>
+<td>Workbook mapping integrity tests</td>
+</tr>
+</tbody>
+</table>
+<h3 id="run-tests">Run Tests</h3>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> backend</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> test               <span class="co"># Full suite with coverage</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> run test:automated <span class="co"># CI-friendly output</span></span></code></pre></div>
+<h3 id="test-database">Test Database</h3>
+<p>Tests use a separate database or in-memory configuration. Configure
+<code>DATABASE_URL</code> to point to a test database to avoid
+corrupting development data.</p>
+<hr />
+<p><em>AASTool by Serg | Dev by Y</em></p>
+</body>
+</html>

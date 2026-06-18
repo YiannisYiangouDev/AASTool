@@ -6,23 +6,8 @@ import Header from "../../components/Header";
 import BottomNav from "../../components/BottomNav";
 import { useCriteria } from "../../lib/hooks/useCriteria";
 import { useMetadata } from "../../lib/hooks/useMetadata";
+import { DT_TEXT_COLORS, AD_TEXT_COLORS } from "../../lib/theme";
 import type { Criterion } from "../../types";
-
-const DT_COLORS: Record<number, string> = {
-  1: "from-teal-400 to-cyan-500 text-teal-300 border-teal-500/30 bg-teal-500/10",
-  2: "from-blue-400 to-indigo-500 text-blue-300 border-blue-500/30 bg-blue-500/10",
-  3: "from-violet-400 to-purple-500 text-violet-300 border-violet-500/30 bg-violet-500/10",
-  4: "from-amber-400 to-orange-500 text-amber-300 border-amber-500/30 bg-amber-500/10",
-  5: "from-rose-400 to-pink-500 text-rose-300 border-rose-500/30 bg-rose-500/10",
-};
-
-const AD_COLORS: Record<number, string> = {
-  1: "text-teal-400 ring-teal-500/20 bg-teal-500/5",
-  2: "text-blue-400 ring-blue-500/20 bg-blue-500/5",
-  3: "text-violet-400 ring-violet-500/20 bg-violet-500/5",
-  4: "text-amber-400 ring-amber-500/20 bg-amber-500/5",
-  5: "text-rose-400 ring-rose-500/20 bg-rose-500/5",
-};
 
 const SearchIcon = () => (
   <svg
@@ -331,10 +316,10 @@ const toggleExpand = (code: string) => {
                       <div>
                         {/* Tags */}
                         <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${DT_COLORS[c.disability]}`}>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${DT_TEXT_COLORS[c.disability]}`}>
                             DT {c.disability} · {dtLabels[c.disability]}
                           </span>
-                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ring-1 ${AD_COLORS[c.dimension]}`}>
+                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ring-1 ${AD_TEXT_COLORS[c.dimension]}`}>
                             AD {c.dimension}
                           </span>
                         </div>

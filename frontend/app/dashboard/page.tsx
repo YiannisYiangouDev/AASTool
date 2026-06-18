@@ -6,78 +6,16 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import Header from "../../components/Header";
 import BottomNav from "../../components/BottomNav";
-import api from "../../lib/api/client";
 import { endpoints } from "../../lib/api/endpoints";
 import { fadeInUp, staggerContainer, staggerItem } from "../../lib/animations";
+import { DT_GRADIENT, AD_GRADIENT, getObsGaugeColors, getNebBadgeGradient } from "../../lib/theme";
+import { loadState, saveState, STORAGE_KEY, CERTIFICATION_KEY } from "../../lib/storage";
 
-import {
-  BuildingType,
-  BUILDING_TYPE_LABELS,
-  DEFAULT_BUILDING_TYPE,
-} from "../../types/building-types";
 import { useMetadata } from "../../lib/hooks/useMetadata";
 
 import type { EvaluationResult, Criterion } from "../../types";
 
-const STORAGE_KEY = "accessibility-assessment-state";
-const CERTIFICATION_KEY = "certification-state";
-
-const DT_GRADIENT: Record<number, string> = {
-  1: "from-teal-500 to-cyan-400",
-  2: "from-blue-500 to-indigo-400",
-  3: "from-violet-500 to-purple-400",
-  4: "from-amber-500 to-orange-400",
-  5: "from-rose-500 to-pink-400",
-};
-
-const AD_GRADIENT: Record<number, string> = {
-  1: "from-teal-500 to-emerald-400",
-  2: "from-sky-500 to-blue-400",
-  3: "from-indigo-500 to-violet-400",
-  4: "from-orange-500 to-amber-400",
-  5: "from-pink-500 to-rose-400",
-};
-
 type CriterionScore = Criterion & { score: number; is: number };
-
-async function fetchEvaluate(
-  buildingType: string,
-  scores?: Record<string, number>,
-): Promise<EvaluationResult> {
-  const payload: any = { buildingType };
-
-  if (scores && Object.keys(scores).length > 0) {
-    payload.scores = scores;
-  }
-
-  const res = await api.post<any>("/evaluate", payload);
-  return (res.data as any)?.result || res.data;
-}
-
-function loadState():
-  | {
-    buildingType: BuildingType;
-    scores: Record<string, number>;
-  }
-  | null {
-  try {
-    // Check certification key first (where criteria updates land),
-    // then fall back to dashboard-specific key
-    const raw = localStorage.getItem(CERTIFICATION_KEY) ?? localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
-function saveState(buildingType: BuildingType, scores: Record<string, number>) {
-  try {
-    const payload = JSON.stringify({ buildingType, scores });
-    localStorage.setItem(STORAGE_KEY, payload);
-    localStorage.setItem(CERTIFICATION_KEY, payload);
-  } catch { }
-}
 
 function OBSGauge({ value }: Readonly<{ value: number }>) {
   const radius = 80;
@@ -87,19 +25,7 @@ function OBSGauge({ value }: Readonly<{ value: number }>) {
   const dashOffset = circumference - (progress / 100) * circumference;
 
   const gradId = "obs-gauge-grad";
-  let color1 = "#ef4444";
-  let color2 = "#f97316";
-
-  if (value >= 85) {
-    color1 = "#14b8a6";
-    color2 = "#06b6d4";
-  } else if (value >= 60) {
-    color1 = "#3b82f6";
-    color2 = "#6366f1";
-  } else if (value >= 40) {
-    color1 = "#f59e0b";
-    color2 = "#eab308";
-  }
+  const { color1, color2 } = getObsGaugeColors(value);
 
   return (
     <svg
@@ -287,9 +213,14 @@ function ServerStatusWidget() {
 
 export default function DashboardPage() {
   const { dtLabels, adLabels } = useMetadata();
-  const [buildingType, setBuildingType] = useState<BuildingType>(
-    DEFAULT_BUILDING_TYPE,
-  );
+
+  // Fetch building types from API — no hardcoded list
+  const { data: buildingTypes = [] } = useQuery({
+    queryKey: ["building-types"],
+    queryFn: () => endpoints.getBuildingTypes(),
+  });
+
+  const [buildingType, setBuildingType] = useState<string>("");
   const [criteria, setCriteria] = useState<CriterionScore[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -307,20 +238,25 @@ export default function DashboardPage() {
     avgRawScoreByAD: {},
     strengths: [],
     weaknesses: [],
-    tisByDT: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 },
-    cisByAD: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 },
+    tisByDT: {},
+    cisByAD: {},
     criteria: [],
   });
 
   const obs = Number.isFinite(results.obs) ? results.obs : 0;
 
   useEffect(() => {
+    if (buildingTypes.length === 0) return;
     const saved = loadState();
-    const bt = saved?.buildingType ?? DEFAULT_BUILDING_TYPE;
+    const defaultBt = buildingTypes[0]?.name ?? "";
+    const bt = saved?.buildingType && buildingTypes.some((b: any) => b.name === saved.buildingType)
+      ? saved.buildingType
+      : defaultBt;
+    const scores = saved?.scores ?? {};
     setBuildingType(bt);
 
-    fetchEvaluate(bt, saved?.scores ?? {})
-      .then((r) => {
+    endpoints.evaluate({ buildingType: bt, scores })
+      .then((r: EvaluationResult) => {
         setCriteria((r.criteria as CriterionScore[]) || []);
         setResults(r);
       })
@@ -328,7 +264,7 @@ export default function DashboardPage() {
         console.error("Failed to load evaluation:", err);
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [buildingTypes]);
 
   useEffect(() => {
     function onStorage(e: StorageEvent) {
@@ -338,8 +274,8 @@ export default function DashboardPage() {
       try {
         const saved = JSON.parse(e.newValue);
         setBuildingType(saved.buildingType);
-        fetchEvaluate(saved.buildingType, saved.scores)
-          .then((r) => {
+        endpoints.evaluate({ buildingType: saved.buildingType, scores: saved.scores })
+          .then((r: EvaluationResult) => {
             setCriteria(r.criteria as CriterionScore[]);
             setResults(r);
           })
@@ -376,12 +312,12 @@ export default function DashboardPage() {
 
     saveState(buildingType, scores);
 
-    fetchEvaluate(buildingType, scores)
-      .then((r) => {
+    endpoints.evaluate({ buildingType, scores })
+      .then((r: EvaluationResult) => {
         setCriteria(r.criteria as CriterionScore[]);
         setResults(r);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.error("Simulation failed:", err?.response?.data || err);
       });
   }, [simTarget, simScore, buildingType, criteria]);
@@ -391,24 +327,17 @@ export default function DashboardPage() {
     if (!saved) return;
 
     setBuildingType(saved.buildingType);
-    fetchEvaluate(saved.buildingType, saved.scores)
-      .then((r) => {
+    endpoints.evaluate({ buildingType: saved.buildingType, scores: saved.scores })
+      .then((r: EvaluationResult) => {
         setCriteria(r.criteria as CriterionScore[]);
         setResults(r);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.error("Reload failed:", err?.response?.data || err);
       });
   }, []);
 
-  const nebBadgeColor =
-    obs >= 85
-      ? "from-teal-500 to-cyan-500"
-      : obs >= 60
-        ? "from-blue-500 to-indigo-500"
-        : obs >= 40
-          ? "from-amber-500 to-yellow-500"
-          : "from-red-500 to-orange-500";
+  const nebBadgeColor = getNebBadgeGradient(results.nebClass);
 
   if (loading) {
     return (
@@ -508,7 +437,7 @@ export default function DashboardPage() {
             <div className="mt-6 text-sm text-slate-400">
               Active Profile:{" "}
               <span className="text-white font-bold">
-                {BUILDING_TYPE_LABELS[buildingType]}
+                {buildingType}
               </span>
             </div>
           </motion.div>

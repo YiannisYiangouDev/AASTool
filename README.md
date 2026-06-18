@@ -90,9 +90,10 @@ Built on **63 evaluation criteria** (EC–DT–AD mapping), each with a 5-level 
 
 1. **Frontend is presentation-only** — zero hardcoded weights, thresholds, or formulas
 2. **Backend is single source of truth** — all calculations happen server-side
-3. **Data-driven** — disability weights, NEB thresholds, and scoring config are stored in the database
-4. **Pure REST** — no direct database connections from the frontend
-5. **Stateless API** — each request is self-contained; no server-side sessions
+3. **Data-driven** — all weights, thresholds, and scoring config live exclusively in the database
+4. **No hardcoded values** — every string, token, gradient, and label is sourced from API, env, or shared modules
+5. **Pure REST** — no direct database connections from the frontend
+6. **Stateless API** — each request is self-contained; no server-side sessions
 
 ---
 
@@ -133,7 +134,7 @@ docker compose up -d mariadb
 ```bash
 cd backend
 export DATABASE_URL=mysql://myuser:mypassword@127.0.0.1:3306/mydb
-npx ts-node src/scripts/seed.ts
+node scripts/seed-mariadb.js
 ```
 
 ### 4. Start Backend
@@ -186,7 +187,7 @@ AASTool/
 │       ├── index.ts               # Express app entry point
 │       ├── data-source.ts         # TypeORM DataSource configuration
 │       ├── controllers/           # Route handlers (REST endpoints)
-│       │   ├── assessController.ts
+│       │   ├── assessmentsController.ts
 │       │   ├── authController.ts
 │       │   ├── buildingsController.ts
 │       │   ├── dataController.ts
@@ -250,6 +251,8 @@ AASTool/
 │       │   ├── useCriteria.ts     # React Query hook for criteria
 │       │   └── useAssessment.ts   # React Query hook for assessments
 │       ├── queryClient.ts         # React Query client config
+│       ├── theme.ts               # Color/gradient tokens + gauge helpers
+│       ├── storage.ts             # localStorage persistence helpers
 │       ├── animations.ts          # Framer Motion animation presets
 │       └── pwa.ts                 # PWA registration utilities
 │
@@ -274,14 +277,20 @@ AASTool/
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `DATABASE_URL` | **Yes** | — | MySQL/MariaDB connection string |
-| `DB_TYPE` | No | `mariadb` | Database type (`mariadb` or `postgres`) |
 | `PORT` | No | `4000` | Express server port |
-| `TYPEORM_SYNCHRONIZE` | No | `false` | Auto-sync DB schema (dev only) |
+| `APP_VERSION` | No | `1.0.0` | Version reported by `/health` |
+| `JWT_SECRET` | **Yes** | — | HMAC-SHA256 signing key for auth tokens |
+| `JWT_EXPIRES_IN` | No | `3600` | Token lifetime in seconds |
+| `LOGIN_REDIRECT` | No | `/dashboard` | Post-login redirect path |
+| `ASSESSMENT_STATUS` | No | `Completed` | Default assessment status label |
+| `REPORT_LOCALE` | No | `en-US` | Date formatting locale for reports |
+| `REPORT_TITLE_PREFIX` | No | `Accessibility Report` | Report title prefix |
 
 Example:
 
 ```env
 DATABASE_URL=mysql://myuser:mypassword@127.0.0.1:3306/mydb
+JWT_SECRET=your-secret-key-here
 PORT=4000
 ```
 
@@ -337,7 +346,7 @@ Then seed:
 ```bash
 cd backend
 export DATABASE_URL=mysql://myuser:mypassword@127.0.0.1:3306/mydb
-npx ts-node src/scripts/seed.ts
+node scripts/seed-mariadb.js
 ```
 
 ### Database Tables
@@ -454,7 +463,7 @@ $$CIS_j = \sum_{i=1}^{n} DTWeight_i \times IS_{ij}$$
 
 ## API Reference
 
-See [docs/api.md](docs/api.md) for the complete OpenAPI-style endpoint reference.
+See [docs/AASTool-API-Reference.pdf](docs/AASTool-API-Reference.pdf) for the complete API endpoint reference (markdown source: [docs/.pdf-build/api.md](docs/.pdf-build/api.md)).
 
 ### Quick Overview
 
@@ -476,7 +485,7 @@ See [docs/api.md](docs/api.md) for the complete OpenAPI-style endpoint reference
 | `GET` | `/api/v1/disability-types` | Get DT labels |
 | `GET` | `/api/v1/assessment-dimensions` | Get AD labels |
 | `GET` | `/api/v1/reports` | List reports |
-| `POST` | `/api/v1/login` | Login (dev mock) |
+| `POST` | `/api/v1/login` | Login (HMAC-SHA256 tokens) |
 
 ---
 
@@ -578,11 +587,12 @@ rm -rf .next && npm run build
 
 | Document | Content |
 |----------|---------|
-| [docs/frontend.md](docs/frontend.md) | Complete frontend architecture, components, pages, data flow |
-| [docs/backend.md](docs/backend.md) | Backend architecture, services, calculation engine, entities |
-| [docs/api.md](docs/api.md) | OpenAPI-style endpoint reference with request/response examples |
-| [docs/pdf-generation.md](docs/pdf-generation.md) | PDF generation subsystem documentation |
+| [docs/AASTool-Frontend-Architecture.pdf](docs/AASTool-Frontend-Architecture.pdf) | Complete frontend architecture, components, pages, data flow |
+| [docs/AASTool-Backend-Architecture.pdf](docs/AASTool-Backend-Architecture.pdf) | Backend architecture, services, calculation engine, entities |
+| [docs/AASTool-API-Reference.pdf](docs/AASTool-API-Reference.pdf) | OpenAPI-style endpoint reference with request/response examples |
+| [docs/AASTool-PDF-Generation-Subsystem.pdf](docs/AASTool-PDF-Generation-Subsystem.pdf) | PDF generation subsystem documentation |
 | [docs/azure-migration.md](docs/azure-migration.md) | Azure cloud infrastructure & migration guide |
+| [docs/.pdf-build/](docs/.pdf-build/) | Markdown sources for all documentation PDFs |
 | [DEVELOPMENT.md](DEVELOPMENT.md) | Developer onboarding and contribution guide |
 
 ---

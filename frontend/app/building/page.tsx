@@ -5,20 +5,13 @@ import Header from "../../components/Header";
 import BottomNav from "../../components/BottomNav";
 import { useQuery } from "@tanstack/react-query";
 import { endpoints } from "../../lib/api/endpoints";
+import { DIMENSION_ACCENT_COLORS } from "../../lib/theme";
 
 type AssessmentDimension = {
   id: number;
   name: string;
   description: string;
 };
-
-const ACCENT_COLORS = [
-  { from: "from-teal-500", to: "to-emerald-500", glow: "bg-teal-500/20", ring: "ring-teal-500/30", icon: "🏗️", label: "Spatial & Physical" },
-  { from: "from-blue-500", to: "to-cyan-500", glow: "bg-blue-500/20", ring: "ring-blue-500/30", icon: "🛡️", label: "Safety & Comfort" },
-  { from: "from-violet-500", to: "to-purple-500", glow: "bg-violet-500/20", ring: "ring-violet-500/30", icon: "🧠", label: "Cognitive & Navigation" },
-  { from: "from-amber-500", to: "to-orange-500", glow: "bg-amber-500/20", ring: "ring-amber-500/30", icon: "💻", label: "Digital & Smart" },
-  { from: "from-rose-500", to: "to-pink-500", glow: "bg-rose-500/20", ring: "ring-rose-500/30", icon: "🤝", label: "Social & Human" },
-];
 
 function SkeletonCard() {
   return (
@@ -102,7 +95,7 @@ export default function BuildingPage() {
         {!isLoading && !error && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {dimensions.map((dimension: AssessmentDimension, idx: number) => {
-              const color = ACCENT_COLORS[idx % ACCENT_COLORS.length];
+              const color = DIMENSION_ACCENT_COLORS[idx % DIMENSION_ACCENT_COLORS.length];
               return (
                 <div
                   key={dimension.id}

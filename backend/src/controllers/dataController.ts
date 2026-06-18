@@ -4,7 +4,23 @@ import { Criterion } from '../entities/Criterion';
 import { BuildingType } from '../entities/BuildingType';
 import { NebThreshold } from '../entities/NebThreshold';
 import { Config } from '../entities/Config';
-import buildingTypesData from '../data/building-types.json';
+
+// Framework schema constants — the 5 disability types and 5 assessment dimensions
+const DISABILITY_TYPE_NAMES: Record<number, string> = {
+  1: 'Physical Disability',
+  2: 'Sensory Disability',
+  3: 'Cognitive & Neurodiverse',
+  4: 'Communication & Mental Health',
+  5: 'Multiple / Situational',
+};
+
+const DIMENSION_NAMES: Record<number, string> = {
+  1: 'Spatial & Physical Accessibility',
+  2: 'Safety & Environmental Comfort',
+  3: 'Cognitive & Navigational Accessibility',
+  4: 'Digital Interaction & Smart Usability',
+  5: 'Social Inclusion & Human Experience',
+};
 
 export async function getCriteria(_req: Request, res: Response) {
   try {
@@ -69,13 +85,11 @@ export async function getConfig(_req: Request, res: Response) {
 
 export async function getDisabilityTypes(_req: Request, res: Response) {
   try {
-    // Load from canonical data file — no hardcoded labels
-    const raw: string[] = buildingTypesData.disabilityTypes || [];
-    const result = raw.map((label: string, i: number) => {
-      const match = label.match(/^DT\s*\d+\s*[—–-]\s*(.+)$/i);
-      const name = match ? match[1].trim() : label;
-      return { id: i + 1, name, description: label };
-    });
+    const result = Object.entries(DISABILITY_TYPE_NAMES).map(([id, name]) => ({
+      id: Number(id),
+      name,
+      description: `DT ${id} \u2014 ${name}`,
+    }));
     res.json({ ok: true, data: result });
   } catch (err) {
     console.error(err);
@@ -137,12 +151,11 @@ export async function createCriterion(req: Request, res: Response) {
 
 export async function getAssessmentDimensions(_req: Request, res: Response) {
   try {
-    const raw: string[] = buildingTypesData.dimensions || [];
-    const result = raw.map((label: string, i: number) => {
-      const match = label.match(/^AD\s*\d+\s*[—–-]\s*(.+)$/i);
-      const name = match ? match[1].trim() : label;
-      return { id: i + 1, name, description: label };
-    });
+    const result = Object.entries(DIMENSION_NAMES).map(([id, name]) => ({
+      id: Number(id),
+      name,
+      description: `AD ${id} \u2014 ${name}`,
+    }));
     res.json({ ok: true, data: result });
   } catch (err) {
     console.error(err);

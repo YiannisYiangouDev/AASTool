@@ -21,7 +21,10 @@ export const endpoints = {
 
   createAssessment: (payload: { buildingId: string; name?: string }) => api.post('/assessments', payload),
   getAssessment: (id: string) => unwrap<{ id: string; buildingId: string; results?: EvaluationResult }>(api.get(`/assessments/${id}`)),
-  evaluate: (payload: { buildingType?: string; scores?: Record<string, number> }) => unwrap<EvaluationResult>(api.post('/evaluate', payload)),
+  evaluate: async (payload: { buildingType?: string; scores?: Record<string, number> }): Promise<EvaluationResult> => {
+    const res = await api.post('/evaluate', payload);
+    return (res.data as any)?.result ?? res.data;
+  },
 
   getCriteria: () => unwrap<Criterion[]>(api.get('/criteria')),
   createCriterion: (payload: {

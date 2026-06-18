@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 
+const APP_VERSION = process.env.APP_VERSION ?? '1.0.0';
+
 const app = express();
 app.use(helmet());
 app.use(cors());
@@ -33,7 +35,7 @@ app.get('/health', async (_req, res) => {
       uptime: Math.floor((Date.now() - startTime) / 1000),
       database: dbConnected ? 'connected' : 'disconnected',
       dbLatencyMs: dbLatency,
-      version: '1.0.0',
+      version: APP_VERSION,
       timestamp: new Date().toISOString(),
     });
   } catch {
@@ -42,7 +44,7 @@ app.get('/health', async (_req, res) => {
       uptime: Math.floor((Date.now() - startTime) / 1000),
       database: 'disconnected',
       dbLatencyMs: null,
-      version: '1.0.0',
+      version: APP_VERSION,
       timestamp: new Date().toISOString(),
     });
   }
@@ -99,7 +101,7 @@ app.get('/api/v1/health', async (_req, res) => {
         uptime: Math.floor((Date.now() - startTime) / 1000),
         database: dbConnected ? 'connected' : 'disconnected',
         dbLatencyMs: dbLatency,
-        version: '1.0.0',
+        version: APP_VERSION,
         timestamp: new Date().toISOString(),
       },
     });
@@ -111,7 +113,7 @@ app.get('/api/v1/health', async (_req, res) => {
         uptime: Math.floor((Date.now() - startTime) / 1000),
         database: 'disconnected',
         dbLatencyMs: null,
-        version: '1.0.0',
+        version: APP_VERSION,
         timestamp: new Date().toISOString(),
       },
     });

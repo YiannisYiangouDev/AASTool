@@ -8,12 +8,16 @@ export async function createAssessment(req: Request, res: Response) {
   try {
     const { buildingId, name } = req.body as { buildingId: string; name?: string };
 
-    const btRepo = AppDataSource.getRepository(BuildingType);
-    let bTypeName = 'Commercial Buildings';
-    if (buildingId) {
-      const bt = await btRepo.findOne({ where: { id: buildingId } });
-      if (bt) bTypeName = bt.name;
+    if (!buildingId) {
+      return res.status(400).json({ ok: false, error: 'buildingId is required' });
     }
+
+    const btRepo = AppDataSource.getRepository(BuildingType);
+    const bt = await btRepo.findOne({ where: { id: buildingId } });
+    if (!bt) {
+      return res.status(404).json({ ok: false, error: 'Building type not found' });
+    }
+    const bTypeName = bt.name;
 
     const result = await calc.evaluate(bTypeName, {});
 

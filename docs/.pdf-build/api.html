@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>AASTool API Reference</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">AASTool API Reference</h1>
+</header>
+<h1 id="aastool-api-reference-openapi-style">AASTool — API Reference
+(OpenAPI-Style)</h1>
+<p><strong>Enterprise Edition | Version 1.0.0</strong></p>
+<p><strong>Base URL</strong>:
+<code>http://localhost:4000/api/v1</code></p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol type="1">
+<li><a href="#conventions">Conventions</a></li>
+<li><a href="#health">Health</a></li>
+<li><a href="#evaluation">Evaluation</a></li>
+<li><a href="#assessments">Assessments</a></li>
+<li><a href="#buildings">Buildings</a></li>
+<li><a href="#criteria">Criteria</a></li>
+<li><a href="#building-types">Building Types</a></li>
+<li><a href="#neb-thresholds">NEB Thresholds</a></li>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#disability-types--dimensions">Disability Types &amp;
+Dimensions</a></li>
+<li><a href="#reports">Reports</a></li>
+<li><a href="#authentication">Authentication</a></li>
+<li><a href="#error-reference">Error Reference</a></li>
+</ol>
+<hr />
+<h2 id="conventions">Conventions</h2>
+<h3 id="response-envelope">Response Envelope</h3>
+<p>All API responses follow a consistent envelope:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">...</span> <span class="fu">}</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Error responses:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Human-readable error message&quot;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="http-status-codes">HTTP Status Codes</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Code</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>200</td>
+<td>Success</td>
+</tr>
+<tr class="even">
+<td>201</td>
+<td>Created</td>
+</tr>
+<tr class="odd">
+<td>400</td>
+<td>Bad request (validation error)</td>
+</tr>
+<tr class="even">
+<td>404</td>
+<td>Resource not found</td>
+</tr>
+<tr class="odd">
+<td>500</td>
+<td>Internal server error</td>
+</tr>
+<tr class="even">
+<td>503</td>
+<td>Service degraded (health check)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="api-versioning">API Versioning</h3>
+<p>The current API version is <code>v1</code> mounted at
+<code>/api/v1/</code>. All endpoints below are relative to
+<code>http://localhost:4000/api/v1</code>.</p>
+<hr />
+<h2 id="health">Health</h2>
+<h3 id="get-health-root"><code>GET /health</code> (root)</h3>
+<p><strong>Purpose</strong>: Infrastructure health check (outside API
+version path).</p>
+<p><strong>Response 200</strong>:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;ok&quot;</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;uptime&quot;</span><span class="fu">:</span> <span class="dv">3600</span><span class="fu">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;database&quot;</span><span class="fu">:</span> <span class="st">&quot;connected&quot;</span><span class="fu">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;dbLatencyMs&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;version&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0.0&quot;</span><span class="fu">,</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;timestamp&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-06-15T12:00:00.000Z&quot;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="get-apiv1health"><code>GET /api/v1/health</code></h3>
+<p><strong>Purpose</strong>: API-scoped health check with envelope.</p>
+<p><strong>Response 200</strong>:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;ok&quot;</span><span class="fu">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;uptime&quot;</span><span class="fu">:</span> <span class="dv">3600</span><span class="fu">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;database&quot;</span><span class="fu">:</span> <span class="st">&quot;connected&quot;</span><span class="fu">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;dbLatencyMs&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;version&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0.0&quot;</span><span class="fu">,</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;timestamp&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-06-15T12:00:00.000Z&quot;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Response 503</strong> (database disconnected):</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;degraded&quot;</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;uptime&quot;</span><span class="fu">:</span> <span class="dv">3600</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;database&quot;</span><span class="fu">:</span> <span class="st">&quot;disconnected&quot;</span><span class="fu">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;dbLatencyMs&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;version&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0.0&quot;</span><span class="fu">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;timestamp&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-06-15T12:00:00.000Z&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="evaluation">Evaluation</h2>
+<h3 id="post-apiv1evaluate"><code>POST /api/v1/evaluate</code></h3>
+<p><strong>Purpose</strong>: Run the accessibility evaluation algorithm.
+This is the core endpoint — all scoring, classification, and analytics
+happen here.</p>
+<p><strong>Request Body</strong>:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;buildingType&quot;</span><span class="fu">:</span> <span class="st">&quot;Commercial Buildings&quot;</span><span class="fu">,</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;scores&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;EC1.1.1&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;EC1.1.2&quot;</span><span class="fu">:</span> <span class="dv">5</span><span class="fu">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;EC1.2.1&quot;</span><span class="fu">:</span> <span class="dv">3</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 13%" />
+<col style="width: 22%" />
+<col style="width: 20%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>buildingType</code></td>
+<td><code>string</code></td>
+<td>No</td>
+<td><code>"Commercial Buildings"</code></td>
+<td>Building type name (must exist in DB)</td>
+</tr>
+<tr class="even">
+<td><code>scores</code></td>
+<td><code>object</code></td>
+<td>No</td>
+<td><code>{}</code></td>
+<td>Map of criterion code → score (1–5)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Validation</strong>: - Body must be a JSON object (not array,
+not scalar) - <code>buildingType</code> must be a string if provided -
+<code>scores</code> must be a plain object (Record&lt;string,
+number&gt;) if provided</p>
+<p><strong>Response 200</strong>:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;result&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;obs&quot;</span><span class="fu">:</span> <span class="fl">72.45</span><span class="fu">,</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;nebClass&quot;</span><span class="fu">:</span> <span class="st">&quot;A&quot;</span><span class="fu">,</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;nebEquivalent&quot;</span><span class="fu">:</span> <span class="st">&quot;Very Good&quot;</span><span class="fu">,</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;nebMeaning&quot;</span><span class="fu">:</span> <span class="st">&quot;Building demonstrates strong accessibility with minor areas for improvement&quot;</span><span class="fu">,</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;nebScore&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;averageRawScore&quot;</span><span class="fu">:</span> <span class="fl">3.82</span><span class="fu">,</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;avgRawScoreByDT&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;1&quot;</span><span class="fu">:</span> <span class="fl">4.1</span><span class="fu">,</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;2&quot;</span><span class="fu">:</span> <span class="fl">3.5</span><span class="fu">,</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;3&quot;</span><span class="fu">:</span> <span class="fl">3.9</span><span class="fu">,</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;4&quot;</span><span class="fu">:</span> <span class="fl">3.8</span><span class="fu">,</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;5&quot;</span><span class="fu">:</span> <span class="fl">3.8</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;avgRawScoreByAD&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;1&quot;</span><span class="fu">:</span> <span class="fl">3.9</span><span class="fu">,</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;2&quot;</span><span class="fu">:</span> <span class="fl">4.0</span><span class="fu">,</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;3&quot;</span><span class="fu">:</span> <span class="fl">3.7</span><span class="fu">,</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;4&quot;</span><span class="fu">:</span> <span class="fl">3.8</span><span class="fu">,</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;5&quot;</span><span class="fu">:</span> <span class="fl">3.7</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;strengths&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;EC1.1.2&quot;</span><span class="fu">,</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Automated door systems&quot;</span><span class="fu">,</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;score&quot;</span><span class="fu">:</span> <span class="dv">5</span><span class="fu">,</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;is&quot;</span><span class="fu">:</span> <span class="fl">4.15</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;weaknesses&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;EC2.3.1&quot;</span><span class="fu">,</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Tactile floor indicators&quot;</span><span class="fu">,</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;score&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;is&quot;</span><span class="fu">:</span> <span class="fl">0.83</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;scoreDistribution&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;1&quot;</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;2&quot;</span><span class="fu">:</span> <span class="dv">8</span><span class="fu">,</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;3&quot;</span><span class="fu">:</span> <span class="dv">22</span><span class="fu">,</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;4&quot;</span><span class="fu">:</span> <span class="dv">18</span><span class="fu">,</span></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;5&quot;</span><span class="fu">:</span> <span class="dv">12</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;tisByDT&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;1&quot;</span><span class="fu">:</span> <span class="fl">85.5</span><span class="fu">,</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;2&quot;</span><span class="fu">:</span> <span class="fl">72.3</span><span class="fu">,</span></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;3&quot;</span><span class="fu">:</span> <span class="fl">81.0</span><span class="fu">,</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;4&quot;</span><span class="fu">:</span> <span class="fl">79.2</span><span class="fu">,</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;5&quot;</span><span class="fu">:</span> <span class="fl">79.2</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;cisByAD&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;1&quot;</span><span class="fu">:</span> <span class="fl">397.25</span><span class="fu">,</span></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;2&quot;</span><span class="fu">:</span> <span class="fl">408.5</span><span class="fu">,</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;3&quot;</span><span class="fu">:</span> <span class="fl">378.1</span><span class="fu">,</span></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;4&quot;</span><span class="fu">:</span> <span class="fl">388.3</span><span class="fu">,</span></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;5&quot;</span><span class="fu">:</span> <span class="fl">378.1</span></span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;criteria&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;EC1.1.1&quot;</span><span class="fu">,</span></span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;...&quot;</span><span class="fu">,</span></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;score&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span></span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;is&quot;</span><span class="fu">:</span> <span class="fl">3.32</span></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Response 400</strong>:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Request body must be a JSON object&quot;</span> <span class="fu">}</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;buildingType must be a string&quot;</span> <span class="fu">}</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;scores must be an object mapping codes to numbers&quot;</span> <span class="fu">}</span></span></code></pre></div>
+<p><strong>Response 500</strong>:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Internal error&quot;</span> <span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="assessments">Assessments</h2>
+<h3
+id="post-apiv1assessments"><code>POST /api/v1/assessments</code></h3>
+<p><strong>Purpose</strong>: Create a new assessment (runs evaluation
+and saves the result to the database).</p>
+<p><strong>Request Body</strong>:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;buildingId&quot;</span><span class="fu">:</span> <span class="st">&quot;550e8400-e29b-41d4-a716-446655440000&quot;</span><span class="fu">,</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Office Tower Audit Q3 2026&quot;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>buildingId</code></td>
+<td><code>string</code></td>
+<td>Yes</td>
+<td>UUID of the BuildingType</td>
+</tr>
+<tr class="even">
+<td><code>name</code></td>
+<td><code>string</code></td>
+<td>No</td>
+<td>Optional label for the assessment</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response 201</strong>:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;660e8400-e29b-41d4-a716-446655440001&quot;</span><span class="fu">,</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;buildingId&quot;</span><span class="fu">:</span> <span class="st">&quot;550e8400-e29b-41d4-a716-446655440000&quot;</span><span class="fu">,</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Assessment - Commercial Buildings&quot;</span><span class="fu">,</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;results&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;obs&quot;</span><span class="fu">:</span> <span class="fl">72.45</span><span class="fu">,</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;nebClass&quot;</span><span class="fu">:</span> <span class="st">&quot;A&quot;</span><span class="fu">,</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;nebEquivalent&quot;</span><span class="fu">:</span> <span class="st">&quot;Very Good&quot;</span><span class="fu">,</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;...&quot;</span><span class="fu">:</span> <span class="st">&quot;...&quot;</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Response 500</strong>:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Failed to create assessment&quot;</span> <span class="fu">}</span></span></code></pre></div>
+<h3
+id="get-apiv1assessmentsid"><code>GET /api/v1/assessments/:id</code></h3>
+<p><strong>Purpose</strong>: Retrieve a saved assessment by ID.</p>
+<p><strong>Path Parameters</strong>:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td><code>string</code></td>
+<td>UUID of the Evaluation</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response 200</strong>:</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;660e8400-e29b-41d4-a716-446655440001&quot;</span><span class="fu">,</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;buildingId&quot;</span><span class="fu">:</span> <span class="st">&quot;550e8400-e29b-41d4-a716-446655440000&quot;</span><span class="fu">,</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;results&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;obs&quot;</span><span class="fu">:</span> <span class="fl">72.45</span><span class="fu">,</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;nebClass&quot;</span><span class="fu">:</span> <span class="st">&quot;A&quot;</span><span class="fu">,</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;...&quot;</span><span class="fu">:</span> <span class="st">&quot;...&quot;</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Response 404</strong>:</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Assessment not found&quot;</span> <span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="buildings">Buildings</h2>
+<h3 id="get-apiv1buildings"><code>GET /api/v1/buildings</code></h3>
+<p><strong>Purpose</strong>: List all building types with their
+assessment history.</p>
+<p><strong>Response 200</strong>:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;550e8400-e29b-41d4-a716-446655440000&quot;</span><span class="fu">,</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Commercial Buildings&quot;</span><span class="fu">,</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;Commercial Buildings&quot;</span><span class="fu">,</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;assessments&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;660e8400-...&quot;</span><span class="fu">,</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;Completed&quot;</span><span class="fu">,</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-06-15T12:00:00.000Z&quot;</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3
+id="get-apiv1buildingsid"><code>GET /api/v1/buildings/:id</code></h3>
+<p><strong>Purpose</strong>: Get building type detail with full
+assessment history.</p>
+<p><strong>Path Parameters</strong>:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td><code>string</code></td>
+<td>UUID of the BuildingType</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response 200</strong>: Same structure as above but single
+object.</p>
+<p><strong>Response 404</strong>:</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Building not found&quot;</span> <span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="criteria">Criteria</h2>
+<h3 id="get-apiv1criteria"><code>GET /api/v1/criteria</code></h3>
+<p><strong>Purpose</strong>: List all evaluation criteria (63
+total).</p>
+<p><strong>Response 200</strong>:</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;770e8400-...&quot;</span><span class="fu">,</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;EC1.1.1&quot;</span><span class="fu">,</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Automated door width compliance&quot;</span><span class="fu">,</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;definition&quot;</span><span class="fu">:</span> <span class="st">&quot;Doors must have a clear opening width of at least 850mm...&quot;</span><span class="fu">,</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;justification&quot;</span><span class="fu">:</span> <span class="st">&quot;Wheelchair users require sufficient clearance...&quot;</span><span class="fu">,</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;value&quot;</span><span class="fu">:</span> <span class="fl">0.83</span><span class="fu">,</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;disability&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;dimension&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;score&quot;</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;levels&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Level 1: Manual doors, no automation&quot;</span><span class="ot">,</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Level 2: Manual doors with accessible hardware&quot;</span><span class="ot">,</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Level 3: Semi-automatic push-button doors&quot;</span><span class="ot">,</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Level 4: Fully automatic sliding doors&quot;</span><span class="ot">,</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Level 5: Smart doors with proximity sensors and voice control&quot;</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Sort order</strong>: Ascending by <code>code</code>.</p>
+<h3 id="post-apiv1criteria"><code>POST /api/v1/criteria</code></h3>
+<p><strong>Purpose</strong>: Create a new evaluation criterion.</p>
+<p><strong>Request Body</strong>:</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;EC1.1.10&quot;</span><span class="fu">,</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;New criterion name&quot;</span><span class="fu">,</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;definition&quot;</span><span class="fu">:</span> <span class="st">&quot;Detailed definition text&quot;</span><span class="fu">,</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;justification&quot;</span><span class="fu">:</span> <span class="st">&quot;Why this matters (optional)&quot;</span><span class="fu">,</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;value&quot;</span><span class="fu">:</span> <span class="fl">0.75</span><span class="fu">,</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;disability&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;dimension&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;levels&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Level 1 description&quot;</span><span class="ot">,</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Level 2 description&quot;</span><span class="ot">,</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Level 3 description&quot;</span><span class="ot">,</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Level 4 description&quot;</span><span class="ot">,</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Level 5 description&quot;</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>code</code></td>
+<td><code>string</code></td>
+<td>Yes</td>
+<td>Must match <code>/^EC\d+\.\d+\.\d+$/</code></td>
+</tr>
+<tr class="even">
+<td><code>name</code></td>
+<td><code>string</code></td>
+<td>Yes</td>
+<td>Short name</td>
+</tr>
+<tr class="odd">
+<td><code>definition</code></td>
+<td><code>string</code></td>
+<td>Yes</td>
+<td>Full definition</td>
+</tr>
+<tr class="even">
+<td><code>justification</code></td>
+<td><code>string</code></td>
+<td>No</td>
+<td>Why this criterion matters</td>
+</tr>
+<tr class="odd">
+<td><code>value</code></td>
+<td><code>number</code></td>
+<td>No</td>
+<td>Base weight (float)</td>
+</tr>
+<tr class="even">
+<td><code>disability</code></td>
+<td><code>number</code></td>
+<td>No</td>
+<td>DT ID (1–5)</td>
+</tr>
+<tr class="odd">
+<td><code>dimension</code></td>
+<td><code>number</code></td>
+<td>No</td>
+<td>AD ID (1–5)</td>
+</tr>
+<tr class="even">
+<td><code>levels</code></td>
+<td><code>string[]</code></td>
+<td>Yes</td>
+<td>Exactly 5 level descriptions</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Validation Errors (400)</strong>:</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;code, name, and definition are required&quot;</span> <span class="fu">}</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;code must match pattern ECx.y.z (e.g. EC1.1.3)&quot;</span> <span class="fu">}</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;levels must be an array of exactly 5 strings&quot;</span> <span class="fu">}</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;disability must be between 1 and 5&quot;</span> <span class="fu">}</span></span></code></pre></div>
+<p><strong>Response 201</strong>:</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;880e8400-...&quot;</span><span class="fu">,</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;EC1.1.10&quot;</span><span class="fu">,</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;New criterion name&quot;</span><span class="fu">,</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;...&quot;</span><span class="fu">:</span> <span class="st">&quot;...&quot;</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3
+id="get-apiv1criteriacode"><code>GET /api/v1/criteria/:code</code></h3>
+<p><strong>Purpose</strong>: Get a single criterion by its code.</p>
+<p><strong>Path Parameters</strong>:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>code</code></td>
+<td><code>string</code></td>
+<td>Criterion code, e.g. <code>EC1.1.1</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response 200</strong>: Single criterion object (same shape as
+list item).</p>
+<p><strong>Response 404</strong>:</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Criterion not found&quot;</span> <span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="building-types">Building Types</h2>
+<h3
+id="get-apiv1building-types"><code>GET /api/v1/building-types</code></h3>
+<p><strong>Purpose</strong>: List all building type definitions with
+their disability and dimension weights.</p>
+<p><strong>Response 200</strong>:</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;550e8400-...&quot;</span><span class="fu">,</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Commercial Buildings&quot;</span><span class="fu">,</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;disability_weights&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fl">1.0</span><span class="ot">,</span> <span class="fl">0.8</span><span class="ot">,</span> <span class="fl">1.2</span><span class="ot">,</span> <span class="fl">1.0</span><span class="ot">,</span> <span class="fl">0.9</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;dimension_weights&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fl">1.0</span><span class="ot">,</span> <span class="fl">1.0</span><span class="ot">,</span> <span class="fl">1.0</span><span class="ot">,</span> <span class="fl">1.0</span><span class="ot">,</span> <span class="fl">1.0</span><span class="ot">]</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Sort order</strong>: Ascending by <code>name</code>.</p>
+<hr />
+<h2 id="neb-thresholds">NEB Thresholds</h2>
+<h3
+id="get-apiv1neb-thresholds"><code>GET /api/v1/neb-thresholds</code></h3>
+<p><strong>Purpose</strong>: Get NEB (Normalized Efficiency Band)
+classification thresholds — the mapping from OBS ranges to letter
+grades.</p>
+<p><strong>Response 200</strong>:</p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;990e8400-...&quot;</span><span class="fu">,</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;min&quot;</span><span class="fu">:</span> <span class="dv">80</span><span class="fu">,</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;neb_class&quot;</span><span class="fu">:</span> <span class="st">&quot;A+&quot;</span><span class="fu">,</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;equivalent&quot;</span><span class="fu">:</span> <span class="st">&quot;Excellent&quot;</span><span class="fu">,</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;meaning&quot;</span><span class="fu">:</span> <span class="st">&quot;The building demonstrates outstanding accessibility across all disability types and dimensions.&quot;</span><span class="fu">,</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;neb_score&quot;</span><span class="fu">:</span> <span class="dv">5</span><span class="fu">,</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;ordinal&quot;</span><span class="fu">:</span> <span class="dv">1</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;min&quot;</span><span class="fu">:</span> <span class="dv">65</span><span class="fu">,</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;neb_class&quot;</span><span class="fu">:</span> <span class="st">&quot;A&quot;</span><span class="fu">,</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;equivalent&quot;</span><span class="fu">:</span> <span class="st">&quot;Very Good&quot;</span><span class="fu">,</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;meaning&quot;</span><span class="fu">:</span> <span class="st">&quot;Strong accessibility with minor areas for improvement.&quot;</span><span class="fu">,</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;neb_score&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;ordinal&quot;</span><span class="fu">:</span> <span class="dv">2</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Sort order</strong>: Descending by <code>min</code> (highest
+threshold first). The last band (D) has <code>min: 0</code>.</p>
+<table>
+<thead>
+<tr class="header">
+<th>OBS ≥</th>
+<th>Class</th>
+<th>Score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>80</td>
+<td>A+</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>65</td>
+<td>A</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>50</td>
+<td>B</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>35</td>
+<td>C</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>0</td>
+<td>D</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="configuration">Configuration</h2>
+<h3 id="get-apiv1config"><code>GET /api/v1/config</code></h3>
+<p><strong>Purpose</strong>: Retrieve all system configuration
+parameters from the database.</p>
+<p><strong>Response 200</strong>:</p>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;aa0e8400-...&quot;</span><span class="fu">,</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;key&quot;</span><span class="fu">:</span> <span class="st">&quot;MAX_OBS&quot;</span><span class="fu">,</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;value&quot;</span><span class="fu">:</span> <span class="st">&quot;1000&quot;</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;aa0e8401-...&quot;</span><span class="fu">,</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;key&quot;</span><span class="fu">:</span> <span class="st">&quot;DEFAULT_SCORE&quot;</span><span class="fu">,</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;value&quot;</span><span class="fu">:</span> <span class="st">&quot;3&quot;</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;aa0e8402-...&quot;</span><span class="fu">,</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;key&quot;</span><span class="fu">:</span> <span class="st">&quot;STRENGTH_THRESHOLD&quot;</span><span class="fu">,</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;value&quot;</span><span class="fu">:</span> <span class="st">&quot;5&quot;</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;aa0e8403-...&quot;</span><span class="fu">,</span></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;key&quot;</span><span class="fu">:</span> <span class="st">&quot;WEAKNESS_THRESHOLD&quot;</span><span class="fu">,</span></span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;value&quot;</span><span class="fu">:</span> <span class="st">&quot;2&quot;</span></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;aa0e8404-...&quot;</span><span class="fu">,</span></span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;key&quot;</span><span class="fu">:</span> <span class="st">&quot;TOP_N_RESULTS&quot;</span><span class="fu">,</span></span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;value&quot;</span><span class="fu">:</span> <span class="st">&quot;5&quot;</span></span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>MAX_OBS</code></td>
+<td>Normalization divisor for OBS calculation</td>
+</tr>
+<tr class="even">
+<td><code>DEFAULT_SCORE</code></td>
+<td>Fallback score when no user score provided</td>
+</tr>
+<tr class="odd">
+<td><code>STRENGTH_THRESHOLD</code></td>
+<td>Minimum score to highlight as strength</td>
+</tr>
+<tr class="even">
+<td><code>WEAKNESS_THRESHOLD</code></td>
+<td>Maximum score to highlight as weakness</td>
+</tr>
+<tr class="odd">
+<td><code>TOP_N_RESULTS</code></td>
+<td>Number of top strengths/weaknesses returned</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="disability-types-dimensions">Disability Types &amp;
+Dimensions</h2>
+<h3
+id="get-apiv1disability-types"><code>GET /api/v1/disability-types</code></h3>
+<p><strong>Purpose</strong>: Get the list of disability type labels
+(DT1–DT5).</p>
+<p><strong>Response 200</strong>:</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span> <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span> <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Physical&quot;</span><span class="fu">,</span> <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;DT 1 — Physical&quot;</span> <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span> <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span> <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Sensory&quot;</span><span class="fu">,</span> <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;DT 2 — Sensory&quot;</span> <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span> <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span> <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Cognitive&quot;</span><span class="fu">,</span> <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;DT 3 — Cognitive&quot;</span> <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span> <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span> <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Intellectual&quot;</span><span class="fu">,</span> <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;DT 4 — Intellectual&quot;</span> <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span> <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">5</span><span class="fu">,</span> <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Psychosocial&quot;</span><span class="fu">,</span> <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;DT 5 — Psychosocial&quot;</span> <span class="fu">}</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Data source</strong>: Loaded from
+<code>building-types.json</code> data file. Labels are parsed to extract
+the human-readable name after the “DT N —” prefix.</p>
+<h3
+id="get-apiv1assessment-dimensions"><code>GET /api/v1/assessment-dimensions</code></h3>
+<p><strong>Purpose</strong>: Get the list of assessment dimension labels
+(AD1–AD5).</p>
+<p><strong>Response 200</strong>:</p>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span> <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span> <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Wayfinding&quot;</span><span class="fu">,</span> <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;AD 1 — Wayfinding&quot;</span> <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span> <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span> <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Entry&quot;</span><span class="fu">,</span> <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;AD 2 — Entry&quot;</span> <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span> <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span> <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Circulation&quot;</span><span class="fu">,</span> <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;AD 3 — Circulation&quot;</span> <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span> <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span> <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Facilities&quot;</span><span class="fu">,</span> <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;AD 4 — Facilities&quot;</span> <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span> <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">5</span><span class="fu">,</span> <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Evacuation&quot;</span><span class="fu">,</span> <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;AD 5 — Evacuation&quot;</span> <span class="fu">}</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="reports">Reports</h2>
+<h3 id="get-apiv1reports"><code>GET /api/v1/reports</code></h3>
+<p><strong>Purpose</strong>: List all generated evaluation reports with
+human-readable titles.</p>
+<p><strong>Response 200</strong>:</p>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;660e8400-...&quot;</span><span class="fu">,</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;Accessibility Report #1 — Commercial Buildings (Jun 15, 2026) — OBS: 72.45%&quot;</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Sort order</strong>: Descending by <code>created_at</code>
+(most recent first).</p>
+<p><strong>Title format</strong>:
+<code>Accessibility Report #N — {building_type} ({date}) — OBS: {obs}%</code></p>
+<p>Where <code>N</code> counts from 1 (oldest) to the total number of
+evaluations.</p>
+<hr />
+<h2 id="authentication">Authentication</h2>
+<h3 id="post-apiv1login"><code>POST /api/v1/login</code></h3>
+<p><strong>Purpose</strong>: User login. <strong>Generates real
+HMAC-SHA256 tokens via Node.js <code>crypto</code>.</strong></p>
+<p><strong>Request Body</strong>:</p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;user@example.com&quot;</span><span class="fu">,</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;password&quot;</span><span class="fu">:</span> <span class="st">&quot;password123&quot;</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Validation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>email</code></td>
+<td><code>string</code></td>
+<td>Yes</td>
+<td>Must contain <code>@</code></td>
+</tr>
+<tr class="even">
+<td><code>password</code></td>
+<td><code>string</code></td>
+<td>Yes</td>
+<td>Minimum 6 characters</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Configuration</strong> (environment variables):</p>
+<table>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>JWT_SECRET</code></td>
+<td><em>(required — 500 if missing)</em></td>
+<td>HMAC secret key</td>
+</tr>
+<tr class="even">
+<td><code>JWT_EXPIRES_IN</code></td>
+<td><code>3600</code></td>
+<td>Token lifetime in seconds</td>
+</tr>
+<tr class="odd">
+<td><code>LOGIN_REDIRECT</code></td>
+<td><code>/dashboard</code></td>
+<td>Post-login redirect path</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response 200</strong>:</p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;accessToken&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;48-char-hex-hmac&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;refreshToken&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;48-char-hex-hmac&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;expiresIn&quot;</span><span class="fu">:</span> <span class="dv">3600</span><span class="fu">,</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;redirectTo&quot;</span><span class="fu">:</span> <span class="st">&quot;/dashboard&quot;</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Response 500</strong> (missing secret):</p>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Server configuration error: JWT_SECRET not set&quot;</span> <span class="fu">}</span></span></code></pre></div>
+<p><strong>Response 400</strong>:</p>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Email and password are required&quot;</span> <span class="fu">}</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Invalid email address&quot;</span> <span class="fu">}</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Password must be at least 6 characters&quot;</span> <span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="error-reference">Error Reference</h2>
+<h3 id="standard-error-format">Standard Error Format</h3>
+<p>All errors follow this structure:</p>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ok&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Human-readable description of what went wrong&quot;</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="error-catalog">Error Catalog</h3>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 33%" />
+<col style="width: 30%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Status</th>
+<th>Error Message</th>
+<th>Endpoint(s)</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>400</td>
+<td><code>Invalid JSON body</code></td>
+<td>All (middleware)</td>
+<td>Malformed JSON in request body</td>
+</tr>
+<tr class="even">
+<td>400</td>
+<td><code>Malformed JSON</code></td>
+<td>All (middleware)</td>
+<td>Syntax error in JSON body</td>
+</tr>
+<tr class="odd">
+<td>400</td>
+<td><code>Request body must be a JSON object</code></td>
+<td><code>POST /evaluate</code></td>
+<td>Body is array or scalar</td>
+</tr>
+<tr class="even">
+<td>400</td>
+<td><code>buildingType must be a string</code></td>
+<td><code>POST /evaluate</code></td>
+<td>Wrong type</td>
+</tr>
+<tr class="odd">
+<td>400</td>
+<td><code>scores must be an object mapping codes to numbers</code></td>
+<td><code>POST /evaluate</code></td>
+<td>Wrong type</td>
+</tr>
+<tr class="even">
+<td>400</td>
+<td><code>code, name, and definition are required</code></td>
+<td><code>POST /criteria</code></td>
+<td>Missing required field</td>
+</tr>
+<tr class="odd">
+<td>400</td>
+<td><code>code must match pattern ECx.y.z</code></td>
+<td><code>POST /criteria</code></td>
+<td>Invalid code format</td>
+</tr>
+<tr class="even">
+<td>400</td>
+<td><code>levels must be an array of exactly 5 strings</code></td>
+<td><code>POST /criteria</code></td>
+<td>Wrong levels count</td>
+</tr>
+<tr class="odd">
+<td>400</td>
+<td><code>disability must be between 1 and 5</code></td>
+<td><code>POST /criteria</code></td>
+<td>Out of range</td>
+</tr>
+<tr class="even">
+<td>400</td>
+<td><code>Email and password are required</code></td>
+<td><code>POST /login</code></td>
+<td>Missing credentials</td>
+</tr>
+<tr class="odd">
+<td>400</td>
+<td><code>Invalid email address</code></td>
+<td><code>POST /login</code></td>
+<td>No @ in email</td>
+</tr>
+<tr class="even">
+<td>400</td>
+<td><code>Password must be at least 6 characters</code></td>
+<td><code>POST /login</code></td>
+<td>Too short</td>
+</tr>
+<tr class="odd">
+<td>404</td>
+<td><code>Criterion not found</code></td>
+<td><code>GET /criteria/:code</code></td>
+<td>Invalid code</td>
+</tr>
+<tr class="even">
+<td>404</td>
+<td><code>Building not found</code></td>
+<td><code>GET /buildings/:id</code></td>
+<td>Invalid UUID</td>
+</tr>
+<tr class="odd">
+<td>404</td>
+<td><code>Assessment not found</code></td>
+<td><code>GET /assessments/:id</code></td>
+<td>Invalid UUID</td>
+</tr>
+<tr class="even">
+<td>500</td>
+<td><code>Internal error</code></td>
+<td><code>POST /evaluate</code></td>
+<td>Unexpected server error</td>
+</tr>
+<tr class="odd">
+<td>500</td>
+<td><code>Failed to create assessment</code></td>
+<td><code>POST /assessments</code></td>
+<td>DB/save failure</td>
+</tr>
+<tr class="even">
+<td>500</td>
+<td><code>Failed to fetch assessment</code></td>
+<td><code>GET /assessments/:id</code></td>
+<td>DB/query failure</td>
+</tr>
+<tr class="odd">
+<td>500</td>
+<td><code>Failed to fetch buildings</code></td>
+<td><code>GET /buildings</code></td>
+<td>DB/query failure</td>
+</tr>
+<tr class="even">
+<td>500</td>
+<td><code>Failed to fetch building details</code></td>
+<td><code>GET /buildings/:id</code></td>
+<td>DB/query failure</td>
+</tr>
+<tr class="odd">
+<td>500</td>
+<td><code>Failed to fetch reports</code></td>
+<td><code>GET /reports</code></td>
+<td>DB/query failure</td>
+</tr>
+<tr class="even">
+<td>500</td>
+<td><code>Internal server error during login</code></td>
+<td><code>POST /login</code></td>
+<td>Unexpected error</td>
+</tr>
+<tr class="odd">
+<td>500</td>
+<td><code>failed</code></td>
+<td><code>GET /criteria</code></td>
+<td>DB/query failure</td>
+</tr>
+</tbody>
+</table>
+<h3 id="rate-limiting">Rate Limiting</h3>
+<p>Rate limiting is <strong>not implemented</strong> in the current
+version. The backend relies on Express’s default behavior with no per-IP
+or per-endpoint throttling. Add <code>express-rate-limit</code>
+middleware for production.</p>
+<h3 id="cors">CORS</h3>
+<p>CORS is enabled for all origins via <code>app.use(cors())</code>.
+Restrict this in production to only the frontend’s domain.</p>
+<hr />
+<p><em>AASTool by Serg | Dev by Y</em></p>
+</body>
+</html>
