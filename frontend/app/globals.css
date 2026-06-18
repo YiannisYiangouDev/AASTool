@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+    @theme {
+      --animate-slide: slide 2s ease-in-out infinite;
+    }
+
     :root {
       --bg: #0b1120;
       --card: #111827;
@@ -297,4 +301,10 @@
       #filterScore {
         flex: 1 1 100% !important;
       }
+    }
+
+    /* Splash screen shimmer animation */
+    @keyframes slide {
+      0%, 100% { transform: translateX(-100%); }
+      50% { transform: translateX(100%); }
     }

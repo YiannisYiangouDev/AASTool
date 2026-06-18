@@ -1,0 +1,3806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AAS Developer Onboarding & Technical Overview — Enterprise Edition v1.0</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&family=Consolas:wght@400;700&display=swap');
+
+  :root {
+    --primary: #003D7A;
+    --primary-dark: #002850;
+    --primary-light: #005AAD;
+    --accent: #0078D4;
+    --text: #1A1A1A;
+    --text-secondary: #444444;
+    --bg: #FFFFFF;
+    --bg-alt: #F5F8FC;
+    --border: #D0D7DE;
+    --table-header: #003D7A;
+    --table-stripe: #F0F4FA;
+    --code-bg: #F6F8FA;
+    --code-text: #1A1A1A;
+    --code-border: #D0D7DE;
+    --success: #107C10;
+    --warning: #FF8C00;
+    --danger: #D13438;
+    --info: #0078D4;
+    --mermaid-bg: #FAFBFC;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 11pt;
+    max-width: 210mm;
+    margin: 0 auto;
+  }
+
+  /* ===== COVER PAGE ===== */
+  .cover-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 277mm;
+    padding: 40px;
+    background: linear-gradient(160deg, #003D7A 0%, #002850 40%, #001A35 100%);
+    color: #FFFFFF;
+    page-break-after: always;
+  }
+  .cover-page h1 {
+    font-size: 32pt;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    color: #FFFFFF;
+    line-height: 1.2;
+  }
+  .cover-page h1 + h1 {
+    font-size: 24pt;
+    font-weight: 300;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 40px;
+  }
+  .cover-page hr {
+    width: 120px;
+    border: 0;
+    border-top: 3px solid #0078D4;
+    margin: 30px auto;
+  }
+  .cover-page h2 {
+    font-size: 18pt;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .cover-page h3 {
+    font-size: 13pt;
+    font-weight: 400;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 50px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .cover-page p {
+    font-size: 10pt;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 12px;
+  }
+  .cover-page strong {
+    color: rgba(255,255,255,0.85);
+  }
+  .cover-page p:last-child {
+    margin-top: 60px;
+    font-style: italic;
+    color: rgba(255,255,255,0.5);
+    font-size: 9pt;
+  }
+
+  /* ===== PAGE BREAKS ===== */
+  .page-break { page-break-after: always; }
+
+  /* ===== MAIN CONTENT ===== */
+  h1 {
+    font-size: 22pt;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 40px 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--primary);
+    page-break-before: always;
+    page-break-after: avoid;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+
+  h2 {
+    font-size: 16pt;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin: 28px 0 12px 0;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 13pt;
+    font-weight: 600;
+    color: var(--text);
+    margin: 22px 0 10px 0;
+    page-break-after: avoid;
+  }
+
+  h4 {
+    font-size: 11pt;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 18px 0 8px 0;
+    page-break-after: avoid;
+  }
+
+  p, li { margin-bottom: 8px; text-align: justify; }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ===== TABLES ===== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 10pt;
+    page-break-inside: avoid;
+  }
+  thead th {
+    background: var(--table-header);
+    color: #FFFFFF;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 9.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  tbody td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even) {
+    background: var(--table-stripe);
+  }
+  tbody tr:hover {
+    background: #E8F0FE;
+  }
+
+  /* ===== CODE BLOCKS ===== */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin: 12px 0;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 9pt;
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    page-break-inside: avoid;
+    color: var(--code-text);
+  }
+  code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 9pt;
+    background: var(--code-bg);
+    padding: 2px 5px;
+    border-radius: 3px;
+    border: 1px solid var(--code-border);
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 9pt;
+  }
+
+  /* ===== BLOCKQUOTES ===== */
+  blockquote {
+    border-left: 4px solid var(--primary);
+    margin: 16px 0;
+    padding: 12px 20px;
+    background: var(--bg-alt);
+    border-radius: 0 4px 4px 0;
+    color: var(--text-secondary);
+    page-break-inside: avoid;
+  }
+  blockquote p:last-child { margin-bottom: 0; }
+
+  /* ===== HORIZONTAL RULES ===== */
+  hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 24px 0;
+  }
+
+  /* ===== LISTS ===== */
+  ul, ol { margin: 8px 0 12px 24px; }
+  li { margin-bottom: 4px; }
+
+  /* ===== SPECIAL ELEMENTS ===== */
+  strong { color: var(--primary-dark); }
+  em { color: var(--text-secondary); }
+
+  /* ===== DIAGRAM PLACEHOLDERS ===== */
+  .mermaid-placeholder {
+    background: var(--mermaid-bg);
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    padding: 24px;
+    margin: 16px 0;
+    text-align: center;
+    page-break-inside: avoid;
+  }
+
+  /* ===== DOCUMENT END ===== */
+  .document-end {
+    text-align: center;
+    padding: 40px 0;
+    margin-top: 40px;
+    border-top: 2px solid var(--primary);
+    color: var(--text-secondary);
+    font-size: 9pt;
+    page-break-before: always;
+  }
+  .document-end hr { border-top-color: var(--primary); }
+
+  /* ===== CALL-OUT BOXES ===== */
+  .info-box {
+    background: #E8F4FD;
+    border-left: 4px solid var(--info);
+    padding: 12px 16px;
+    margin: 12px 0;
+    border-radius: 0 4px 4px 0;
+    page-break-inside: avoid;
+  }
+  .warning-box {
+    background: #FFF4E5;
+    border-left: 4px solid var(--warning);
+    padding: 12px 16px;
+    margin: 12px 0;
+    border-radius: 0 4px 4px 0;
+    page-break-inside: avoid;
+  }
+  .danger-box {
+    background: #FDE7E9;
+    border-left: 4px solid var(--danger);
+    padding: 12px 16px;
+    margin: 12px 0;
+    border-radius: 0 4px 4px 0;
+    page-break-inside: avoid;
+  }
+
+  /* ===== HEADER & FOOTER LAYOUT ===== */
+  @media print {
+    @page {
+      size: A4;
+      margin: 20mm 18mm 22mm 18mm;
+      @top-center {
+        content: "AAS — Developer Onboarding Guide — Enterprise Edition v1.0";
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 7pt;
+        color: #888888;
+      }
+      @bottom-center {
+        content: "&copy; 2026 AAS | Confidential &mdash; Internal | Page " counter(page) " of " counter(pages);
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 7pt;
+        color: #888888;
+      }
+    }
+    body {
+      max-width: none;
+      padding: 0 10px;
+    }
+    h1 { page-break-before: always; }
+    h1:first-of-type { page-break-before: avoid; }
+    h1, h2, h3, h4 { page-break-after: avoid; }
+    pre, table, blockquote { page-break-inside: avoid; }
+    .cover-page { page-break-after: always; }
+    .page-break { page-break-after: always; }
+  }
+
+  @media screen {
+    body { padding: 30px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<!--
+================================================================================
+AAS
+Developer Onboarding & Technical Overview
+Enterprise Edition — Version 1.0
+Document ID: AAS-DOC-ONBOARD-001
+Confidentiality: Internal — Engineering Team Only
+Release Date: 2026-06-17
+Prepared By: Engineering Team
+================================================================================
+--><div class="cover-page"><h1 id="accessibility-assessment-scheme-tool">Accessibility Assessment Scheme Tool</h1>
+<h1 id="aast">(AAST)</h1>
+<hr>
+<h2 id="developer-onboarding-manual">Developer Onboarding Manual</h2>
+<h3 id="enterprise-technical-documentation">Enterprise Technical Documentation</h3>
+<hr>
+<p><strong>Version:</strong> 1.0<br><strong>Release Date:</strong> 2026-06-17<br><strong>Document ID:</strong> AAST-DOC-ONBOARD-001<br><strong>Confidentiality:</strong> Internal — Engineering Team Only<br><strong>Prepared By:</strong> Engineering Team</p>
+<hr>
+<p><em>&copy; 2026 AAS. All rights reserved.</em></p>
+</div><div class="page-break"></div><hr>
+<h1 id="table-of-contents">TABLE OF CONTENTS</h1>
+<ol>
+<li><a href="#1-executive-summary">Executive Summary</a></li>
+<li><a href="#2-project-overview">Project Overview</a></li>
+<li><a href="#3-business-purpose">Business Purpose</a></li>
+<li><a href="#4-system-architecture">System Architecture</a></li>
+<li><a href="#5-backend-overview">Backend Overview</a></li>
+<li><a href="#6-frontend-overview">Frontend Overview</a></li>
+<li><a href="#7-database-overview">Database Overview</a></li>
+<li><a href="#8-project-folder-structure">Project Folder Structure</a></li>
+<li><a href="#9-request-lifecycle">Request Lifecycle</a></li>
+<li><a href="#10-api-architecture">API Architecture</a></li>
+<li><a href="#11-calculation-engine">Calculation Engine</a></li>
+<li><a href="#12-metadata-driven-design">Metadata-Driven Design</a></li>
+<li><a href="#13-dynamic-criteria-system">Dynamic Criteria System</a></li>
+<li><a href="#14-docker-environment">Docker Environment</a></li>
+<li><a href="#15-local-development-setup">Local Development Setup</a></li>
+<li><a href="#16-running-the-project">Running the Project</a></li>
+<li><a href="#17-common-workflows">Common Workflows</a></li>
+<li><a href="#18-debugging-guide">Debugging Guide</a></li>
+<li><a href="#19-troubleshooting">Troubleshooting</a></li>
+<li><a href="#20-coding-standards">Coding Standards</a></li>
+<li><a href="#21-git-workflow">Git Workflow</a></li>
+<li><a href="#22-deployment">Deployment</a></li>
+<li><a href="#23-maintenance">Maintenance</a></li>
+<li><a href="#24-future-development">Future Development</a></li>
+<li><a href="#25-faq">FAQ</a></li>
+<li><a href="#26-useful-commands">Useful Commands</a></li>
+<li><a href="#27-contacts">Contacts</a></li>
+<li><a href="#28-glossary">Glossary</a></li>
+</ol>
+<hr>
+<div class="page-break"></div><h1 id="1-executive-summary">1 EXECUTIVE SUMMARY</h1>
+<h2 id="what-is-aast">What Is AAST?</h2>
+<p>The <strong>AAS</strong> is an enterprise-grade, metadata-driven platform for evaluating the accessibility of buildings against the European Standard <strong>EN 17210</strong> framework. It replaces static spreadsheets and manual certification workflows with a dynamic, auditable, and API-first system.</p>
+<h2 id="why-it-exists">Why It Exists</h2>
+<p>Traditional accessibility assessment suffers from:</p>
+<ul>
+<li><strong>Hardcoded formulas</strong> in Excel that resist change</li>
+<li><strong>Inconsistent evaluations</strong> across different assessors</li>
+<li><strong>No audit trail</strong> for certification decisions</li>
+<li><strong>Manual report generation</strong> that scales poorly</li>
+</ul>
+<p>AAST solves these by making <strong>every formula, threshold, weight, and criterion configurable in a database</strong> — no source code changes required for business rule updates.</p>
+<h2 id="business-goals">Business Goals</h2>
+<table>
+<thead>
+<tr>
+<th>Goal</th>
+<th>Metric</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Standardize accessibility assessments across the EU</td>
+<td>100% consistent scoring</td>
+</tr>
+<tr>
+<td>Reduce assessment time per building</td>
+<td>From days to hours</td>
+</tr>
+<tr>
+<td>Enable non-technical domain experts to manage criteria</td>
+<td>Zero code deploys</td>
+</tr>
+<tr>
+<td>Provide auditable certification records</td>
+<td>Full evaluation history</td>
+</tr>
+</tbody></table>
+<h2 id="enterprise-goals">Enterprise Goals</h2>
+<table>
+<thead>
+<tr>
+<th>Goal</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Cloud-native deployment</td>
+<td>Azure App Service + Static Web Apps</td>
+</tr>
+<tr>
+<td>CI/CD automation</td>
+<td>GitHub Actions with test gates</td>
+</tr>
+<tr>
+<td>Infrastructure-as-Code</td>
+<td>Bicep templates for full environment</td>
+</tr>
+<tr>
+<td>Observability</td>
+<td>Application Insights + Log Analytics</td>
+</tr>
+<tr>
+<td>Security</td>
+<td>Helmet, CORS, HTTPS-only, TLS 1.2</td>
+</tr>
+</tbody></table>
+<h2 id="high-level-architecture">High-Level Architecture</h2>
+<p>The system follows a strict <strong>three-tier separation</strong>:</p>
+<ul>
+<li><strong>Frontend (Next.js 16 + React 19):</strong> Presentation only — NO business logic</li>
+<li><strong>Backend (Express + TypeScript + TypeORM):</strong> All calculations, validation, and data access</li>
+<li><strong>Database (MariaDB):</strong> Single source of truth for criteria, weights, thresholds, and evaluations</li>
+</ul>
+<blockquote>
+<p><strong>Key principle:</strong> The frontend is a &quot;dumb client.&quot; It calls REST APIs and renders responses. The backend owns every formula, every threshold lookup, every weight application. This ensures a single source of truth for all business logic.</p>
+</blockquote>
+<hr>
+<div class="page-break"></div><h1 id="2-project-overview">2 PROJECT OVERVIEW</h1>
+<h2 id="technology-stack">Technology Stack</h2>
+<h3 id="backend-the-quotkernelquot">Backend — The &quot;Kernel&quot;</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Technology</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Runtime</td>
+<td>Node.js</td>
+<td>20 LTS / 24</td>
+</tr>
+<tr>
+<td>Framework</td>
+<td>Express.js</td>
+<td>4.18</td>
+</tr>
+<tr>
+<td>Language</td>
+<td>TypeScript</td>
+<td>5.1+</td>
+</tr>
+<tr>
+<td>ORM</td>
+<td>TypeORM</td>
+<td>0.3.17</td>
+</tr>
+<tr>
+<td>Database</td>
+<td>MariaDB</td>
+<td>10.11</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>Zod</td>
+<td>4.4+</td>
+</tr>
+<tr>
+<td>Security</td>
+<td>Helmet</td>
+<td>7.0</td>
+</tr>
+<tr>
+<td>Spreadsheet</td>
+<td>xlsx</td>
+<td>0.18</td>
+</tr>
+</tbody></table>
+<h3 id="frontend-the-quotclient-shellquot">Frontend — The &quot;Client Shell&quot;</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Technology</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Framework</td>
+<td>Next.js (App Router)</td>
+<td>16.2.6</td>
+</tr>
+<tr>
+<td>UI Library</td>
+<td>React</td>
+<td>19.2.6</td>
+</tr>
+<tr>
+<td>State/Server</td>
+<td>TanStack Query</td>
+<td>5.x</td>
+</tr>
+<tr>
+<td>HTTP Client</td>
+<td>Axios</td>
+<td>1.5</td>
+</tr>
+<tr>
+<td>Styling</td>
+<td>Tailwind CSS</td>
+<td>4.x</td>
+</tr>
+<tr>
+<td>Animation</td>
+<td>Framer Motion</td>
+<td>12.x</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>Zod</td>
+<td>3.25</td>
+</tr>
+</tbody></table>
+<h3 id="infrastructure">Infrastructure</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Technology</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Containerization</td>
+<td>Docker / Docker Compose</td>
+</tr>
+<tr>
+<td>Cloud</td>
+<td>Microsoft Azure</td>
+</tr>
+<tr>
+<td>CI/CD</td>
+<td>GitHub Actions</td>
+</tr>
+<tr>
+<td>IaC</td>
+<td>Bicep</td>
+</tr>
+<tr>
+<td>Monitoring</td>
+<td>Application Insights</td>
+</tr>
+</tbody></table>
+<h2 id="architecture-diagram">Architecture Diagram</h2>
+<pre><code class="language-mermaid">graph TD
+    subgraph &quot;Client Layer&quot;
+        A[Browser / PWA]
+    end
+
+    subgraph &quot;Frontend — Next.js&quot;
+        B[App Router Pages]
+        C[React Components]
+        D[TanStack Query Hooks]
+        E[Axios API Client]
+    end
+
+    subgraph &quot;Backend — Express Kernel&quot;
+        F[Controllers — Request/Response]
+        G[Calculation Service — IS/CIS/TIS/OBS/NEB]
+        H[Metadata Service — Caching + Validation]
+        I[TypeORM Repositories]
+    end
+
+    subgraph &quot;Data Layer&quot;
+        J[(MariaDB 10.11)]
+    end
+
+    subgraph &quot;Infrastructure&quot;
+        K[Docker Container]
+        L[Azure App Service]
+        M[GitHub Actions CI/CD]
+    end
+
+    A --&gt; B
+    B --&gt; C
+    C --&gt; D
+    D --&gt; E
+    E --&gt;|REST /api/v1| F
+    F --&gt; G
+    F --&gt; H
+    G --&gt; H
+    H --&gt; I
+    I --&gt; J
+    J -.-&gt; K
+    K -.-&gt; L
+    L -.-&gt; M
+</code></pre>
+<h2 id="key-architectural-decisions">Key Architectural Decisions</h2>
+<ol>
+<li><strong>Metadata-Driven:</strong> All configurable values (weights, thresholds, criteria, max OBS) live in the database, not in code.</li>
+<li><strong>Single Source of Truth:</strong> The backend is the sole authority for calculations. The frontend contains zero business logic.</li>
+<li><strong>Dynamic Type Detection:</strong> Disability Types (DT 1-5) and Assessment Dimensions (AD 1-5) are derived from actual criteria data — never hardcoded.</li>
+<li><strong>Config-Driven Thresholds:</strong> NEB classification breakpoints, strength/weakness thresholds, and MAX_OBS are all database rows.</li>
+<li><strong>Lazy Metadata Caching:</strong> The metadata service initializes once and caches all lookup data in memory.</li>
+</ol>
+<hr>
+<div class="page-break"></div><h1 id="3-business-purpose">3 BUSINESS PURPOSE</h1>
+<h2 id="accessibility-assessments">Accessibility Assessments</h2>
+<p>The AAST evaluates buildings against <strong>63 canonical criteria</strong> organized across a 5×5 matrix:</p>
+<ul>
+<li><strong>5 Disability Types (DT):</strong> Physical, Sensory, Cognitive &amp; Neurodiverse, Communication &amp; Mental Health, Multiple/Situational</li>
+<li><strong>5 Assessment Dimensions (AD):</strong> Spatial &amp; Physical, Safety &amp; Environmental, Cognitive &amp; Navigational, Digital Interaction, Social Inclusion</li>
+</ul>
+<p>Each criterion has a unique code in the format <code>EC{DT}.{AD}.{index}</code> (e.g., <code>EC1.1.1</code> — Physical Disability × Spatial Accessibility, criterion 1). Every criterion carries:</p>
+<ul>
+<li>A <strong>value</strong> (float 0–1) representing its importance weight</li>
+<li>A <strong>score</strong> (integer 1–5) representing the assessor&#39;s rating</li>
+<li><strong>5 descriptive levels</strong> defining what each score means</li>
+</ul>
+<h2 id="certification-process">Certification Process</h2>
+<ol>
+<li><strong>Assessor</strong> selects building type (e.g., &quot;Commercial Buildings&quot;)</li>
+<li><strong>Assessor</strong> rates each applicable criterion on a 1–5 scale</li>
+<li><strong>Backend</strong> computes the weighted OBS (Overall Building Score) percentage</li>
+<li><strong>Backend</strong> maps OBS to a <strong>NEB classification</strong>: A+ (≥85%), A (≥60%), B (≥40%), No Rating (&lt;40%)</li>
+<li><strong>Backend</strong> returns strengths, weaknesses, per-DT scores, per-AD scores</li>
+<li><strong>Evaluation</strong> is persisted with full audit trail</li>
+</ol>
+<h2 id="dynamic-scoring">Dynamic Scoring</h2>
+<p>The scoring system is <strong>not static</strong>. Adding a criterion to the database immediately changes the evaluation output because:</p>
+<ul>
+<li>DT/AD sets are dynamically derived from <code>criteria.disability</code> and <code>criteria.dimension</code> columns</li>
+<li>Building type weights are loaded from <code>building_types.disability_weights</code> and <code>building_types.dimension_weights</code></li>
+<li>NEB thresholds are sorted DESC by <code>min</code> at query time</li>
+<li>MAX_OBS and all thresholds are read from the <code>config</code> table</li>
+</ul>
+<h2 id="metadata-management">Metadata Management</h2>
+<p>Domain experts can manage the entire assessment framework without developer involvement:</p>
+<ul>
+<li>Add/remove/modify criteria via the REST API</li>
+<li>Adjust building type weights</li>
+<li>Change NEB classification thresholds</li>
+<li>Update configuration values (MAX_OBS, thresholds)</li>
+</ul>
+<h2 id="reporting">Reporting</h2>
+<p>The system provides:</p>
+<ul>
+<li>Per-building evaluation history</li>
+<li>OBS trend tracking</li>
+<li>Strength/weakness analysis</li>
+<li>Certification status reports</li>
+</ul>
+<h2 id="european-market-goals">European Market Goals</h2>
+<p>AAST is designed for the European accessibility market, targeting compliance with:</p>
+<ul>
+<li><strong>EN 17210</strong> — Accessibility and usability of the built environment</li>
+<li><strong>EU Web Accessibility Directive</strong> (for digital interaction criteria)</li>
+<li>National accessibility regulations across EU member states</li>
+</ul>
+<hr>
+<div class="page-break"></div><h1 id="4-system-architecture">4 SYSTEM ARCHITECTURE</h1>
+<h2 id="layered-architecture">Layered Architecture</h2>
+<pre><code class="language-mermaid">graph TD
+    subgraph &quot;Presentation Layer&quot;
+        A1[Next.js Pages]
+        A2[React Components]
+        A3[Custom Hooks]
+    end
+
+    subgraph &quot;API Gateway&quot;
+        B1[Express Router]
+        B2[Helmet Security]
+        B3[CORS Middleware]
+        B4[JSON Body Parser]
+    end
+
+    subgraph &quot;Business Logic Layer&quot;
+        C1[Calculation Service]
+        C2[Metadata Service]
+        C3[Validation — Zod]
+    end
+
+    subgraph &quot;Data Access Layer&quot;
+        D1[TypeORM Repositories]
+        D2[Entities]
+        D3[Migrations]
+    end
+
+    subgraph &quot;Persistence Layer&quot;
+        E1[(MariaDB)]
+    end
+
+    A1 --&gt; A2 --&gt; A3
+    A3 --&gt;|HTTP| B1
+    B1 --&gt; B2 --&gt; B3 --&gt; B4
+    B4 --&gt; C1
+    B4 --&gt; C2
+    C1 --&gt; C2
+    C2 --&gt; D1
+    D1 --&gt; D2
+    D2 --&gt; E1
+    D3 -.-&gt;|Schema Evolution| E1
+</code></pre>
+<h2 id="layer-responsibilities">Layer Responsibilities</h2>
+<h3 id="presentation-layer-frontend">Presentation Layer (Frontend)</h3>
+<ul>
+<li><strong>Pages:</strong> Next.js App Router pages (dashboard, criteria, certification, reports, buildings, login)</li>
+<li><strong>Components:</strong> Reusable UI primitives (Header, BottomNav, BuildingCard, ErrorBoundary, PWAProvider, OfflineIndicator)</li>
+<li><strong>Hooks:</strong> TanStack Query wrappers (<code>useAssessment</code>, <code>useBuildings</code>, <code>useCriteria</code>)</li>
+<li><strong>Constraint:</strong> Contains absolutely NO business logic, NO calculations, NO formula evaluations</li>
+</ul>
+<h3 id="api-gateway-backend-middleware">API Gateway (Backend Middleware)</h3>
+<ul>
+<li><strong>Helmet:</strong> Sets security headers (CSP, X-Frame-Options, HSTS, etc.)</li>
+<li><strong>CORS:</strong> Configured for cross-origin requests from frontend</li>
+<li><strong>JSON Parser:</strong> <code>express.json()</code> with custom error handling for malformed JSON</li>
+<li><strong>Error Handler:</strong> Catches <code>entity.parse.failed</code> and <code>SyntaxError</code> for graceful 400 responses</li>
+</ul>
+<h3 id="business-logic-layer-backend-services">Business Logic Layer (Backend Services)</h3>
+<ul>
+<li><strong>Calculation Service:</strong> The 5-layer engine — IS → TIS → CIS → OBS → NEB</li>
+<li><strong>Metadata Service:</strong> Lazy-initialized cache for criteria, building types, NEB thresholds, config</li>
+<li><strong>Validation:</strong> Zod schemas for all POST/PUT endpoints</li>
+</ul>
+<h3 id="data-access-layer">Data Access Layer</h3>
+<ul>
+<li><strong>TypeORM Repositories:</strong> Entity-based data access with UUID primary keys</li>
+<li><strong>Entities:</strong> Criterion, BuildingType, Evaluation, NebThreshold, Config</li>
+<li><strong>Migrations:</strong> 3 sequential migrations for schema evolution</li>
+</ul>
+<h3 id="persistence-layer">Persistence Layer</h3>
+<ul>
+<li><strong>MariaDB 10.11:</strong> MySQL-compatible, UTF-8, InnoDB storage engine</li>
+<li><strong>Init Script:</strong> <code>docker-initdb.d/init.sql</code> creates database and user</li>
+<li><strong>Seed Script:</strong> Populates all 5 tables with canonical data</li>
+</ul>
+<h2 id="data-flow-summary">Data Flow Summary</h2>
+<pre><code>User Input → Frontend Hook → Axios POST → Express Router → Controller → Service → Repository → MariaDB
+                                                                                                      ↓
+User Display ← React Render ← JSON Response ← Express Response ← Controller ← Service ← Query Result
+</code></pre>
+<hr>
+<div class="page-break"></div><h1 id="5-backend-overview">5 BACKEND OVERVIEW</h1>
+<h2 id="folder-structure">Folder Structure</h2>
+<pre><code>backend/
+├── docker-compose.yml           # MariaDB container definition
+├── docker-initdb.d/
+│   └── init.sql                 # DB user &amp; database creation
+├── package.json                 # Dependencies &amp; scripts
+├── tsconfig.json                # TypeScript config (ES2022, CommonJS)
+├── src/
+│   ├── index.ts                 # Express app entry point
+│   ├── data-source.ts           # TypeORM DataSource configuration
+│   ├── controllers/
+│   │   ├── evaluateController.ts    # POST /api/v1/evaluate
+│   │   ├── dataController.ts        # GET criteria, building types, NEB, config
+│   │   ├── buildingsController.ts   # GET buildings, building detail
+│   │   ├── assessmentsController.ts # POST/GET assessments
+│   │   ├── reportsController.ts     # GET reports
+│   │   └── authController.ts        # POST /api/v1/auth/login
+│   ├── services/
+│   │   ├── calculationService.ts    # 5-layer calculation engine
+│   │   └── metadataService.ts       # Lazy caching + validation
+│   ├── entities/
+│   │   ├── Criterion.ts
+│   │   ├── BuildingType.ts
+│   │   ├── Evaluation.ts
+│   │   ├── NebThreshold.ts
+│   │   └── Config.ts
+│   ├── migrations/
+│   │   ├── 1686300000000-InitSchema.ts
+│   │   ├── 1686460000000-AddEvaluationFields.ts
+│   │   └── 1686550000000-AddNebAndConfig.ts
+│   ├── data/
+│   │   ├── criteria.ts              # 63 canonical criterion definitions
+│   │   └── building-types.json      # 7 building types + DT/AD weights
+│   ├── scripts/
+│   │   ├── seed.ts                  # Database seeding
+│   │   ├── runMigrations.ts         # Migration runner
+│   │   ├── extract_workbook_mappings.ts  # Workbook verification
+│   │   └── populate_workbook_criteria.ts # Workbook import
+│   └── tests/
+│       ├── calculation.test.ts      # Unit test: evaluate with default scores
+│       ├── static.test.ts           # Ban hardcoded patterns
+│       └── metadata.test.ts         # Metadata validation
+</code></pre>
+<h2 id="controllers">Controllers</h2>
+<p>Controllers are Express route handlers. They:</p>
+<ul>
+<li>Parse and validate incoming request bodies</li>
+<li>Call the appropriate service methods</li>
+<li>Format and return JSON responses</li>
+</ul>
+<p><strong>Key controllers:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Controller</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>evaluateController</code></td>
+<td><code>POST /api/v1/evaluate</code></td>
+<td>Full evaluation computation</td>
+</tr>
+<tr>
+<td><code>dataController.getCriteria</code></td>
+<td><code>GET /api/v1/criteria</code></td>
+<td>All 63 criteria</td>
+</tr>
+<tr>
+<td><code>dataController.createCriterion</code></td>
+<td><code>POST /api/v1/criteria</code></td>
+<td>Add new criterion dynamically</td>
+</tr>
+<tr>
+<td><code>dataController.getBuildingTypes</code></td>
+<td><code>GET /api/v1/building-types</code></td>
+<td>7 building types with weights</td>
+</tr>
+<tr>
+<td><code>dataController.getNebThresholds</code></td>
+<td><code>GET /api/v1/neb-thresholds</code></td>
+<td>NEB classification table</td>
+</tr>
+<tr>
+<td><code>dataController.getConfig</code></td>
+<td><code>GET /api/v1/config</code></td>
+<td>All configuration key-values</td>
+</tr>
+<tr>
+<td><code>dataController.getDisabilityTypes</code></td>
+<td><code>GET /api/v1/disability-types</code></td>
+<td>5 DT labels from JSON</td>
+</tr>
+<tr>
+<td><code>dataController.getAssessmentDimensions</code></td>
+<td><code>GET /api/v1/assessment-dimensions</code></td>
+<td>5 AD labels from JSON</td>
+</tr>
+<tr>
+<td><code>buildingsController.getBuildings</code></td>
+<td><code>GET /api/v1/buildings</code></td>
+<td>All buildings with evaluations</td>
+</tr>
+<tr>
+<td><code>assessmentsController.createAssessment</code></td>
+<td><code>POST /api/v1/assessments</code></td>
+<td>Create &amp; save evaluation</td>
+</tr>
+<tr>
+<td><code>reportsController.getReports</code></td>
+<td><code>GET /api/v1/reports</code></td>
+<td>Evaluation history as reports</td>
+</tr>
+<tr>
+<td><code>authController.login</code></td>
+<td><code>POST /api/v1/auth/login</code></td>
+<td>Mock JWT login</td>
+</tr>
+</tbody></table>
+<h2 id="services">Services</h2>
+<h3>Calculation Service (<code>calculationService.ts</code>)</h3>
+<p>The heart of the system. Implements the 5-layer accessibility scoring algorithm (see Section 11).</p>
+<h3>Metadata Service (<code>metadataService.ts</code>)</h3>
+<p>A lazy-initialized caching layer that:</p>
+<ul>
+<li>Initializes the TypeORM DataSource connection once</li>
+<li>Caches NEB thresholds (ordered DESC by <code>min</code>)</li>
+<li>Caches config values per key</li>
+<li>Provides <code>getBuildingType()</code>, <code>getAllCriteria()</code>, <code>validateMetadata()</code></li>
+<li>Validates all 4 core tables have data on startup</li>
+</ul>
+<h2 id="static-test-enforcement">Static Test Enforcement</h2>
+<p>The <code>static.test.ts</code> file greps ALL source files for banned hardcoded patterns:</p>
+<ul>
+<li>❌ <code>0.2,0.2,0.2,0.2,0.2</code> (equal weights — must be DB-driven)</li>
+<li>❌ <code>85, 60, 40</code> (hardcoded NEB thresholds — must be in <code>neb_thresholds</code> table)</li>
+<li>❌ <code>MAX_OBS = 25</code> (hardcoded config — must be in <code>config</code> table)</li>
+</ul>
+<p>This ensures the system remains <strong>metadata-driven</strong> and no developer accidentally reintroduces hardcoded logic.</p>
+<hr>
+<div class="page-break"></div><h1 id="6-frontend-overview">6 FRONTEND OVERVIEW</h1>
+<h2 id="technology">Technology</h2>
+<p>The frontend is a <strong>Next.js 16 App Router</strong> application with <strong>React 19</strong>, styled with <strong>Tailwind CSS 4</strong> and animated with <strong>Framer Motion</strong>.</p>
+<h2 id="folder-structure">Folder Structure</h2>
+<pre><code>frontend/
+├── package.json
+├── next.config.js
+├── tsconfig.json
+├── tailwind.config.ts
+├── postcss.config.js
+├── app/
+│   ├── layout.tsx              # Root layout (Inter font, dark theme, PWA meta)
+│   ├── page.tsx                 # Home page with quick links
+│   ├── globals.css              # Global styles
+│   ├── dashboard/
+│   │   └── page.tsx             # Main assessment dashboard with OBS gauge
+│   ├── criteria/
+│   │   └── page.tsx             # Criteria search/filter grid
+│   ├── certification/
+│   │   └── page.tsx             # Certification results with filtering
+│   ├── reports/
+│   │   └── page.tsx             # Historical reports view
+│   ├── buildings/
+│   │   ├── page.tsx             # Building list
+│   │   └── [id]/
+│   │       └── page.tsx         # Building detail
+│   ├── assessments/
+│   │   ├── new/
+│   │   │   └── page.tsx         # Create new assessment
+│   │   └── [id]/
+│   │       └── page.tsx         # Assessment detail
+│   ├── building/
+│   │   └── page.tsx             # Building type management
+│   ├── dimensions/
+│   │   └── page.tsx             # Dimension management
+│   ├── disability/
+│   │   └── page.tsx             # Disability type management
+│   └── login/
+│       └── page.tsx             # Authentication page
+├── components/
+│   ├── Header.tsx               # Top navigation bar
+│   ├── BottomNav.tsx            # Mobile bottom navigation
+│   ├── BuildingCard.tsx         # Building summary card
+│   ├── ErrorBoundary.tsx        # React error boundary
+│   ├── OfflineIndicator.tsx     # PWA offline status
+│   └── PWAProvider.tsx          # Service worker registration
+├── lib/
+│   ├── api/
+│   │   ├── client.ts            # Axios instance with interceptors
+│   │   └── endpoints.ts         # All 16 API call wrappers
+│   ├── hooks/
+│   │   ├── useAssessment.ts     # TanStack Query: single assessment
+│   │   ├── useBuildings.ts      # TanStack Query: buildings list
+│   │   └── useCriteria.ts       # TanStack Query: criteria list
+│   ├── queryClient.ts           # TanStack QueryClient config
+│   ├── animations.ts            # Shared Framer Motion variants
+│   └── pwa.ts                   # PWA service worker registration
+└── public/
+    ├── manifest.json             # PWA manifest
+    └── sw.js                     # Service worker
+</code></pre>
+<h2 id="key-design-principle-zero-business-logic">Key Design Principle: Zero Business Logic</h2>
+<p><strong>The frontend contains NO business logic.</strong> This is a critical architectural constraint:</p>
+<ul>
+<li>✅ All calculations happen on the backend</li>
+<li>✅ All thresholds are read from the database</li>
+<li>✅ All weights are applied server-side</li>
+<li>✅ The frontend only sends user inputs and renders API responses</li>
+<li>❌ No formula evaluation in the browser</li>
+<li>❌ No hardcoded NEB thresholds</li>
+<li>❌ No weight calculations client-side</li>
+</ul>
+<h2 id="api-layer">API Layer</h2>
+<h3>Axios Client (<code>client.ts</code>)</h3>
+<pre><code class="language-typescript">const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL || &quot;http://localhost:4000/api/v1&quot;,
+  timeout: 15000,
+  headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+});
+</code></pre>
+<p>The client includes a response interceptor that normalizes errors into a consistent shape:</p>
+<pre><code class="language-typescript">{ status, ok, error, message }
+</code></pre>
+<h3>Endpoints (<code>endpoints.ts</code>)</h3>
+<p>All 16 API endpoints are defined as typed functions using a shared <code>unwrap</code> helper:</p>
+<pre><code class="language-typescript">export const endpoints = {
+  evaluate: (payload) =&gt; unwrap&lt;EvaluationResult&gt;(api.post(&#39;/evaluate&#39;, payload)),
+  getCriteria: () =&gt; unwrap&lt;Criterion[]&gt;(api.get(&#39;/criteria&#39;)),
+  getBuildings: () =&gt; unwrap&lt;any[]&gt;(api.get(&#39;/buildings&#39;)),
+  // ... 13 more endpoints
+};
+</code></pre>
+<h2 id="state-management">State Management</h2>
+<ul>
+<li><strong>Server State:</strong> TanStack React Query v5 manages all async data (fetching, caching, refetching, error states)</li>
+<li><strong>Client State:</strong> React <code>useState</code> for UI-local state (form inputs, toggles, modals)</li>
+<li><strong>Persistence:</strong> Assessment state is persisted to <code>localStorage</code> under key <code>accessibility-assessment-state</code></li>
+</ul>
+<h2 id="hooks">Hooks</h2>
+<table>
+<thead>
+<tr>
+<th>Hook</th>
+<th>Query Key</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>useAssessment(id)</code></td>
+<td><code>[&#39;assessment&#39;, id]</code></td>
+<td>Fetch single assessment</td>
+</tr>
+<tr>
+<td><code>useBuildings()</code></td>
+<td><code>[&#39;buildings&#39;]</code></td>
+<td>Fetch all buildings</td>
+</tr>
+<tr>
+<td><code>useCriteria()</code></td>
+<td><code>[&#39;criteria&#39;]</code></td>
+<td>Fetch all 63 criteria</td>
+</tr>
+</tbody></table>
+<hr>
+<div class="page-break"></div><h1 id="7-database-overview">7 DATABASE OVERVIEW</h1>
+<h2 id="entity-relationship-diagram">Entity-Relationship Diagram</h2>
+<pre><code class="language-mermaid">erDiagram
+    building_types {
+        VARCHAR_36 id PK
+        VARCHAR_255 name UK
+        JSON disability_weights
+        JSON dimension_weights
+    }
+
+    criteria {
+        VARCHAR_36 id PK
+        VARCHAR_255 code UK
+        TEXT name
+        TEXT definition
+        TEXT justification
+        FLOAT value
+        INT disability
+        INT dimension
+        INT score
+        JSON levels
+    }
+
+    evaluations {
+        VARCHAR_36 id PK
+        VARCHAR_255 user_id FK_NULL
+        VARCHAR_255 building_type
+        JSON scores
+        JSON result
+        DATETIME created_at
+        DOUBLE obs
+        VARCHAR neb_class
+        DOUBLE average_raw_score
+    }
+
+    neb_thresholds {
+        VARCHAR_36 id PK
+        INT min
+        VARCHAR_50 neb_class
+        VARCHAR_50 equivalent
+        TEXT meaning
+        INT neb_score
+        INT ordinal
+    }
+
+    config {
+        VARCHAR_36 id PK
+        VARCHAR_255 key UK
+        TEXT value
+    }
+
+    evaluations ||--o{ building_types : &quot;building_type references name&quot;
+</code></pre>
+<h2 id="table-details">Table Details</h2>
+<h3><code>building_types</code> — 7 rows</h3>
+<p>Stores building type definitions with per-type weight matrices.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id</code></td>
+<td>VARCHAR(36) PK</td>
+<td>UUID</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>VARCHAR(255) UNIQUE</td>
+<td>e.g., &quot;Commercial Buildings&quot;</td>
+</tr>
+<tr>
+<td><code>disability_weights</code></td>
+<td>JSON</td>
+<td>Array of 5 floats (DT 1–5 weights)</td>
+</tr>
+<tr>
+<td><code>dimension_weights</code></td>
+<td>JSON</td>
+<td>Array of 5 floats (AD 1–5 weights)</td>
+</tr>
+</tbody></table>
+<p><strong>Example:</strong></p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;Commercial Buildings&quot;,
+  &quot;disability_weights&quot;: [0.28, 0.22, 0.18, 0.12, 0.2],
+  &quot;dimension_weights&quot;: [0.30, 0.25, 0.18, 0.12, 0.15]
+}
+</code></pre>
+<h3><code>criteria</code> — 63 rows</h3>
+<p>The canonical set of evaluation criteria.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id</code></td>
+<td>VARCHAR(36) PK</td>
+<td>UUID</td>
+</tr>
+<tr>
+<td><code>code</code></td>
+<td>VARCHAR(255) UNIQUE</td>
+<td>e.g., &quot;EC1.1.1&quot;</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>TEXT</td>
+<td>Human-readable name</td>
+</tr>
+<tr>
+<td><code>definition</code></td>
+<td>TEXT</td>
+<td>What this criterion measures</td>
+</tr>
+<tr>
+<td><code>justification</code></td>
+<td>TEXT</td>
+<td>Why this criterion matters</td>
+</tr>
+<tr>
+<td><code>value</code></td>
+<td>DOUBLE</td>
+<td>Importance weight (0–1)</td>
+</tr>
+<tr>
+<td><code>disability</code></td>
+<td>INT</td>
+<td>Disability Type (1–5)</td>
+</tr>
+<tr>
+<td><code>dimension</code></td>
+<td>INT</td>
+<td>Assessment Dimension (1–5)</td>
+</tr>
+<tr>
+<td><code>score</code></td>
+<td>INT</td>
+<td>Default score (3)</td>
+</tr>
+<tr>
+<td><code>levels</code></td>
+<td>JSON</td>
+<td>Array of 5 level descriptors</td>
+</tr>
+</tbody></table>
+<p><strong>Example:</strong></p>
+<pre><code class="language-json">{
+  &quot;code&quot;: &quot;EC1.1.1&quot;,
+  &quot;name&quot;: &quot;Accessible Entrance Width&quot;,
+  &quot;definition&quot;: &quot;Minimum clear opening width for doors and entrances&quot;,
+  &quot;justification&quot;: &quot;Ensures wheelchair and mobility device passage&quot;,
+  &quot;value&quot;: 0.7,
+  &quot;disability&quot;: 1,
+  &quot;dimension&quot;: 1,
+  &quot;score&quot;: 3,
+  &quot;levels&quot;: [&quot;Insufficient (&lt;80cm)&quot;, &quot;Narrow (80-90cm)&quot;, &quot;Adequate (90-100cm)&quot;, &quot;Good (100-120cm)&quot;, &quot;Excellent (&gt;120cm)&quot;]
+}
+</code></pre>
+<h3><code>evaluations</code> — Variable rows</h3>
+<p>Each evaluation represents one assessment run for a building.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id</code></td>
+<td>VARCHAR(36) PK</td>
+<td>UUID</td>
+</tr>
+<tr>
+<td><code>user_id</code></td>
+<td>VARCHAR(255) NULL</td>
+<td>Assessor identifier</td>
+</tr>
+<tr>
+<td><code>building_type</code></td>
+<td>VARCHAR(255)</td>
+<td>Building type name</td>
+</tr>
+<tr>
+<td><code>scores</code></td>
+<td>JSON</td>
+<td>Map of criterion code → score</td>
+</tr>
+<tr>
+<td><code>result</code></td>
+<td>JSON</td>
+<td>Full evaluation result</td>
+</tr>
+<tr>
+<td><code>created_at</code></td>
+<td>DATETIME</td>
+<td>Auto-generated timestamp</td>
+</tr>
+<tr>
+<td><code>obs</code></td>
+<td>DOUBLE</td>
+<td>Overall Building Score %</td>
+</tr>
+<tr>
+<td><code>neb_class</code></td>
+<td>VARCHAR(10)</td>
+<td>NEB classification (A+, A, B, No Rating)</td>
+</tr>
+<tr>
+<td><code>average_raw_score</code></td>
+<td>DOUBLE</td>
+<td>Average of all criterion scores</td>
+</tr>
+</tbody></table>
+<h3><code>neb_thresholds</code> — 4 rows</h3>
+<p>Defines the NEB classification bands.</p>
+<table>
+<thead>
+<tr>
+<th>min</th>
+<th>neb_class</th>
+<th>equivalent</th>
+<th>meaning</th>
+<th>neb_score</th>
+<th>ordinal</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>85</td>
+<td>A+</td>
+<td>5</td>
+<td>Excellent / Best practice</td>
+<td>5</td>
+<td>1</td>
+</tr>
+<tr>
+<td>60</td>
+<td>A</td>
+<td>4</td>
+<td>Good</td>
+<td>4</td>
+<td>2</td>
+</tr>
+<tr>
+<td>40</td>
+<td>B</td>
+<td>3</td>
+<td>Acceptable</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr>
+<td>0</td>
+<td>No Rating</td>
+<td>N/A</td>
+<td>Non-compliant</td>
+<td>1</td>
+<td>4</td>
+</tr>
+</tbody></table>
+<h3><code>config</code> — 5 rows</h3>
+<p>Key-value configuration store.</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>MAX_OBS</code></td>
+<td>25</td>
+<td>Maximum possible OBS raw score</td>
+</tr>
+<tr>
+<td><code>DEFAULT_SCORE</code></td>
+<td>3</td>
+<td>Default criterion score when not specified</td>
+</tr>
+<tr>
+<td><code>STRENGTH_THRESHOLD</code></td>
+<td>5</td>
+<td>Minimum score to be considered a strength</td>
+</tr>
+<tr>
+<td><code>WEAKNESS_THRESHOLD</code></td>
+<td>2</td>
+<td>Maximum score to be considered a weakness</td>
+</tr>
+<tr>
+<td><code>TOP_N_RESULTS</code></td>
+<td>5</td>
+<td>Number of strengths/weaknesses to return</td>
+</tr>
+</tbody></table>
+<hr>
+<div class="page-break"></div><h1 id="8-project-folder-structure">8 PROJECT FOLDER STRUCTURE</h1>
+<pre><code>proj/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml                    # CI/CD pipeline (5 jobs)
+├── azure/
+│   └── main.bicep                        # Azure infrastructure-as-code
+├── backend/
+│   ├── docker-compose.yml                # MariaDB container
+│   ├── docker-initdb.d/
+│   │   └── init.sql                      # DB initialization
+│   ├── package.json                      # Backend dependencies
+│   ├── tsconfig.json                     # TypeScript configuration
+│   ├── README.md                         # Backend documentation
+│   ├── api-spec.md                       # API specification
+│   ├── workbook-mapping.md               # Excel-to-DB mapping verification
+│   ├── test_output.txt                   # Test execution output
+│   └── src/
+│       ├── index.ts                      # Express app entry point
+│       ├── data-source.ts                # TypeORM DataSource
+│       ├── controllers/                  # Route handlers (6 files)
+│       ├── services/                     # Business logic (2 files)
+│       ├── entities/                     # TypeORM entities (5 files)
+│       ├── migrations/                   # DB schema evolution (3 files)
+│       ├── data/                         # Seed data (criteria.ts, building-types.json)
+│       ├── scripts/                      # Utility scripts (4 files)
+│       └── tests/                        # Automated tests (3 files)
+├── frontend/
+│   ├── package.json                      # Frontend dependencies
+│   ├── next.config.js                    # Next.js configuration
+│   ├── tsconfig.json                     # TypeScript configuration
+│   ├── tailwind.config.ts                # Tailwind CSS theme
+│   ├── postcss.config.js                 # PostCSS plugins
+│   ├── README.md                         # Frontend documentation
+│   ├── IMPLEMENTATION_SUMMARY.md         # Implementation notes
+│   ├── next-env.d.ts                     # Next.js TypeScript declarations
+│   ├── app/                              # Next.js App Router pages (14 pages)
+│   ├── components/                       # Shared React components (8 files)
+│   ├── lib/                              # Utilities, API client, hooks (7 files)
+│   └── public/                           # Static assets, PWA manifest
+├── docs/
+│   ├── README.md                         # Documentation index
+│   ├── azure-migration.md                # Azure deployment guide
+│   ├── developer-onboarding.md           # ← THIS DOCUMENT
+│   ├── backend-enterprise.md             # Backend comprehensive reference
+│   └── enterprise-manual.md              # Enterprise technical manual
+├── DEVELOPMENT.md                        # Development environment guide
+├── logs-dev.sh                           # Dev log viewing script
+├── start-dev.sh                          # One-command dev startup
+├── status-dev.sh                         # Dev status check
+└── stop-dev.sh                           # Dev shutdown
+</code></pre>
+<h3 id="purpose-of-each-major-folder">Purpose of Each Major Folder</h3>
+<table>
+<thead>
+<tr>
+<th>Folder</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>.github/workflows/</code></td>
+<td>GitHub Actions CI/CD pipeline definition</td>
+</tr>
+<tr>
+<td><code>azure/</code></td>
+<td>Bicep infrastructure-as-code templates</td>
+</tr>
+<tr>
+<td><code>backend/src/controllers/</code></td>
+<td>Express route handlers — request validation &amp; response formatting</td>
+</tr>
+<tr>
+<td><code>backend/src/services/</code></td>
+<td>Business logic — calculation engine &amp; metadata caching</td>
+</tr>
+<tr>
+<td><code>backend/src/entities/</code></td>
+<td>TypeORM entity definitions mapping to DB tables</td>
+</tr>
+<tr>
+<td><code>backend/src/migrations/</code></td>
+<td>Database schema versioning — incremental DDL changes</td>
+</tr>
+<tr>
+<td><code>backend/src/data/</code></td>
+<td>Canonical seed data — criteria definitions &amp; building type weights</td>
+</tr>
+<tr>
+<td><code>backend/src/scripts/</code></td>
+<td>Utility scripts — seeding, migrations, workbook verification</td>
+</tr>
+<tr>
+<td><code>backend/src/tests/</code></td>
+<td>Automated test suite — calculation, static analysis, metadata validation</td>
+</tr>
+<tr>
+<td><code>frontend/app/</code></td>
+<td>Next.js App Router — file-based routing for all pages</td>
+</tr>
+<tr>
+<td><code>frontend/components/</code></td>
+<td>Reusable React UI components</td>
+</tr>
+<tr>
+<td><code>frontend/lib/api/</code></td>
+<td>Axios client configuration &amp; typed API endpoints</td>
+</tr>
+<tr>
+<td><code>frontend/lib/hooks/</code></td>
+<td>TanStack Query hooks for server state management</td>
+</tr>
+<tr>
+<td><code>frontend/public/</code></td>
+<td>Static files — PWA manifest, service worker</td>
+</tr>
+<tr>
+<td><code>docs/</code></td>
+<td>Project documentation</td>
+</tr>
+</tbody></table>
+<hr>
+<div class="page-break"></div><h1 id="9-request-lifecycle">9 REQUEST LIFECYCLE</h1>
+<h2 id="complete-request-flow">Complete Request Flow</h2>
+<pre><code class="language-mermaid">sequenceDiagram
+    participant User as User / Assessor
+    participant FE as Frontend (Next.js)
+    participant Axios as Axios Client
+    participant Express as Express Server
+    participant Ctrl as Controller
+    participant Svc as Service
+    participant Repo as Repository
+    participant DB as MariaDB
+
+    User-&gt;&gt;FE: Clicks &quot;Evaluate&quot;
+    FE-&gt;&gt;FE: useAssessment hook triggers mutation
+    FE-&gt;&gt;Axios: POST /api/v1/evaluate
+    Axios-&gt;&gt;Express: HTTP POST with JSON body
+    Express-&gt;&gt;Express: Helmet headers, CORS check, JSON parse
+    Express-&gt;&gt;Ctrl: evaluateController(req, res)
+    Ctrl-&gt;&gt;Ctrl: Validate body shape (buildingType? string, scores? object)
+    Ctrl-&gt;&gt;Svc: calculationService.evaluate(buildingType, scores)
+    Svc-&gt;&gt;Svc: Read MAX_OBS, DEFAULT_SCORE, thresholds from metadata
+    Svc-&gt;&gt;Svc: Load building type disability weights
+    Svc-&gt;&gt;Svc: Load all 63 criteria
+    Svc-&gt;&gt;Svc: Build criteria with scores (IS = value × score)
+    Svc-&gt;&gt;Svc: Derive DT/AD sets dynamically
+    Svc-&gt;&gt;Svc: Compute TIS per DT, CIS per AD
+    Svc-&gt;&gt;Svc: Compute OBS raw → OBS%
+    Svc-&gt;&gt;Svc: Lookup NEB classification
+    Svc-&gt;&gt;Svc: Compute strengths/weaknesses
+    Svc--&gt;&gt;Ctrl: Return evaluation result object
+    Ctrl--&gt;&gt;Express: res.json({ ok: true, result })
+    Express--&gt;&gt;Axios: HTTP 200 JSON response
+    Axios--&gt;&gt;FE: Unwrapped result object
+    FE-&gt;&gt;FE: React re-renders with result data
+    FE--&gt;&gt;User: Display OBS gauge, NEB class, strengths, weaknesses
+</code></pre>
+<h2 id="step-by-step-details">Step-by-Step Details</h2>
+<h3 id="1-user-interaction">1. User Interaction</h3>
+<p>The user selects a building type, rates criteria (1–5 scale), and clicks &quot;Evaluate&quot; on the dashboard page.</p>
+<h3 id="2-frontend-processing">2. Frontend Processing</h3>
+<p>The <code>dashboard/page.tsx</code> component:</p>
+<ul>
+<li>Collects building type from state</li>
+<li>Builds a <code>scores</code> object mapping criterion codes to numeric scores</li>
+<li>Calls <code>api.post(&#39;/evaluate&#39;, { buildingType, scores })</code></li>
+</ul>
+<h3 id="3-axios-transport">3. Axios Transport</h3>
+<p>The Axios instance:</p>
+<ul>
+<li>Sends a POST to <code>http://localhost:4000/api/v1/evaluate</code></li>
+<li>Adds <code>Content-Type: application/json</code> header</li>
+<li>Has a 15-second timeout</li>
+<li>Intercepts errors for normalization</li>
+</ul>
+<h3 id="4-express-middleware-pipeline">4. Express Middleware Pipeline</h3>
+<ul>
+<li><strong>Helmet:</strong> Adds security headers</li>
+<li><strong>CORS:</strong> Validates cross-origin request</li>
+<li><strong>JSON Parser:</strong> Parses request body</li>
+<li><strong>Error Handler:</strong> Catches malformed JSON → 400</li>
+</ul>
+<h3 id="5-controller-validation">5. Controller Validation</h3>
+<p><code>evaluateController.ts</code> validates:</p>
+<ul>
+<li><code>buildingType</code> is a string or undefined</li>
+<li><code>scores</code> is an object (not array) or undefined</li>
+<li>Returns 400 with specific error message on validation failure</li>
+</ul>
+<h3 id="6-service-computation">6. Service Computation</h3>
+<p><code>calculationService.evaluate()</code> runs the 5-layer engine (see Section 11).</p>
+<h3 id="7-repository-access">7. Repository Access</h3>
+<p>The metadata service loads data from the database via TypeORM repositories with in-memory caching.</p>
+<h3 id="8-response-assembly">8. Response Assembly</h3>
+<p>The result object contains: <code>obs</code>, <code>nebClass</code>, <code>nebEquivalent</code>, <code>nebMeaning</code>, <code>nebScore</code>, <code>averageRawScore</code>, <code>avgRawScoreByDT</code>, <code>avgRawScoreByAD</code>, <code>strengths</code>, <code>weaknesses</code>, <code>tisByDT</code>, <code>cisByAD</code>, <code>criteria</code>.</p>
+<h3 id="9-frontend-render">9. Frontend Render</h3>
+<p>React re-renders the dashboard with:</p>
+<ul>
+<li>An OBS percentage gauge</li>
+<li>NEB classification badge</li>
+<li>Strength and weakness lists</li>
+<li>Per-DT and per-AD score breakdowns</li>
+</ul>
+<hr>
+<div class="page-break"></div><h1 id="10-api-architecture">10 API ARCHITECTURE</h1>
+<h2 id="api-philosophy">API Philosophy</h2>
+<p>The AAST API follows REST principles:</p>
+<ul>
+<li><strong>Base URL:</strong> <code>/api/v1</code></li>
+<li><strong>Content-Type:</strong> <code>application/json</code></li>
+<li><strong>Response Envelope:</strong> Always <code>{ ok: boolean, data?: any, error?: string }</code></li>
+<li><strong>Status Codes:</strong> 200 (success), 201 (created), 400 (validation), 404 (not found), 409 (conflict), 500 (internal)</li>
+<li><strong>Validation:</strong> All POST/PUT endpoints validate input before processing</li>
+</ul>
+<h2 id="complete-api-reference">Complete API Reference</h2>
+<h3 id="evaluation">Evaluation</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>POST</td>
+<td><code>/api/v1/evaluate</code></td>
+<td>No</td>
+<td>Run full evaluation computation</td>
+</tr>
+</tbody></table>
+<p><strong>Request:</strong></p>
+<pre><code class="language-json">{
+  &quot;buildingType&quot;: &quot;Commercial Buildings&quot;,
+  &quot;scores&quot;: { &quot;EC1.1.1&quot;: 5, &quot;EC1.1.2&quot;: 3, &quot;EC2.3.1&quot;: 4 }
+}
+</code></pre>
+<p><strong>Response:</strong></p>
+<pre><code class="language-json">{
+  &quot;ok&quot;: true,
+  &quot;result&quot;: {
+    &quot;obs&quot;: 64.28,
+    &quot;nebClass&quot;: &quot;A&quot;,
+    &quot;nebEquivalent&quot;: &quot;4&quot;,
+    &quot;nebMeaning&quot;: &quot;Good&quot;,
+    &quot;nebScore&quot;: 4,
+    &quot;averageRawScore&quot;: 3.12,
+    &quot;avgRawScoreByDT&quot;: { &quot;1&quot;: 3.5, &quot;2&quot;: 2.8, &quot;3&quot;: 3.1, &quot;4&quot;: 3.0, &quot;5&quot;: 3.2 },
+    &quot;avgRawScoreByAD&quot;: { &quot;1&quot;: 3.3, &quot;2&quot;: 3.0, &quot;3&quot;: 3.2, &quot;4&quot;: 3.1, &quot;5&quot;: 3.0 },
+    &quot;strengths&quot;: [ /* top 5 criteria with score ≥ 5 */ ],
+    &quot;weaknesses&quot;: [ /* top 5 criteria with score ≤ 2 */ ],
+    &quot;tisByDT&quot;: { &quot;1&quot;: 5.8234, &quot;2&quot;: 4.2100, &quot;3&quot;: 3.8765, &quot;4&quot;: 2.9430, &quot;5&quot;: 3.1542 },
+    &quot;cisByAD&quot;: { &quot;1&quot;: 3.4567, &quot;2&quot;: 2.8901, &quot;3&quot;: 3.1234, &quot;4&quot;: 2.5678, &quot;5&quot;: 2.3456 },
+    &quot;criteria&quot;: [ /* all 63 criteria with computed IS values */ ]
+  }
+}
+</code></pre>
+<h3 id="data-retrieval">Data Retrieval</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td><code>/api/v1/criteria</code></td>
+<td>All criteria (ordered by code ASC)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/v1/criteria/:code</code></td>
+<td>Single criterion by code</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/v1/criteria</code></td>
+<td>Create new criterion</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/v1/building-types</code></td>
+<td>All building types with weights</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/v1/neb-thresholds</code></td>
+<td>NEB classification thresholds</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/v1/config</code></td>
+<td>All configuration key-value pairs</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/v1/disability-types</code></td>
+<td>5 disability type labels</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/v1/assessment-dimensions</code></td>
+<td>5 assessment dimension labels</td>
+</tr>
+</tbody></table>
+<h3 id="assessments-and-reports">Assessments &amp; Reports</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td><code>/api/v1/buildings</code></td>
+<td>All buildings (joined with evaluations)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/v1/buildings/:id</code></td>
+<td>Single building detail</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/v1/assessments</code></td>
+<td>Create and save an assessment</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/v1/assessments/:id</code></td>
+<td>Retrieve a saved assessment</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/v1/reports</code></td>
+<td>All evaluation reports</td>
+</tr>
+</tbody></table>
+<h3 id="authentication">Authentication</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>POST</td>
+<td><code>/api/v1/auth/login</code></td>
+<td>Mock JWT login</td>
+</tr>
+</tbody></table>
+<h3 id="creating-a-new-criterion">Creating a New Criterion</h3>
+<p><strong>Request:</strong></p>
+<pre><code class="language-json">{
+  &quot;code&quot;: &quot;EC1.1.10&quot;,
+  &quot;name&quot;: &quot;Automatic Door Speed&quot;,
+  &quot;definition&quot;: &quot;Opening and closing speed of automatic doors&quot;,
+  &quot;justification&quot;: &quot;Ensures safe passage for users with mobility impairments&quot;,
+  &quot;value&quot;: 0.15,
+  &quot;disability&quot;: 1,
+  &quot;dimension&quot;: 1,
+  &quot;levels&quot;: [
+    &quot;Dangerously fast&quot;,
+    &quot;Fast closing&quot;,
+    &quot;Standard speed&quot;,
+    &quot;Slow and safe&quot;,
+    &quot;Fully adjustable&quot;
+  ]
+}
+</code></pre>
+<p><strong>Validation rules:</strong></p>
+<ul>
+<li><code>code</code> must match <code>/^EC\d+\.\d+\.\d+$/</code></li>
+<li><code>name</code> and <code>definition</code> are required</li>
+<li><code>value</code> must be a float between 0 and 1</li>
+<li><code>disability</code> must be an integer 1–5</li>
+<li><code>dimension</code> must be an integer 1–5</li>
+<li><code>levels</code> must be an array of exactly 5 strings</li>
+<li>Duplicate <code>code</code> returns 409 Conflict</li>
+</ul>
+<hr>
+<div class="page-break"></div><h1 id="11-calculation-engine">11 CALCULATION ENGINE</h1>
+<h2 id="overview">Overview</h2>
+<p>The calculation engine is the single most important component in the system. It implements the <strong>EN 17210 accessibility scoring framework</strong> in a purely metadata-driven way. No formula or threshold is hardcoded.</p>
+<h2 id="the-5-layer-algorithm">The 5-Layer Algorithm</h2>
+<pre><code class="language-mermaid">graph TD
+    A[63 Criteria × Scores] --&gt; B[&quot;Layer 1: IS&lt;br/&gt;Impact Score = value × score&quot;]
+    B --&gt; C[&quot;Layer 2: TIS&lt;br/&gt;Total Impact Score per DT&lt;br/&gt;Σ IS for each Disability Type&quot;]
+    C --&gt; D[&quot;Layer 3: CIS&lt;br/&gt;Combined Impact Score per AD&lt;br/&gt;Σ (DT_weight × IS) for each Assessment Dimension&quot;]
+    D --&gt; E[&quot;Layer 4: OBS&lt;br/&gt;Overall Building Score&lt;br/&gt;Σ (DT_weight × TIS) / MAX_OBS × 100&quot;]
+    E --&gt; F[&quot;Layer 5: NEB&lt;br/&gt;Classification lookup&lt;br/&gt;Find first threshold where OBS ≥ min&quot;]
+</code></pre>
+<h2 id="layer-details">Layer Details</h2>
+<h3 id="layer-1-impact-score-is">Layer 1: Impact Score (IS)</h3>
+<p>For each criterion <code>c</code>:</p>
+<pre><code>IS(c) = c.value × c.score
+</code></pre>
+<p>The <code>value</code> is the criterion&#39;s importance weight (0–1 range, from the database). The <code>score</code> is the assessor&#39;s rating (1–5). The result is rounded to 4 decimal places.</p>
+<p><strong>Code:</strong></p>
+<pre><code class="language-typescript">is: Number((c.value * score).toFixed(4))
+</code></pre>
+<h3 id="layer-2-total-impact-score-tis">Layer 2: Total Impact Score (TIS)</h3>
+<p>For each Disability Type <code>dt</code> (1–5, dynamically derived):</p>
+<pre><code>TIS(dt) = Σ IS(c) for all criteria c where c.disability === dt
+</code></pre>
+<p>The set of DT IDs is <strong>not hardcoded</strong>. It is derived by scanning all criteria:</p>
+<pre><code class="language-typescript">const dtIds = uniqueSortedIds(criteria, &#39;disability&#39;);
+// → [1, 2, 3, 4, 5] (derived from actual data)
+</code></pre>
+<h3 id="layer-3-combined-impact-score-cis">Layer 3: Combined Impact Score (CIS)</h3>
+<p>For each Assessment Dimension <code>ad</code> (1–5, dynamically derived):</p>
+<pre><code>CIS(ad) = Σ (dtWeight[dt] × IS(c))
+</code></pre>
+<p>for all criteria <code>c</code> where <code>c.dimension === ad</code>. The DT weight comes from the building type&#39;s <code>disability_weights</code> array (index 0 = DT 1, index 1 = DT 2, etc.).</p>
+<h3 id="layer-4-overall-building-score-obs">Layer 4: Overall Building Score (OBS)</h3>
+<pre><code>OBS_raw = Σ (dtWeight[dt] × TIS(dt)) for all dt
+OBS_pct = (OBS_raw / MAX_OBS) × 100
+</code></pre>
+<p><code>MAX_OBS</code> is read from the <code>config</code> table (value: 25). The result is rounded to 2 decimal places.</p>
+<h3 id="layer-5-neb-classification">Layer 5: NEB Classification</h3>
+<p>The NEB thresholds are loaded sorted DESC by <code>min</code>:</p>
+<pre><code class="language-sql">SELECT * FROM neb_thresholds ORDER BY min DESC;
+-- Result: 85, 60, 40, 0
+</code></pre>
+<p>The engine finds the <strong>first</strong> threshold where <code>OBS_pct ≥ threshold.min</code>:</p>
+<ul>
+<li>OBS ≥ 85 → &quot;A+&quot; (Excellent / Best practice)</li>
+<li>OBS ≥ 60 → &quot;A&quot; (Good)</li>
+<li>OBS ≥ 40 → &quot;B&quot; (Acceptable)</li>
+<li>OBS ≥ 0 → &quot;No Rating&quot; (Non-compliant)</li>
+</ul>
+<h2 id="additional-computations">Additional Computations</h2>
+<h3 id="strengths-and-weaknesses">Strengths &amp; Weaknesses</h3>
+<ul>
+<li><strong>Strengths:</strong> Top N criteria where <code>score ≥ STRENGTH_THRESHOLD</code> (config: 5)</li>
+<li><strong>Weaknesses:</strong> Top N criteria where <code>score ≤ WEAKNESS_THRESHOLD</code> (config: 2), sorted ascending</li>
+</ul>
+<h3 id="per-dt-average-scores">Per-DT Average Scores</h3>
+<p>For each DT, the average of all criterion scores belonging to that DT.</p>
+<h3 id="per-ad-average-scores">Per-AD Average Scores</h3>
+<p>For each DT, the average of all criterion scores belonging to that AD.</p>
+<h2 id="config-driven-parameters">Config-Driven Parameters</h2>
+<p>All tunable parameters are stored in the <code>config</code> table:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Value</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>MAX_OBS</code></td>
+<td>25</td>
+<td>Scales the OBS percentage</td>
+</tr>
+<tr>
+<td><code>DEFAULT_SCORE</code></td>
+<td>3</td>
+<td>Score used when a criterion has no score</td>
+</tr>
+<tr>
+<td><code>STRENGTH_THRESHOLD</code></td>
+<td>5</td>
+<td>Minimum score for a strength</td>
+</tr>
+<tr>
+<td><code>WEAKNESS_THRESHOLD</code></td>
+<td>2</td>
+<td>Maximum score for a weakness</td>
+</tr>
+<tr>
+<td><code>TOP_N_RESULTS</code></td>
+<td>5</td>
+<td>Number of strengths/weaknesses to return</td>
+</tr>
+</tbody></table>
+<p>Changing any of these values in the database immediately changes the calculation output — no code deploy needed.</p>
+<h2 id="key-architectural-guarantees">Key Architectural Guarantees</h2>
+<ol>
+<li>✅ DT/AD sets are <strong>derived from data</strong>, not hardcoded</li>
+<li>✅ Weights are <strong>per building type</strong>, loaded from the database</li>
+<li>✅ NEB thresholds are <strong>database rows</strong>, not if-else chains</li>
+<li>✅ MAX_OBS is <strong>configurable</strong>, not a magic number</li>
+<li>✅ Static tests <strong>enforce</strong> no hardcoded patterns in source</li>
+</ol>
+<hr>
+<div class="page-break"></div><h1 id="12-metadata-driven-design">12 METADATA-DRIVEN DESIGN</h1>
+<h2 id="core-philosophy">Core Philosophy</h2>
+<p>The AAST system is designed around the principle that <strong>all configurable business rules must live in the database, never in source code.</strong> This enables domain experts to update the system without developer involvement and without code deployments.</p>
+<h2 id="what-is-metadata">What Is Metadata?</h2>
+<p>In AAST, &quot;metadata&quot; refers to the four tables that define the assessment framework:</p>
+<ol>
+<li><strong><code>criteria</code></strong> — What is being evaluated (63 criteria)</li>
+<li><strong><code>building_types</code></strong> — How different building types weight accessibility factors</li>
+<li><strong><code>neb_thresholds</code></strong> — How OBS percentages map to NEB classes</li>
+<li><strong><code>config</code></strong> — Tunable parameters for the calculation engine</li>
+</ol>
+<h2 id="metadata-service">Metadata Service</h2>
+<p>The <code>metadataService.ts</code> provides a centralized, cached access layer:</p>
+<pre><code class="language-typescript">// Lazy initialization — only connects to DB once
+async function init() {
+  if (initialized || AppDataSource.isInitialized) return;
+  await AppDataSource.initialize();
+  initialized = true;
+}
+</code></pre>
+<h3 id="caching-strategy">Caching Strategy</h3>
+<ul>
+<li><strong>NEB Thresholds:</strong> Cached on first access, ordered DESC by <code>min</code></li>
+<li><strong>Config Values:</strong> Cached per key, with configurable fallback values</li>
+<li><strong>Building Types:</strong> Loaded on demand (not cached — allows runtime updates)</li>
+<li><strong>Criteria:</strong> Loaded on demand (not cached — allows runtime additions)</li>
+</ul>
+<h3 id="validation-on-startup">Validation on Startup</h3>
+<p>When the backend starts, <code>validateMetadata()</code> checks:</p>
+<ul>
+<li>✅ <code>config</code> table has <code>MAX_OBS</code></li>
+<li>✅ <code>building_types</code> table has at least 1 row</li>
+<li>✅ <code>criteria</code> table has at least 1 row</li>
+<li>✅ <code>neb_thresholds</code> table has at least 1 row</li>
+</ul>
+<p>If any check fails, the process exits with code 1.</p>
+<h2 id="dynamic-loading-pattern">Dynamic Loading Pattern</h2>
+<p>Every time a calculation runs:</p>
+<ol>
+<li>MAX_OBS is read from <code>config</code> (cached)</li>
+<li>STRENGTH_THRESHOLD is read from <code>config</code> (cached)</li>
+<li>WEAKNESS_THRESHOLD is read from <code>config</code> (cached)</li>
+<li>TOP_N_RESULTS is read from <code>config</code> (cached)</li>
+<li>Building type weights are loaded from <code>building_types</code></li>
+<li>All criteria are loaded from <code>criteria</code></li>
+<li>NEB thresholds are loaded from <code>neb_thresholds</code> (cached)</li>
+</ol>
+<p>This means if a domain expert updates any of these tables, the <strong>next evaluation</strong> automatically uses the new values.</p>
+<h2 id="why-not-hardcode">Why Not Hardcode?</h2>
+<table>
+<thead>
+<tr>
+<th>Hardcoded Approach</th>
+<th>Metadata-Driven Approach</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>const NEB = [85, 60, 40]</code></td>
+<td><code>SELECT * FROM neb_thresholds ORDER BY min DESC</code></td>
+</tr>
+<tr>
+<td><code>const MAX_OBS = 25</code></td>
+<td><code>SELECT value FROM config WHERE key = &#39;MAX_OBS&#39;</code></td>
+</tr>
+<tr>
+<td><code>if (score &gt;= 5) strength</code></td>
+<td><code>if (score &gt;= STRENGTH_THRESHOLD) strength</code></td>
+</tr>
+<tr>
+<td>Fixed DT/AD arrays</td>
+<td>Derived from <code>criteria.disability</code> and <code>criteria.dimension</code></td>
+</tr>
+<tr>
+<td>Redeploy to change</td>
+<td>Update DB row — instant effect</td>
+</tr>
+</tbody></table>
+<h2 id="static-test-enforcement">Static Test Enforcement</h2>
+<p>The <code>static.test.ts</code> file programmatically enforces the metadata-driven constraint:</p>
+<pre><code>Forbidden pattern /0.2,0.2,0.2,0.2,0.2/ found in ...
+Forbidden pattern /85,\s*60,\s*40/ found in ...
+Forbidden pattern /MAX_OBS\s*=\s*25/ found in ...
+</code></pre>
+<p>This runs as part of the CI pipeline (<code>npm run test:automated</code>) and blocks deployment if any hardcoded pattern is detected.</p>
+<hr>
+<div class="page-break"></div><h1 id="13-dynamic-criteria-system">13 DYNAMIC CRITERIA SYSTEM</h1>
+<h2 id="the-problem">The Problem</h2>
+<p>Traditional accessibility tools hardcode criteria in source code. Adding a new criterion requires:</p>
+<ol>
+<li>A developer to write code</li>
+<li>Code review</li>
+<li>Testing</li>
+<li>Deployment</li>
+<li>Database migration</li>
+</ol>
+<h2 id="the-aast-solution">The AAST Solution</h2>
+<p>In AAST, adding a new criterion is a <strong>single API call</strong> or a <strong>single database INSERT</strong>. No code changes. No deployment. Instant effect.</p>
+<h2 id="how-it-works">How It Works</h2>
+<pre><code class="language-mermaid">graph LR
+    A[Domain Expert] --&gt;|POST /api/v1/criteria| B[Express Controller]
+    B --&gt;|Validates body| C[Zod/Manual Validation]
+    C --&gt;|Inserts row| D[(MariaDB criteria table)]
+    D --&gt;|Next evaluation| E[Calculation Engine]
+    E --&gt;|Includes new criterion| F[Updated OBS/NEB Result]
+</code></pre>
+<h3 id="adding-a-criterion-via-api">Adding a Criterion via API</h3>
+<pre><code class="language-bash">curl -X POST http://localhost:4000/api/v1/criteria \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{
+    &quot;code&quot;: &quot;EC1.1.10&quot;,
+    &quot;name&quot;: &quot;Automatic Door Speed&quot;,
+    &quot;definition&quot;: &quot;Opening and closing speed of automatic doors&quot;,
+    &quot;justification&quot;: &quot;Ensures safe passage for mobility-impaired users&quot;,
+    &quot;value&quot;: 0.15,
+    &quot;disability&quot;: 1,
+    &quot;dimension&quot;: 1,
+    &quot;levels&quot;: [&quot;Dangerously fast&quot;, &quot;Fast closing&quot;, &quot;Standard speed&quot;, &quot;Slow and safe&quot;, &quot;Fully adjustable&quot;]
+  }&#39;
+</code></pre>
+<h3 id="adding-a-criterion-via-sql">Adding a Criterion via SQL</h3>
+<pre><code class="language-sql">INSERT INTO criteria (id, code, name, definition, justification, value, disability, dimension, score, levels)
+VALUES (
+  UUID(), &#39;EC1.1.10&#39;, &#39;Automatic Door Speed&#39;,
+  &#39;Opening and closing speed of automatic doors&#39;,
+  &#39;Ensures safe passage for mobility-impaired users&#39;,
+  0.15, 1, 1, 3,
+  &#39;[&quot;Dangerously fast&quot;, &quot;Fast closing&quot;, &quot;Standard speed&quot;, &quot;Slow and safe&quot;, &quot;Fully adjustable&quot;]&#39;
+);
+</code></pre>
+<h3 id="what-happens-next">What Happens Next</h3>
+<ol>
+<li>The next time <code>calculationService.evaluate()</code> runs, it calls <code>metadataService.getAllCriteria()</code></li>
+<li>The new criterion is included in the result set</li>
+<li>It participates in IS, TIS, CIS, OBS, and NEB calculations</li>
+<li>The OBS percentage may change because the total number of criteria affects the weighted sum</li>
+<li>Strengths and weaknesses may change</li>
+</ol>
+<h3 id="adjusting-building-type-weights">Adjusting Building Type Weights</h3>
+<pre><code class="language-sql">-- Change the disability weights for Commercial Buildings
+UPDATE building_types
+SET disability_weights = &#39;[0.30, 0.20, 0.20, 0.15, 0.15]&#39;
+WHERE name = &#39;Commercial Buildings&#39;;
+</code></pre>
+<p>The next evaluation for &quot;Commercial Buildings&quot; automatically uses the new weights.</p>
+<h3 id="changing-neb-thresholds">Changing NEB Thresholds</h3>
+<pre><code class="language-sql">-- Add a new &quot;A++&quot; level at 95%
+INSERT INTO neb_thresholds (id, min, neb_class, equivalent, meaning, neb_score, ordinal)
+VALUES (UUID(), 95, &#39;A++&#39;, &#39;5+&#39;, &#39;Outstanding / World-class&#39;, 5, 0);
+
+-- Lower the B threshold
+UPDATE neb_thresholds SET min = 35 WHERE neb_class = &#39;B&#39;;
+</code></pre>
+<p>The next evaluation automatically uses the updated threshold table (sorted DESC by <code>min</code>).</p>
+<h2 id="key-design-insight">Key Design Insight</h2>
+<p>The <strong>DT and AD sets are derived from the criteria data</strong>, not from a configuration file. If you add a criterion with <code>disability: 6</code>, the system would automatically create a DT 6 bucket. While the API validates disability to 1–5, this architecture ensures the system adapts to whatever data exists.</p>
+<hr>
+<div class="page-break"></div><h1 id="14-docker-environment">14 DOCKER ENVIRONMENT</h1>
+<h2 id="architecture">Architecture</h2>
+<p>The Docker environment runs only the MariaDB database. The backend and frontend run natively on the host machine during development.</p>
+<pre><code class="language-mermaid">graph LR
+    subgraph &quot;Docker&quot;
+        A[MariaDB 10.11 Container]
+        B[(db_data Volume)]
+    end
+    subgraph &quot;Host&quot;
+        C[Backend :4000]
+        D[Frontend :3000]
+    end
+    C --&gt;|mysql://myuser:mypassword@127.0.0.1:3306/mydb| A
+    D --&gt;|HTTP localhost:4000| C
+    A --&gt; B
+</code></pre>
+<h2 id="docker-composeyml">docker-compose.yml</h2>
+<pre><code class="language-yaml">version: &#39;3.8&#39;
+services:
+  mariadb:
+    image: mariadb:10.11
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    ports:
+      - &quot;3306:3306&quot;
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker-initdb.d:/docker-entrypoint-initdb.d:ro
+
+volumes:
+  db_data:
+</code></pre>
+<h3 id="container-details">Container Details</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Image</td>
+<td><code>mariadb:10.11</code></td>
+</tr>
+<tr>
+<td>Container Name</td>
+<td><code>mariadb</code></td>
+</tr>
+<tr>
+<td>Restart Policy</td>
+<td><code>unless-stopped</code> (survives reboots)</td>
+</tr>
+<tr>
+<td>Root Password</td>
+<td><code>rootpass</code></td>
+</tr>
+<tr>
+<td>Database</td>
+<td><code>mydb</code></td>
+</tr>
+<tr>
+<td>App User</td>
+<td><code>myuser</code> / <code>mypassword</code></td>
+</tr>
+<tr>
+<td>Host Port</td>
+<td><code>3306</code></td>
+</tr>
+<tr>
+<td>Data Volume</td>
+<td><code>db_data</code> (persistent across container restarts)</td>
+</tr>
+<tr>
+<td>Init Script</td>
+<td><code>docker-initdb.d/init.sql</code> (runs on first start)</td>
+</tr>
+</tbody></table>
+<h2 id="init-script">Init Script</h2>
+<p>The <code>docker-initdb.d/init.sql</code> runs automatically when the container starts for the first time:</p>
+<pre><code class="language-sql">CREATE DATABASE IF NOT EXISTS mydb;
+CREATE USER IF NOT EXISTS &#39;myuser&#39;@&#39;%&#39; IDENTIFIED BY &#39;mypassword&#39;;
+GRANT ALL PRIVILEGES ON mydb.* TO &#39;myuser&#39;@&#39;%&#39;;
+FLUSH PRIVILEGES;
+</code></pre>
+<h2 id="useful-docker-commands">Useful Docker Commands</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>docker compose up -d mariadb</code></td>
+<td>Start MariaDB in background</td>
+</tr>
+<tr>
+<td><code>docker compose down</code></td>
+<td>Stop and remove container</td>
+</tr>
+<tr>
+<td><code>docker compose down -v</code></td>
+<td>Stop and remove container + volume (DATA LOSS)</td>
+</tr>
+<tr>
+<td><code>docker compose logs mariadb</code></td>
+<td>View MariaDB logs</td>
+</tr>
+<tr>
+<td><code>docker compose ps</code></td>
+<td>Check container status</td>
+</tr>
+<tr>
+<td><code>docker compose restart mariadb</code></td>
+<td>Restart the container</td>
+</tr>
+<tr>
+<td><code>docker exec -it mariadb mariadb -u myuser -pmypassword mydb</code></td>
+<td>Connect to MariaDB CLI</td>
+</tr>
+</tbody></table>
+<hr>
+<div class="page-break"></div><h1 id="15-local-development-setup">15 LOCAL DEVELOPMENT SETUP</h1>
+<h2 id="prerequisites">Prerequisites</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Minimum Version</th>
+<th>Check Command</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Node.js</td>
+<td>18 LTS (20 recommended)</td>
+<td><code>node --version</code></td>
+</tr>
+<tr>
+<td>npm</td>
+<td>9+</td>
+<td><code>npm --version</code></td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>24+</td>
+<td><code>docker --version</code></td>
+</tr>
+<tr>
+<td>Git</td>
+<td>2.40+</td>
+<td><code>git --version</code></td>
+</tr>
+</tbody></table>
+<h2 id="step-by-step-setup">Step-by-Step Setup</h2>
+<h3 id="step-1-clone-the-repository">Step 1: Clone the Repository</h3>
+<pre><code class="language-bash">git clone &lt;repository-url&gt; aastool
+cd aast-project
+</code></pre>
+<h3 id="step-2-install-backend-dependencies">Step 2: Install Backend Dependencies</h3>
+<pre><code class="language-bash">cd backend
+npm install
+</code></pre>
+<h3 id="step-3-start-mariadb">Step 3: Start MariaDB</h3>
+<pre><code class="language-bash"># From the backend/ directory
+docker compose up -d mariadb
+</code></pre>
+<p>Wait ~10 seconds for MariaDB to initialize. Verify:</p>
+<pre><code class="language-bash">docker compose ps
+# Should show: mariadb  Up  healthy
+</code></pre>
+<h3 id="step-4-seed-the-database">Step 4: Seed the Database</h3>
+<pre><code class="language-bash">npx ts-node src/scripts/seed.ts
+</code></pre>
+<p>Expected output:</p>
+<pre><code>DataSource initialized
+Seeding complete
+</code></pre>
+<p>This creates all tables (via TypeORM <code>synchronize: true</code>) and populates them with canonical data:</p>
+<ul>
+<li>7 building types</li>
+<li>63 criteria</li>
+<li>4 NEB thresholds</li>
+<li>5 config values</li>
+</ul>
+<h3 id="step-5-start-the-backend">Step 5: Start the Backend</h3>
+<pre><code class="language-bash">npm start
+</code></pre>
+<p>Expected output:</p>
+<pre><code>DataSource initialized
+Metadata validation passed
+Backend listening on 4000
+</code></pre>
+<p>Verify:</p>
+<pre><code class="language-bash">curl http://localhost:4000/health
+# → {&quot;status&quot;:&quot;ok&quot;}
+
+curl http://localhost:4000/api/v1/criteria | head -c 200
+# → {&quot;ok&quot;:true,&quot;data&quot;:[{...63 criteria...}]}
+</code></pre>
+<h3 id="step-6-install-frontend-dependencies">Step 6: Install Frontend Dependencies</h3>
+<pre><code class="language-bash">cd ../frontend
+npm install
+</code></pre>
+<h3 id="step-7-start-the-frontend">Step 7: Start the Frontend</h3>
+<pre><code class="language-bash">npm run dev
+</code></pre>
+<p>Expected output:</p>
+<pre><code>▲ Next.js 16.2.6
+- Local: http://localhost:3000
+</code></pre>
+<h3 id="step-8-verify-the-full-stack">Step 8: Verify the Full Stack</h3>
+<ol>
+<li>Open <code>http://localhost:3000</code> in your browser</li>
+<li>Navigate to the Dashboard</li>
+<li>Select a building type and adjust some criterion scores</li>
+<li>Click &quot;Evaluate&quot;</li>
+<li>Verify you see the OBS gauge and NEB classification</li>
+</ol>
+<h3 id="troubleshooting-setup">Troubleshooting Setup</h3>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ECONNREFUSED 127.0.0.1:3306</code></td>
+<td>MariaDB not running</td>
+<td><code>docker compose up -d mariadb</code></td>
+</tr>
+<tr>
+<td><code>Access denied for user</code></td>
+<td>Wrong credentials</td>
+<td>Check <code>DATABASE_URL</code> matches docker-compose</td>
+</tr>
+<tr>
+<td><code>Table &#39;mydb.criteria&#39; doesn&#39;t exist</code></td>
+<td>Not seeded</td>
+<td><code>npx ts-node src/scripts/seed.ts</code></td>
+</tr>
+<tr>
+<td><code>Metadata validation failed</code></td>
+<td>Empty tables</td>
+<td>Run seed script</td>
+</tr>
+<tr>
+<td><code>Port 4000 already in use</code></td>
+<td>Another process</td>
+<td><code>netstat -ano | findstr 4000</code> then kill</td>
+</tr>
+<tr>
+<td><code>Port 3000 already in use</code></td>
+<td>Another Next.js instance</td>
+<td>Kill other dev servers</td>
+</tr>
+</tbody></table>
+<hr>
+<div class="page-break"></div><h1 id="16-running-the-project">16 RUNNING THE PROJECT</h1>
+<h2 id="daily-development-scripts">Daily Development Scripts</h2>
+<p>The project provides shell scripts for common operations:</p>
+<table>
+<thead>
+<tr>
+<th>Script</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>start-dev.sh</code></td>
+<td>Start all services (MariaDB + Backend + Frontend)</td>
+</tr>
+<tr>
+<td><code>stop-dev.sh</code></td>
+<td>Stop all services</td>
+</tr>
+<tr>
+<td><code>status-dev.sh</code></td>
+<td>Check status of all services</td>
+</tr>
+<tr>
+<td><code>logs-dev.sh</code></td>
+<td>View logs from all services</td>
+</tr>
+</tbody></table>
+<h2 id="manual-startup-windows">Manual Startup (Windows)</h2>
+<p>Start <strong>three separate terminal windows</strong>:</p>
+<p><strong>Terminal 1 — MariaDB:</strong></p>
+<pre><code class="language-bash">cd backend
+docker compose up -d mariadb
+docker compose logs -f mariadb   # optional: watch logs
+</code></pre>
+<p><strong>Terminal 2 — Backend:</strong></p>
+<pre><code class="language-bash">cd backend
+npm start
+</code></pre>
+<p><strong>Terminal 3 — Frontend:</strong></p>
+<pre><code class="language-bash">cd frontend
+npm run dev
+</code></pre>
+<h2 id="verifying-everything-works">Verifying Everything Works</h2>
+<h3 id="health-check">Health Check</h3>
+<pre><code class="language-bash">curl http://localhost:4000/health
+# → {&quot;status&quot;:&quot;ok&quot;}
+</code></pre>
+<h3 id="quick-evaluation-test">Quick Evaluation Test</h3>
+<pre><code class="language-bash">curl -X POST http://localhost:4000/api/v1/evaluate \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;buildingType&quot;: &quot;Commercial Buildings&quot;}&#39;
+</code></pre>
+<p>Should return a JSON object with <code>obs</code>, <code>nebClass</code>, <code>averageRawScore</code>, <code>strengths</code>, <code>weaknesses</code>, etc.</p>
+<h3 id="frontend-accessibility">Frontend Accessibility</h3>
+<p>Open <code>http://localhost:3000</code> — you should see the AAST home page with quick links to Dashboard, Criteria, Certification, and Reports.</p>
+<h2 id="environment-variables">Environment Variables</h2>
+<h3 id="backend">Backend</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>PORT</code></td>
+<td><code>4000</code></td>
+<td>Backend HTTP port</td>
+</tr>
+<tr>
+<td><code>DATABASE_URL</code></td>
+<td><code>mysql://myuser:mypassword@127.0.0.1:3306/mydb</code></td>
+<td>MariaDB connection string</td>
+</tr>
+<tr>
+<td><code>DB_TYPE</code></td>
+<td><code>mariadb</code></td>
+<td>Database type (mariadb or postgres)</td>
+</tr>
+<tr>
+<td><code>TYPEORM_SYNCHRONIZE</code></td>
+<td><code>false</code></td>
+<td>Auto-create tables (development only)</td>
+</tr>
+</tbody></table>
+<h3 id="frontend">Frontend</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>NEXT_PUBLIC_API_URL</code></td>
+<td><code>http://localhost:4000/api/v1</code></td>
+<td>Backend API base URL</td>
+</tr>
+</tbody></table>
+<h2 id="npm-scripts-reference">NPM Scripts Reference</h2>
+<h3 id="backend-scripts">Backend Scripts</h3>
+<table>
+<thead>
+<tr>
+<th>Script</th>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>start</code></td>
+<td><code>ts-node src/index.ts</code></td>
+<td>Start backend server</td>
+</tr>
+<tr>
+<td><code>test</code></td>
+<td><code>ts-node src/tests/calculation.test.ts</code></td>
+<td>Run calculation tests</td>
+</tr>
+<tr>
+<td><code>test:automated</code></td>
+<td><code>ts-node src/tests/metadata.test.ts &amp;&amp; ts-node src/tests/static.test.ts &amp;&amp; ts-node src/tests/calculation.test.ts</code></td>
+<td>Full test suite</td>
+</tr>
+<tr>
+<td><code>verify:workbook</code></td>
+<td><code>ts-node src/scripts/extract_workbook_mappings.ts</code></td>
+<td>Verify workbook mapping</td>
+</tr>
+<tr>
+<td><code>migrate</code></td>
+<td><code>ts-node src/scripts/runMigrations.ts</code></td>
+<td>Run DB migrations</td>
+</tr>
+<tr>
+<td><code>seed</code></td>
+<td><code>ts-node src/scripts/seed.ts</code></td>
+<td>Seed database</td>
+</tr>
+</tbody></table>
+<h3 id="frontend-scripts">Frontend Scripts</h3>
+<table>
+<thead>
+<tr>
+<th>Script</th>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>dev</code></td>
+<td><code>next dev</code></td>
+<td>Start development server</td>
+</tr>
+<tr>
+<td><code>build</code></td>
+<td><code>next build</code></td>
+<td>Production build</td>
+</tr>
+<tr>
+<td><code>start</code></td>
+<td><code>next start</code></td>
+<td>Start production server</td>
+</tr>
+<tr>
+<td><code>lint</code></td>
+<td><code>next lint</code></td>
+<td>Run linter</td>
+</tr>
+</tbody></table>
+<hr>
+<div class="page-break"></div><h1 id="17-common-workflows">17 COMMON WORKFLOWS</h1>
+<h2 id="workflow-1-adding-a-new-criterion">Workflow 1: Adding a New Criterion</h2>
+<pre><code class="language-mermaid">graph TD
+    A[Domain expert identifies new criterion] --&gt; B[POST /api/v1/criteria]
+    B --&gt; C{Valid?}
+    C --&gt;|Yes| D[Row inserted in criteria table]
+    C --&gt;|No| E[400 Validation error]
+    D --&gt; F[Next evaluation includes new criterion]
+    F --&gt; G[OBS and NEB adjust automatically]
+</code></pre>
+<p><strong>Command:</strong></p>
+<pre><code class="language-bash">curl -X POST http://localhost:4000/api/v1/criteria \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;code&quot;:&quot;EC1.1.10&quot;,&quot;name&quot;:&quot;...&quot;,&quot;definition&quot;:&quot;...&quot;,&quot;value&quot;:0.15,&quot;disability&quot;:1,&quot;dimension&quot;:1,&quot;levels&quot;:[&quot;L1&quot;,&quot;L2&quot;,&quot;L3&quot;,&quot;L4&quot;,&quot;L5&quot;]}&#39;
+</code></pre>
+<h2 id="workflow-2-running-an-assessment">Workflow 2: Running an Assessment</h2>
+<ol>
+<li>Open Dashboard at <code>http://localhost:3000/dashboard</code></li>
+<li>Select building type from dropdown</li>
+<li>Rate each criterion on the 1–5 scale</li>
+<li>Click &quot;Evaluate&quot;</li>
+<li>Review OBS gauge, NEB class, strengths, weaknesses</li>
+<li>Optionally save as an assessment</li>
+</ol>
+<h2 id="workflow-3-adjusting-neb-thresholds">Workflow 3: Adjusting NEB Thresholds</h2>
+<p><strong>Scenario:</strong> The certification body wants to raise the &quot;A&quot; classification from 60% to 65%.</p>
+<pre><code class="language-sql">UPDATE neb_thresholds SET min = 65 WHERE neb_class = &#39;A&#39;;
+</code></pre>
+<p>The next evaluation automatically uses the new threshold. No code change. No deployment.</p>
+<h2 id="workflow-4-creating-a-new-building-type">Workflow 4: Creating a New Building Type</h2>
+<pre><code class="language-sql">INSERT INTO building_types (id, name, disability_weights, dimension_weights)
+VALUES (
+  UUID(),
+  &#39;Healthcare Buildings&#39;,
+  &#39;[0.20, 0.25, 0.20, 0.20, 0.15]&#39;,
+  &#39;[0.30, 0.30, 0.15, 0.10, 0.15]&#39;
+);
+</code></pre>
+<p>The new building type is immediately available for evaluations.</p>
+<h2 id="workflow-5-running-tests-before-commit">Workflow 5: Running Tests Before Commit</h2>
+<pre><code class="language-bash">cd backend
+npm run test:automated
+</code></pre>
+<p>Expected output:</p>
+<pre><code>Metadata validation passed
+Static checks passed
+All tests passed
+</code></pre>
+<h2 id="workflow-6-viewing-evaluation-history">Workflow 6: Viewing Evaluation History</h2>
+<pre><code class="language-bash">curl http://localhost:4000/api/v1/reports
+</code></pre>
+<p>Returns all evaluations as report records with: building type, OBS, NEB class, date, average score.</p>
+<h2 id="workflow-7-debugging-a-calculation">Workflow 7: Debugging a Calculation</h2>
+<ol>
+<li>Send a test evaluation via curl</li>
+<li>Examine the response:<ul>
+<li>Check <code>tisByDT</code> — are DT weights applied correctly?</li>
+<li>Check <code>cisByAD</code> — are AD weights applied correctly?</li>
+<li>Check <code>criteria[0].is</code> — is IS = value × score?</li>
+</ul>
+</li>
+<li>Compare against expected values from the Excel workbook</li>
+</ol>
+<hr>
+<div class="page-break"></div><h1 id="18-debugging-guide">18 DEBUGGING GUIDE</h1>
+<h2 id="common-log-locations">Common Log Locations</h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Log Location</th>
+<th>How to View</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Backend</td>
+<td>stdout (terminal)</td>
+<td>Terminal where <code>npm start</code> runs</td>
+</tr>
+<tr>
+<td>MariaDB</td>
+<td>Docker container logs</td>
+<td><code>docker compose logs mariadb</code></td>
+</tr>
+<tr>
+<td>Frontend</td>
+<td>Browser console (F12)</td>
+<td>DevTools → Console tab</td>
+</tr>
+<tr>
+<td>Frontend Network</td>
+<td>Browser DevTools</td>
+<td>DevTools → Network tab</td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>Docker daemon logs</td>
+<td><code>docker compose logs</code></td>
+</tr>
+</tbody></table>
+<h2 id="common-errors-and-fixes">Common Errors and Fixes</h2>
+<h3 id="error-1-quotdatasource-init-failedquot">Error 1: &quot;DataSource init failed&quot;</h3>
+<p><strong>Symptom:</strong> Backend crashes on startup with <code>DataSource init failed</code>.</p>
+<p><strong>Causes &amp; Fixes:</strong></p>
+<ul>
+<li>MariaDB not running → <code>docker compose up -d mariadb</code></li>
+<li>Wrong DATABASE_URL → Check environment variable</li>
+<li>Port conflict → Ensure port 3306 is free</li>
+<li>Credentials wrong → Verify docker-compose.yml matches DATABASE_URL</li>
+</ul>
+<h3 id="error-2-quotmetadata-validation-failedquot">Error 2: &quot;Metadata validation failed&quot;</h3>
+<p><strong>Symptom:</strong> Backend starts but exits with code 1 after &quot;Metadata validation failed&quot;.</p>
+<p><strong>Causes &amp; Fixes:</strong></p>
+<ul>
+<li>Database not seeded → Run <code>npx ts-node src/scripts/seed.ts</code></li>
+<li>Empty tables → Seed script was interrupted, truncate and re-seed</li>
+<li>TypeORM synchronize disabled and tables don&#39;t exist → Enable synchronize or run migrations</li>
+</ul>
+<h3 id="error-3-quoteconnrefusedquot">Error 3: &quot;ECONNREFUSED&quot;</h3>
+<p><strong>Symptom:</strong> Frontend or curl returns <code>ECONNREFUSED 127.0.0.1:4000</code>.</p>
+<p><strong>Fix:</strong> Backend is not running. Start it with <code>npm start</code> from the <code>backend/</code> directory.</p>
+<h3 id="error-4-cors-errors-in-browser">Error 4: CORS Errors in Browser</h3>
+<p><strong>Symptom:</strong> Browser console shows CORS policy errors.</p>
+<p><strong>Fix:</strong> Backend uses <code>cors()</code> middleware. If you changed the frontend port, update CORS configuration.</p>
+<h3 id="error-5-quotcode-must-match-pattern-ecxyzquot">Error 5: &quot;code must match pattern ECx.y.z&quot;</h3>
+<p><strong>Symptom:</strong> 400 error when creating a criterion.</p>
+<p><strong>Fix:</strong> Ensure the code follows the pattern: <code>EC</code> + integer + <code>.</code> + integer + <code>.</code> + integer. Examples: <code>EC1.1.1</code>, <code>EC5.2.3</code>.</p>
+<h3 id="error-6-quotlevels-must-be-an-array-of-exactly-5-stringsquot">Error 6: &quot;levels must be an array of exactly 5 strings&quot;</h3>
+<p><strong>Symptom:</strong> 400 error when creating a criterion.</p>
+<p><strong>Fix:</strong> The <code>levels</code> field must be a JSON array with exactly 5 strings (one per score level 1–5).</p>
+<h3 id="error-7-quotmissing-configuration-max_obsquot">Error 7: &quot;Missing configuration: MAX_OBS&quot;</h3>
+<p><strong>Symptom:</strong> Evaluation returns 500 with &quot;Missing configuration: MAX_OBS&quot;.</p>
+<p><strong>Fix:</strong> The <code>config</code> table is missing the MAX_OBS row. Re-run the seed script.</p>
+<h3 id="error-8-quotmissing-or-invalid-disability_weightsquot">Error 8: &quot;Missing or invalid disability_weights&quot;</h3>
+<p><strong>Symptom:</strong> Evaluation returns 500 with this error for a specific building type.</p>
+<p><strong>Fix:</strong> The building type has empty or null <code>disability_weights</code>. Update the row:</p>
+<pre><code class="language-sql">UPDATE building_types
+SET disability_weights = &#39;[0.28, 0.22, 0.18, 0.12, 0.2]&#39;
+WHERE name = &#39;Your Building Type&#39;;
+</code></pre>
+<h3 id="error-9-port-already-in-use">Error 9: Port Already in Use</h3>
+<p><strong>Symptom:</strong> <code>Error: listen EADDRINUSE :::4000</code> or <code>EADDRINUSE :::3000</code>.</p>
+<p><strong>Fix:</strong></p>
+<pre><code class="language-powershell"># Find process using port 4000
+netstat -ano | findstr :4000
+# Kill the process (replace PID)
+taskkill /PID &lt;PID&gt; /F
+</code></pre>
+<h3 id="error-10-frontend-shows-stale-data">Error 10: Frontend Shows Stale Data</h3>
+<p><strong>Symptom:</strong> Frontend doesn&#39;t reflect recent database changes.</p>
+<p><strong>Fix:</strong> TanStack Query has caching. Either:</p>
+<ul>
+<li>Click &quot;Refresh&quot; in the browser</li>
+<li>Invalidate the query in DevTools → React Query DevTools</li>
+<li>Check <code>staleTime</code> in <code>queryClient.ts</code> (default is likely 0 for most queries)</li>
+</ul>
+<hr>
+<div class="page-break"></div><h1 id="19-troubleshooting">19 TROUBLESHOOTING</h1>
+<h2 id="comprehensive-troubleshooting-table">Comprehensive Troubleshooting Table</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Problem</th>
+<th>Probable Cause</th>
+<th>Solution</th>
+<th>Verification</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Backend won&#39;t start</td>
+<td>MariaDB not running</td>
+<td><code>docker compose up -d mariadb</code></td>
+<td><code>curl localhost:4000/health</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>&quot;Access denied for user&quot;</td>
+<td>Wrong DB credentials</td>
+<td>Verify DATABASE_URL matches docker-compose.yml</td>
+<td>Connect via mysql CLI</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Tables don&#39;t exist</td>
+<td>Not seeded</td>
+<td><code>npx ts-node src/scripts/seed.ts</code></td>
+<td><code>SHOW TABLES;</code> in MariaDB</td>
+</tr>
+<tr>
+<td>4</td>
+<td>OBS always 0</td>
+<td>MAX_OBS missing from config</td>
+<td>Re-seed or insert config row manually</td>
+<td><code>SELECT * FROM config WHERE key=&#39;MAX_OBS&#39;</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>NEB always &quot;No Rating&quot;</td>
+<td>NEB thresholds missing</td>
+<td>Re-seed neb_thresholds</td>
+<td><code>SELECT * FROM neb_thresholds</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>All strengths/weaknesses empty</td>
+<td>Threshold config wrong</td>
+<td>Check STRENGTH_THRESHOLD and WEAKNESS_THRESHOLD</td>
+<td><code>SELECT * FROM config</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Frontend can&#39;t reach API</td>
+<td>Wrong NEXT_PUBLIC_API_URL</td>
+<td>Set env var or check default</td>
+<td>Check Network tab in DevTools</td>
+</tr>
+<tr>
+<td>8</td>
+<td>CORS errors</td>
+<td>Frontend origin not allowed</td>
+<td>Ensure cors() middleware is active</td>
+<td>Check response headers for Access-Control-Allow-Origin</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Docker container exits immediately</td>
+<td>Port 3306 conflict</td>
+<td>Stop local MySQL/MariaDB or change port</td>
+<td><code>docker compose ps</code></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Data lost after Docker restart</td>
+<td>Volume not configured</td>
+<td>Check docker-compose.yml has db_data volume</td>
+<td><code>docker volume ls</code></td>
+</tr>
+<tr>
+<td>11</td>
+<td>Evaluation returns unexpected OBS</td>
+<td>Building type weights incorrect</td>
+<td>Check building_types weights</td>
+<td><code>SELECT * FROM building_types</code></td>
+</tr>
+<tr>
+<td>12</td>
+<td>Criteria count wrong</td>
+<td>Seed incomplete or duplicate codes</td>
+<td>Check criteria count</td>
+<td><code>SELECT COUNT(*) FROM criteria</code> (should be 63)</td>
+</tr>
+<tr>
+<td>13</td>
+<td>&quot;entity.parse.failed&quot; in logs</td>
+<td>Invalid JSON in request body</td>
+<td>Check request payload formatting</td>
+<td>Validate JSON with a linter</td>
+</tr>
+<tr>
+<td>14</td>
+<td>TypeORM &quot;EntityMetadataNotFound&quot;</td>
+<td>Entity not registered in DataSource</td>
+<td>Check data-source.ts entities array</td>
+<td>List all 5 entities in entities array</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Migration fails</td>
+<td>Table already exists</td>
+<td>Check migration history, use IF NOT EXISTS</td>
+<td>Run migration then verify schema</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Frontend build fails</td>
+<td>Next.js version mismatch or missing deps</td>
+<td><code>npm ci</code> then <code>npm run build</code></td>
+<td>Check build output</td>
+</tr>
+<tr>
+<td>17</td>
+<td>&quot;Cannot find module &#39;criteria&#39;&quot;</td>
+<td>Import path wrong</td>
+<td>Check import path in seed.ts</td>
+<td>Verify src/data/criteria.ts exists</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Scores not persisting</td>
+<td>Assessment creation failing</td>
+<td>Check POST /api/v1/assessments request format</td>
+<td>Verify assessment appears in GET</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Docker pull fails</td>
+<td>No internet or registry down</td>
+<td>Check network, try <code>docker pull mariadb:10.11</code></td>
+<td>Run manually then compose up</td>
+</tr>
+<tr>
+<td>20</td>
+<td>TypeScript compilation errors</td>
+<td>tsconfig or dependency issue</td>
+<td><code>npm install</code> then check tsconfig.json</td>
+<td>Run <code>npx tsc --noEmit</code></td>
+</tr>
+<tr>
+<td>21</td>
+<td>JSON parse error in seed</td>
+<td>Invalid JSON in building-types.json</td>
+<td>Validate building-types.json</td>
+<td>Use a JSON validator</td>
+</tr>
+<tr>
+<td>22</td>
+<td>Backend memory leak</td>
+<td>Lazy cache not bounded</td>
+<td>Restart backend periodically</td>
+<td>Monitor with <code>process.memoryUsage()</code></td>
+</tr>
+<tr>
+<td>23</td>
+<td>Slow evaluation (&gt;2s)</td>
+<td>Large criteria set or DB latency</td>
+<td>Check MariaDB indices, use EXPLAIN</td>
+<td>Benchmark with curl timing</td>
+</tr>
+<tr>
+<td>24</td>
+<td>Frontend white screen</td>
+<td>JavaScript error</td>
+<td>Check browser console</td>
+<td>Look for React render errors</td>
+</tr>
+<tr>
+<td>25</td>
+<td>PWA not installing</td>
+<td>Service worker or manifest issue</td>
+<td>Check manifest.json and sw.js</td>
+<td>Use Lighthouse PWA audit</td>
+</tr>
+<tr>
+<td>26</td>
+<td>&quot;413 Request Entity Too Large&quot;</td>
+<td>Payload too large</td>
+<td>Increase Express body parser limit</td>
+<td>Configure <code>express.json({ limit: &#39;1mb&#39; })</code></td>
+</tr>
+<tr>
+<td>27</td>
+<td>Missing environment variable</td>
+<td>.env not loaded</td>
+<td>Create .env file or set in terminal</td>
+<td><code>echo $DATABASE_URL</code></td>
+</tr>
+<tr>
+<td>28</td>
+<td>&quot;Socket hang up&quot; from frontend</td>
+<td>Backend timeout or crash</td>
+<td>Check backend is running, increase Axios timeout</td>
+<td><code>curl localhost:4000/health</code></td>
+</tr>
+<tr>
+<td>29</td>
+<td>Duplicate key error (409)</td>
+<td>Criterion code already exists</td>
+<td>Use unique code or update existing</td>
+<td><code>SELECT code FROM criteria WHERE code=&#39;ECx.y.z&#39;</code></td>
+</tr>
+<tr>
+<td>30</td>
+<td>&quot;Cannot set headers after sent&quot;</td>
+<td>Controller sends multiple responses</td>
+<td>Check controller logic is single-response</td>
+<td>Review controller code for multiple res.json calls</td>
+</tr>
+<tr>
+<td>31</td>
+<td>Static test fails in CI</td>
+<td>Hardcoded pattern found</td>
+<td>Remove hardcoded values, use DB config</td>
+<td><code>npm run test:automated</code> locally</td>
+</tr>
+<tr>
+<td>32</td>
+<td>Frontend OBS gauge shows 0</td>
+<td>Evaluation not triggered</td>
+<td>Click &quot;Evaluate&quot; button, check network</td>
+<td>Verify POST /evaluate returns data</td>
+</tr>
+</tbody></table>
+<hr>
+<div class="page-break"></div><h1 id="20-coding-standards">20 CODING STANDARDS</h1>
+<h2 id="general-principles">General Principles</h2>
+<ol>
+<li><strong>Metadata-Driven First:</strong> Never hardcode a value that belongs in the database. If you&#39;re tempted to write <code>const MAX_OBS = 25</code>, put it in the <code>config</code> table instead.</li>
+<li><strong>Backend Owns Logic:</strong> All calculations, validations, and business rules live in the backend. The frontend is a presentation-only shell.</li>
+<li><strong>TypeScript Strict Mode:</strong> All code uses <code>strict: true</code>. No implicit <code>any</code>. Use explicit types.</li>
+<li><strong>Single Source of Truth:</strong> The canonical source for criteria values is <code>src/data/criteria.ts</code>. The database is populated from this file during seeding.</li>
+</ol>
+<h2 id="naming-conventions">Naming Conventions</h2>
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Convention</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Files</td>
+<td>kebab-case</td>
+<td><code>calculation-service.ts</code></td>
+</tr>
+<tr>
+<td>Classes / Entities</td>
+<td>PascalCase</td>
+<td><code>NebThreshold</code></td>
+</tr>
+<tr>
+<td>Functions</td>
+<td>camelCase</td>
+<td><code>getBuildingType()</code></td>
+</tr>
+<tr>
+<td>Variables</td>
+<td>camelCase</td>
+<td><code>averageRawScore</code></td>
+</tr>
+<tr>
+<td>Constants</td>
+<td>UPPER_SNAKE_CASE</td>
+<td><code>MAX_OBS</code></td>
+</tr>
+<tr>
+<td>Database tables</td>
+<td>snake_case</td>
+<td><code>neb_thresholds</code></td>
+</tr>
+<tr>
+<td>Database columns</td>
+<td>snake_case</td>
+<td><code>building_type</code></td>
+</tr>
+<tr>
+<td>API endpoints</td>
+<td>kebab-case in path</td>
+<td><code>/api/v1/building-types</code></td>
+</tr>
+<tr>
+<td>React components</td>
+<td>PascalCase</td>
+<td><code>BuildingCard.tsx</code></td>
+</tr>
+<tr>
+<td>Hooks</td>
+<td>camelCase, <code>use</code> prefix</td>
+<td><code>useBuildings</code></td>
+</tr>
+</tbody></table>
+<h2 id="folder-structure-conventions">Folder Structure Conventions</h2>
+<pre><code>controllers/   ← Route handlers only (no business logic)
+services/      ← Business logic + computation
+entities/      ← TypeORM entity definitions
+data/          ← Seed data (JSON, TS arrays)
+scripts/       ← Utility scripts (seed, migrate, verify)
+tests/         ← Automated tests
+</code></pre>
+<h2 id="service-conventions">Service Conventions</h2>
+<ul>
+<li>Services export <strong>async functions</strong>, not classes</li>
+<li>Services use the metadata service for data access (not direct repository calls)</li>
+<li>Calculation service is the only place formulas exist</li>
+<li>Never import calculation service from a controller — controllers only call it</li>
+</ul>
+<h2 id="controller-conventions">Controller Conventions</h2>
+<ul>
+<li>Controllers validate request shape before calling services</li>
+<li>Controllers use <code>try/catch</code> and return appropriate HTTP status codes</li>
+<li>Validation errors return 400 with descriptive messages</li>
+<li>Server errors return 500 with a generic message (logged internally)</li>
+<li>Success responses always include <code>ok: true</code></li>
+</ul>
+<h2 id="component-conventions-frontend">Component Conventions (Frontend)</h2>
+<ul>
+<li>Components are functional (no class components)</li>
+<li>Use <code>&quot;use client&quot;</code> directive for interactive components</li>
+<li>Use TanStack Query hooks for server data (never fetch directly in components)</li>
+<li>Use Framer Motion <code>motion</code> components for animations</li>
+<li>Keep components focused — single responsibility</li>
+</ul>
+<h2 id="formatting">Formatting</h2>
+<ul>
+<li>TypeScript: 2-space indentation (configured in tsconfig)</li>
+<li>No trailing whitespace</li>
+<li>Files end with a newline</li>
+<li>Use semicolons (TypeScript default)</li>
+</ul>
+<h2 id="documentation-and-comments">Documentation &amp; Comments</h2>
+<ul>
+<li>Every entity has a JSDoc comment describing its purpose</li>
+<li>Complex calculation steps have inline comments</li>
+<li>API endpoints are documented in <code>api-spec.md</code></li>
+<li>&quot;Why&quot; comments explain design decisions, not what the code does</li>
+</ul>
+<h2 id="prohibited-patterns">Prohibited Patterns</h2>
+<p>These are checked by <code>static.test.ts</code>:</p>
+<pre><code class="language-typescript">// ❌ PROHIBITED
+const weights = [0.2, 0.2, 0.2, 0.2, 0.2];  // Equal weights — must be in DB
+const NEB = [85, 60, 40];                      // Hardcoded thresholds
+const MAX_OBS = 25;                            // Hardcoded config
+
+// ✅ CORRECT
+const weights = bt.disability_weights;          // From database
+const neb = await metadata.getNebThresholds(); // From database
+const MAX_OBS = await metadata.getConfigNumber(&#39;MAX_OBS&#39;); // From database
+</code></pre>
+<hr>
+<div class="page-break"></div><h1 id="21-git-workflow">21 GIT WORKFLOW</h1>
+<h2 id="branch-strategy">Branch Strategy</h2>
+<pre><code>main          ← Production branch (deploys to Azure)
+  └── develop ← Integration branch
+       └── feature/xxx ← Feature branches
+       └── fix/xxx     ← Bug fix branches
+       └── chore/xxx   ← Maintenance branches
+</code></pre>
+<h2 id="branch-naming">Branch Naming</h2>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Pattern</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Feature</td>
+<td><code>feature/&lt;description&gt;</code></td>
+<td><code>feature/add-export-pdf</code></td>
+</tr>
+<tr>
+<td>Bug Fix</td>
+<td><code>fix/&lt;description&gt;</code></td>
+<td><code>fix/neb-threshold-ordering</code></td>
+</tr>
+<tr>
+<td>Chore</td>
+<td><code>chore/&lt;description&gt;</code></td>
+<td><code>chore/update-dependencies</code></td>
+</tr>
+<tr>
+<td>Hotfix</td>
+<td><code>hotfix/&lt;description&gt;</code></td>
+<td><code>hotfix/cors-production</code></td>
+</tr>
+</tbody></table>
+<h2 id="commit-messages">Commit Messages</h2>
+<p>Follow conventional commits:</p>
+<pre><code>&lt;type&gt;(&lt;scope&gt;): &lt;description&gt;
+
+[optional body]
+[optional footer]
+</code></pre>
+<p><strong>Types:</strong> <code>feat</code>, <code>fix</code>, <code>chore</code>, <code>docs</code>, <code>test</code>, <code>refactor</code>, <code>perf</code>, <code>ci</code></p>
+<p><strong>Examples:</strong></p>
+<pre><code>feat(backend): add POST /api/v1/criteria endpoint
+fix(calculation): correct CIS formula for AD weighting
+docs(readme): update local setup instructions
+test(static): add banned pattern for hardcoded MAX_OBS
+</code></pre>
+<h2 id="pull-request-process">Pull Request Process</h2>
+<ol>
+<li>Create feature branch from <code>develop</code></li>
+<li>Make changes, commit with conventional messages</li>
+<li>Run <code>npm run test:automated</code> locally</li>
+<li>Push branch to remote</li>
+<li>Create Pull Request to <code>develop</code></li>
+<li>CI runs automatically (test-backend job)</li>
+<li>Request code review from at least one team member</li>
+<li>Address review comments</li>
+<li>Merge when approved and CI passes</li>
+</ol>
+<h2 id="ci-pipeline-github-actions">CI Pipeline (GitHub Actions)</h2>
+<p>On push to <code>main</code>:</p>
+<ol>
+<li><strong>test-backend:</strong> Runs metadata.test.ts, static.test.ts, calculation.test.ts, verify:workbook</li>
+<li><strong>build-backend:</strong> Compiles TypeScript, uploads dist artifact</li>
+<li><strong>deploy-backend:</strong> Deploys to Azure App Service</li>
+<li><strong>build-frontend:</strong> Runs <code>next build</code>, uploads .next artifact</li>
+<li><strong>deploy-frontend:</strong> Deploys to Azure Static Web App</li>
+</ol>
+<h2 id="releases">Releases</h2>
+<ul>
+<li>Releases are tagged with semantic versioning: <code>v1.0.0</code>, <code>v1.1.0</code>, etc.</li>
+<li><code>main</code> branch is always deployable</li>
+<li>Hotfix branches are created from <code>main</code> and merged back to both <code>main</code> and <code>develop</code></li>
+</ul>
+<hr>
+<div class="page-break"></div><h1 id="22-deployment">22 DEPLOYMENT</h1>
+<h2 id="deployment-architecture">Deployment Architecture</h2>
+<pre><code class="language-mermaid">graph TD
+    subgraph &quot;GitHub Actions&quot;
+        A[Push to main]
+        B[Test → Build → Deploy]
+    end
+
+    subgraph &quot;Azure&quot;
+        C[App Service Plan B1]
+        D[Backend App Service&lt;br/&gt;Node 20 Linux]
+        E[Static Web App&lt;br/&gt;Next.js]
+        F[MariaDB Server&lt;br/&gt;10.3, TLS 1.2]
+        G[Application Insights]
+        H[Log Analytics]
+    end
+
+    A --&gt; B
+    B --&gt; D
+    B --&gt; E
+    D --&gt; F
+    D --&gt; G
+    G --&gt; H
+</code></pre>
+<h2 id="azure-resources-defined-in-mainbicep">Azure Resources (Defined in main.bicep)</h2>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Name Pattern</th>
+<th>SKU/Tier</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Resource Group</td>
+<td><code>rg-aas-{environment}</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>App Service Plan</td>
+<td><code>asp-aas-{environment}</code></td>
+<td>B1 (Basic Linux)</td>
+</tr>
+<tr>
+<td>Backend App</td>
+<td><code>app-aas-backend-{environment}</code></td>
+<td>Node 20 LTS</td>
+</tr>
+<tr>
+<td>Static Web App</td>
+<td><code>stapp-aas-frontend-{environment}</code></td>
+<td>Standard</td>
+</tr>
+<tr>
+<td>MariaDB Server</td>
+<td><code>mariadb-aas-{environment}</code></td>
+<td>10.3, TLS 1.2</td>
+</tr>
+<tr>
+<td>Application Insights</td>
+<td><code>appi-aas-{environment}</code></td>
+<td>Web</td>
+</tr>
+<tr>
+<td>Log Analytics</td>
+<td><code>law-aas-{environment}</code></td>
+<td>PerGB2018</td>
+</tr>
+</tbody></table>
+<h2 id="deployment-via-bicep">Deployment via Bicep</h2>
+<pre><code class="language-bash">az deployment sub create \
+  --location westeurope \
+  --template-file azure/main.bicep \
+  --parameters dbPassword=&#39;&lt;secure-password&gt;&#39; dbAdminPassword=&#39;&lt;admin-password&gt;&#39;
+</code></pre>
+<h2 id="environment-variables-in-production">Environment Variables in Production</h2>
+<h3 id="backend-app-settings">Backend App Settings</h3>
+<pre><code>PORT=4000
+WEBSITES_PORT=4000
+DATABASE_URL=mysql://myuser:&lt;password&gt;@mariadb-aas-production.mariadb.database.azure.com:3306/mydb
+DB_TYPE=mariadb
+TYPEORM_SYNCHRONIZE=false
+</code></pre>
+<h3 id="frontend-build-settings">Frontend Build Settings</h3>
+<pre><code>NEXT_PUBLIC_API_URL=https://app-aas-backend-production.azurewebsites.net/api/v1
+</code></pre>
+<h2 id="cicd-pipeline">CI/CD Pipeline</h2>
+<p>The GitHub Actions workflow (<code>.github/workflows/deploy.yml</code>) has 5 jobs:</p>
+<table>
+<thead>
+<tr>
+<th>Job</th>
+<th>Trigger</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>test-backend</code></td>
+<td>On push to main</td>
+<td>Runs full test suite</td>
+</tr>
+<tr>
+<td><code>build-backend</code></td>
+<td>After tests pass</td>
+<td>Compiles TypeScript, uploads artifact</td>
+</tr>
+<tr>
+<td><code>deploy-backend</code></td>
+<td>After build</td>
+<td>Deploys to Azure App Service</td>
+</tr>
+<tr>
+<td><code>build-frontend</code></td>
+<td>On push to main</td>
+<td>Runs <code>next build</code>, uploads artifact</td>
+</tr>
+<tr>
+<td><code>deploy-frontend</code></td>
+<td>After build</td>
+<td>Deploys to Azure Static Web Apps</td>
+</tr>
+</tbody></table>
+<h2 id="deployment-checks">Deployment Checks</h2>
+<p>After deployment, verify:</p>
+<ol>
+<li><code>GET https://app-aas-backend-production.azurewebsites.net/health</code> → <code>{&quot;status&quot;:&quot;ok&quot;}</code></li>
+<li><code>GET https://app-aas-backend-production.azurewebsites.net/api/v1/criteria</code> → Returns criteria</li>
+<li>Frontend loads without errors</li>
+<li>Evaluation works end-to-end</li>
+</ol>
+<hr>
+<div class="page-break"></div><h1 id="23-maintenance">23 MAINTENANCE</h1>
+<h2 id="how-to-maintain-the-system-without-changing-code">How to Maintain the System Without Changing Code</h2>
+<p>The AAST system is designed so that the most common maintenance tasks require <strong>zero source code changes</strong>.</p>
+<h3 id="adding-a-new-criterion">Adding a New Criterion</h3>
+<pre><code class="language-sql">INSERT INTO criteria (id, code, name, definition, justification, value, disability, dimension, score, levels)
+VALUES (UUID(), &#39;EC1.1.10&#39;, &#39;New Criterion&#39;, &#39;Definition...&#39;, &#39;Justification...&#39;, 0.15, 1, 1, 3,
+  &#39;[&quot;Level 1&quot;, &quot;Level 2&quot;, &quot;Level 3&quot;, &quot;Level 4&quot;, &quot;Level 5&quot;]&#39;);
+</code></pre>
+<p>Or via API:</p>
+<pre><code class="language-bash">curl -X POST http://localhost:4000/api/v1/criteria -H &quot;Content-Type: application/json&quot; -d &#39;{...}&#39;
+</code></pre>
+<h3 id="modifying-a-criterion">Modifying a Criterion</h3>
+<pre><code class="language-sql">UPDATE criteria
+SET value = 0.45, name = &#39;Updated Name&#39;
+WHERE code = &#39;EC1.1.1&#39;;
+</code></pre>
+<h3 id="adding-a-building-type">Adding a Building Type</h3>
+<pre><code class="language-sql">INSERT INTO building_types (id, name, disability_weights, dimension_weights)
+VALUES (UUID(), &#39;Healthcare Buildings&#39;, &#39;[0.20, 0.25, 0.20, 0.20, 0.15]&#39;, &#39;[0.30, 0.30, 0.15, 0.10, 0.15]&#39;);
+</code></pre>
+<h3 id="modifying-building-type-weights">Modifying Building Type Weights</h3>
+<pre><code class="language-sql">UPDATE building_types
+SET disability_weights = &#39;[0.30, 0.20, 0.20, 0.15, 0.15]&#39;
+WHERE name = &#39;Commercial Buildings&#39;;
+</code></pre>
+<h3 id="changing-neb-thresholds">Changing NEB Thresholds</h3>
+<pre><code class="language-sql">UPDATE neb_thresholds SET min = 65 WHERE neb_class = &#39;A&#39;;
+UPDATE neb_thresholds SET min = 90 WHERE neb_class = &#39;A+&#39;;
+</code></pre>
+<h3 id="adding-a-new-neb-level">Adding a New NEB Level</h3>
+<pre><code class="language-sql">INSERT INTO neb_thresholds (id, min, neb_class, equivalent, meaning, neb_score, ordinal)
+VALUES (UUID(), 95, &#39;A++&#39;, &#39;5+&#39;, &#39;Outstanding / World-class&#39;, 5, 0);
+</code></pre>
+<h3 id="changing-config-values">Changing Config Values</h3>
+<pre><code class="language-sql">UPDATE config SET value = &#39;30&#39; WHERE key = &#39;MAX_OBS&#39;;
+UPDATE config SET value = &#39;4&#39; WHERE key = &#39;STRENGTH_THRESHOLD&#39;;
+UPDATE config SET value = &#39;10&#39; WHERE key = &#39;TOP_N_RESULTS&#39;;
+</code></pre>
+<h3 id="adding-a-new-config-value">Adding a New Config Value</h3>
+<pre><code class="language-sql">INSERT INTO config (id, key, value) VALUES (UUID(), &#39;NEW_PARAM&#39;, &#39;100&#39;);
+</code></pre>
+<h3 id="removing-a-criterion">Removing a Criterion</h3>
+<pre><code class="language-sql">DELETE FROM criteria WHERE code = &#39;EC1.1.10&#39;;
+</code></pre>
+<blockquote>
+<p><strong>Warning:</strong> Removing criteria changes the OBS calculation immediately. Ensure this is intentional.</p>
+</blockquote>
+<h2 id="when-code-changes-are-required">When Code Changes ARE Required</h2>
+<ul>
+<li>Adding new API endpoints</li>
+<li>Changing the calculation algorithm itself (new formula layers)</li>
+<li>Adding new entity types</li>
+<li>Modifying the database schema (new columns, new tables)</li>
+<li>UI changes in the frontend</li>
+<li>Security middleware changes</li>
+</ul>
+<hr>
+<div class="page-break"></div><h1 id="24-future-development">24 FUTURE DEVELOPMENT</h1>
+<h2 id="recommended-enhancements">Recommended Enhancements</h2>
+<h3 id="1-authentication-and-authorization">1. Authentication &amp; Authorization</h3>
+<ul>
+<li>Implement proper JWT with refresh tokens</li>
+<li>Role-based access control (Admin, Assessor, Viewer)</li>
+<li>User management endpoints</li>
+</ul>
+<h3 id="2-pdf-report-generation">2. PDF Report Generation</h3>
+<ul>
+<li>Generate professional certification reports</li>
+<li>Include charts, OBS gauge, criterion breakdown</li>
+<li>Multi-language report support</li>
+</ul>
+<h3 id="3-multi-tenant-architecture">3. Multi-Tenant Architecture</h3>
+<ul>
+<li>Organization-level data isolation</li>
+<li>Custom criteria per organization</li>
+<li>White-label frontend</li>
+</ul>
+<h3 id="4-performance-and-scaling">4. Performance &amp; Scaling</h3>
+<table>
+<thead>
+<tr>
+<th>Enhancement</th>
+<th>Benefit</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Redis caching layer</td>
+<td>Reduce DB queries for metadata</td>
+</tr>
+<tr>
+<td>Database connection pooling</td>
+<td>Handle concurrent assessments</td>
+</tr>
+<tr>
+<td>CDN for frontend static assets</td>
+<td>Faster global load times</td>
+</tr>
+<tr>
+<td>API rate limiting</td>
+<td>Protect against abuse</td>
+</tr>
+</tbody></table>
+<h3 id="5-microservices-decomposition">5. Microservices Decomposition</h3>
+<ul>
+<li><strong>Assessment Service:</strong> Evaluation logic</li>
+<li><strong>Criteria Service:</strong> Criteria CRUD &amp; management</li>
+<li><strong>Reporting Service:</strong> PDF/CSV generation</li>
+<li><strong>Auth Service:</strong> User management &amp; authentication</li>
+</ul>
+<h3 id="6-monitoring-and-observability">6. Monitoring &amp; Observability</h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Application Insights</td>
+<td>Request tracing, performance metrics</td>
+</tr>
+<tr>
+<td>Log Analytics</td>
+<td>Centralized log aggregation</td>
+</tr>
+<tr>
+<td>Azure Monitor</td>
+<td>Resource health &amp; alerts</td>
+</tr>
+<tr>
+<td>Custom dashboards</td>
+<td>OBS trends, evaluation volume</td>
+</tr>
+</tbody></table>
+<h3 id="7-analytics-and-insights">7. Analytics &amp; Insights</h3>
+<ul>
+<li>Building accessibility score trends over time</li>
+<li>Most common weaknesses across all assessments</li>
+<li>Regional accessibility compliance rates</li>
+<li>Assessor performance metrics</li>
+</ul>
+<h3 id="8-internationalization">8. Internationalization</h3>
+<ul>
+<li>Multi-language UI (i18n)</li>
+<li>Criterion definitions in multiple languages</li>
+<li>Regional NEB classification variants</li>
+<li>Country-specific building type weights</li>
+</ul>
+<h3 id="9-advanced-api-features">9. Advanced API Features</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Pagination</td>
+<td>GET /criteria?limit=20&amp;offset=0</td>
+</tr>
+<tr>
+<td>Filtering</td>
+<td>GET /criteria?disability=1&amp;dimension=2</td>
+</tr>
+<tr>
+<td>Sorting</td>
+<td>GET /criteria?sort=value&amp;order=desc</td>
+</tr>
+<tr>
+<td>Bulk operations</td>
+<td>POST /criteria/bulk</td>
+</tr>
+<tr>
+<td>Webhooks</td>
+<td>Notify external systems on certification</td>
+</tr>
+</tbody></table>
+<h3 id="10-testing-enhancements">10. Testing Enhancements</h3>
+<ul>
+<li>Integration tests with test database</li>
+<li>E2E tests with Playwright</li>
+<li>Load testing with k6 or Artillery</li>
+<li>Snapshot testing for calculation results</li>
+</ul>
+<hr>
+<div class="page-break"></div><h1 id="25-faq">25 FAQ</h1>
+<h2 id="25-frequently-asked-questions">25+ Frequently Asked Questions</h2>
+<p><strong>Q1: What is the technology stack?</strong>
+A: Backend: Node.js 20 + Express + TypeScript + TypeORM + MariaDB. Frontend: Next.js 16 + React 19 + TanStack Query + Tailwind CSS 4.</p>
+<p><strong>Q2: How many API endpoints are there?</strong>
+A: 14 endpoints covering evaluation, criteria CRUD, building types, NEB thresholds, config, assessments, reports, and auth.</p>
+<p><strong>Q3: How many criteria are there?</strong>
+A: 63 criteria across a 5×5 matrix (5 Disability Types × 5 Assessment Dimensions).</p>
+<p><strong>Q4: What is the code format for criteria?</strong>
+A: <code>EC{DT}.{AD}.{index}</code> — e.g., <code>EC1.1.1</code> (Physical Disability × Spatial Accessibility, criterion 1).</p>
+<p><strong>Q5: How is the OBS (Overall Building Score) calculated?</strong>
+A: A 5-layer algorithm: IS (value × score) → TIS (per DT) → CIS (per AD) → OBS raw → OBS% → NEB lookup. All configurable via database.</p>
+<p><strong>Q6: Can I add a new criterion without changing code?</strong>
+A: Yes. Use <code>POST /api/v1/criteria</code> or directly INSERT into the <code>criteria</code> table. The calculation engine dynamically picks up all criteria.</p>
+<p><strong>Q7: Can I change the NEB thresholds?</strong>
+A: Yes. Update the <code>neb_thresholds</code> table. The next evaluation uses the new thresholds automatically.</p>
+<p><strong>Q8: Can I add a new building type?</strong>
+A: Yes. INSERT into <code>building_types</code> with <code>disability_weights</code> and <code>dimension_weights</code> arrays. The new type is immediately available.</p>
+<p><strong>Q9: Where does the frontend store business logic?</strong>
+A: Nowhere. The frontend contains ZERO business logic. All calculations, validations, and business rules live exclusively in the backend.</p>
+<p><strong>Q10: How do I run the project locally?</strong>
+A: Start MariaDB with <code>docker compose up -d mariadb</code>, seed with <code>npx ts-node src/scripts/seed.ts</code>, start backend with <code>npm start</code>, start frontend with <code>npm run dev</code>.</p>
+<p><strong>Q11: What database does it use?</strong>
+A: MariaDB 10.11, running in Docker. Connection: <code>mysql://myuser:mypassword@127.0.0.1:3306/mydb</code>.</p>
+<p><strong>Q12: What is the NEB classification?</strong>
+A: NEB (National Evaluation of Buildings) is the certification level: A+ (≥85%), A (≥60%), B (≥40%), No Rating (&lt;40%).</p>
+<p><strong>Q13: How are building type weights used?</strong>
+A: Each building type has two weight vectors (5 DT weights, 5 AD weights). DT weights scale TIS contributions to OBS. AD weights are informational.</p>
+<p><strong>Q14: What is MAX_OBS and why is it 25?</strong>
+A: MAX_OBS is the theoretical maximum OBS raw score, used to normalize to a percentage. Set to 25 in the <code>config</code> table.</p>
+<p><strong>Q15: How do I reset the database?</strong>
+A: <code>docker compose down -v</code> (destroys volume) then <code>docker compose up -d mariadb</code> and <code>npx ts-node src/scripts/seed.ts</code>.</p>
+<p><strong>Q16: Does the frontend have offline support?</strong>
+A: Yes, via PWA with a service worker (<code>sw.js</code>) and offline indicator component.</p>
+<p><strong>Q17: How is authentication handled?</strong>
+A: Currently mock JWT via <code>POST /api/v1/auth/login</code>. Validates email/password format, returns a JWT token.</p>
+<p><strong>Q18: Are there automated tests?</strong>
+A: Yes. 3 test files: <code>calculation.test.ts</code> (evaluation output), <code>static.test.ts</code> (banned hardcoded patterns), <code>metadata.test.ts</code> (database validation).</p>
+<p><strong>Q19: How is the project deployed?</strong>
+A: GitHub Actions CI/CD deploys to Azure: App Service (backend) + Static Web App (frontend) + MariaDB.</p>
+<p><strong>Q20: Can I use PostgreSQL instead of MariaDB?</strong>
+A: TypeORM supports it. Set <code>DATABASE_URL</code> with <code>postgres://</code> scheme and <code>DB_TYPE=postgres</code>. Some migration syntax may need adjustment.</p>
+<p><strong>Q21: What are the Disability Types (DT)?</strong>
+A: DT1 Physical, DT2 Sensory, DT3 Cognitive &amp; Neurodiverse, DT4 Communication &amp; Mental Health, DT5 Multiple/Situational.</p>
+<p><strong>Q22: What are the Assessment Dimensions (AD)?</strong>
+A: AD1 Spatial &amp; Physical, AD2 Safety &amp; Environmental, AD3 Cognitive &amp; Navigational, AD4 Digital Interaction, AD5 Social Inclusion.</p>
+<p><strong>Q23: How are strengths and weaknesses determined?</strong>
+A: Config-driven. Strengths: score ≥ <code>STRENGTH_THRESHOLD</code> (default 5). Weaknesses: score ≤ <code>WEAKNESS_THRESHOLD</code> (default 2). Returns top <code>TOP_N_RESULTS</code> (default 5).</p>
+<p><strong>Q24: What happens if I don&#39;t provide scores for all criteria?</strong>
+A: Unscored criteria use <code>DEFAULT_SCORE</code> (3) from the <code>config</code> table. You can also provide a partial <code>scores</code> object — only the specified criteria get custom scores.</p>
+<p><strong>Q25: How do I verify the workbook mapping is correct?</strong>
+A: Run <code>npm run verify:workbook</code>. This extracts the Excel workbook mappings and verifies them against the database.</p>
+<p><strong>Q26: What port does the backend run on?</strong>
+A: 4000 by default, configurable via the <code>PORT</code> environment variable.</p>
+<p><strong>Q27: What port does the frontend run on?</strong>
+A: 3000 by default (Next.js dev server).</p>
+<p><strong>Q28: How do I see evaluation history?</strong>
+A: <code>GET /api/v1/reports</code> returns all evaluations with OBS, NEB class, date, and average score.</p>
+<hr>
+<div class="page-break"></div><h1 id="26-useful-commands">26 USEFUL COMMANDS</h1>
+<h2 id="docker-commands">Docker Commands</h2>
+<pre><code class="language-bash"># Start MariaDB
+docker compose up -d mariadb
+
+# Stop MariaDB
+docker compose down
+
+# Stop MariaDB and delete data volume (⚠️ DESTRUCTIVE)
+docker compose down -v
+
+# View MariaDB logs (follow mode)
+docker compose logs -f mariadb
+
+# Check container status
+docker compose ps
+
+# Restart MariaDB
+docker compose restart mariadb
+
+# Connect to MariaDB CLI
+docker exec -it mariadb mariadb -u myuser -pmypassword mydb
+
+# Show all databases
+docker exec -it mariadb mariadb -u myuser -pmypassword -e &quot;SHOW DATABASES;&quot;
+
+# Show all tables
+docker exec -it mariadb mariadb -u myuser -pmypassword mydb -e &quot;SHOW TABLES;&quot;
+
+# Count criteria
+docker exec -it mariadb mariadb -u myuser -pmypassword mydb -e &quot;SELECT COUNT(*) FROM criteria;&quot;
+</code></pre>
+<h2 id="backend-commands">Backend Commands</h2>
+<pre><code class="language-bash"># Install dependencies
+cd backend &amp;&amp; npm install
+
+# Start backend
+npm start
+
+# Seed database
+npx ts-node src/scripts/seed.ts
+
+# Run migrations
+npx ts-node src/scripts/runMigrations.ts
+
+# Run all tests
+npm run test:automated
+
+# Run calculation tests only
+npm test
+
+# Verify workbook mappings
+npm run verify:workbook
+
+# TypeScript type check (no emit)
+npx tsc --noEmit
+</code></pre>
+<h2 id="frontend-commands">Frontend Commands</h2>
+<pre><code class="language-bash"># Install dependencies
+cd frontend &amp;&amp; npm install
+
+# Start dev server
+npm run dev
+
+# Production build
+npm run build
+
+# Start production server
+npm start
+
+# Run linter
+npm run lint
+</code></pre>
+<h2 id="git-commands">Git Commands</h2>
+<pre><code class="language-bash"># Create feature branch
+git checkout -b feature/my-feature develop
+
+# Commit with conventional message
+git commit -m &quot;feat(backend): add export endpoint&quot;
+
+# Push to remote
+git push origin feature/my-feature
+
+# Check status
+git status
+
+# View commit history
+git log --oneline -20
+
+# Stash uncommitted changes
+git stash
+
+# Apply stashed changes
+git stash pop
+</code></pre>
+<h2 id="api-testing-with-curl">API Testing with curl</h2>
+<pre><code class="language-bash"># Health check
+curl http://localhost:4000/health
+
+# Get all criteria
+curl http://localhost:4000/api/v1/criteria
+
+# Get single criterion
+curl http://localhost:4000/api/v1/criteria/EC1.1.1
+
+# Run evaluation with all default scores
+curl -X POST http://localhost:4000/api/v1/evaluate \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;buildingType&quot;: &quot;Commercial Buildings&quot;}&#39;
+
+# Run evaluation with custom scores
+curl -X POST http://localhost:4000/api/v1/evaluate \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;buildingType&quot;: &quot;Commercial Buildings&quot;, &quot;scores&quot;: {&quot;EC1.1.1&quot;: 5, &quot;EC2.3.1&quot;: 4}}&#39;
+
+# Get building types
+curl http://localhost:4000/api/v1/building-types
+
+# Get NEB thresholds
+curl http://localhost:4000/api/v1/neb-thresholds
+
+# Get config
+curl http://localhost:4000/api/v1/config
+
+# Get reports
+curl http://localhost:4000/api/v1/reports
+</code></pre>
+<h2 id="database-inspection">Database Inspection</h2>
+<pre><code class="language-sql">-- See all 63 criteria codes
+SELECT code, name, value, disability, dimension FROM criteria ORDER BY code;
+
+-- See building type weights
+SELECT name, disability_weights, dimension_weights FROM building_types;
+
+-- See NEB thresholds
+SELECT * FROM neb_thresholds ORDER BY min DESC;
+
+-- See config values
+SELECT * FROM config;
+
+-- See recent evaluations
+SELECT building_type, obs, neb_class, average_raw_score, created_at
+FROM evaluations ORDER BY created_at DESC LIMIT 10;
+
+-- Count evaluations per building type
+SELECT building_type, COUNT(*) as count FROM evaluations GROUP BY building_type;
+</code></pre>
+<hr>
+<div class="page-break"></div><h1 id="27-contacts">27 CONTACTS</h1>
+<h2 id="project-team">Project Team</h2>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Contact</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Project Owner</td>
+<td><em>(to be assigned)</em></td>
+<td>Strategic direction, stakeholder management</td>
+</tr>
+<tr>
+<td>Technical Lead</td>
+<td><em>(to be assigned)</em></td>
+<td>Architecture decisions, code review, technical roadmap</td>
+</tr>
+<tr>
+<td>Backend Developer</td>
+<td><em>(to be assigned)</em></td>
+<td>API development, calculation engine, database</td>
+</tr>
+<tr>
+<td>Frontend Developer</td>
+<td><em>(to be assigned)</em></td>
+<td>UI/UX, Next.js, React components</td>
+</tr>
+<tr>
+<td>DevOps Engineer</td>
+<td><em>(to be assigned)</em></td>
+<td>CI/CD, Azure infrastructure, Docker</td>
+</tr>
+<tr>
+<td>Domain Expert</td>
+<td><em>(to be assigned)</em></td>
+<td>Accessibility standards, criteria definitions</td>
+</tr>
+</tbody></table>
+<h2 id="repository-and-tools">Repository &amp; Tools</h2>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Source Code</td>
+<td><em>(GitHub repository URL)</em></td>
+</tr>
+<tr>
+<td>Issue Tracker</td>
+<td><em>(GitHub Issues URL)</em></td>
+</tr>
+<tr>
+<td>CI/CD Pipeline</td>
+<td><em>(GitHub Actions URL)</em></td>
+</tr>
+<tr>
+<td>Documentation</td>
+<td><code>/docs/</code> directory in repository</td>
+</tr>
+<tr>
+<td>API Specification</td>
+<td><code>backend/api-spec.md</code></td>
+</tr>
+</tbody></table>
+<h2 id="support-channels">Support Channels</h2>
+<ul>
+<li><strong>Technical Issues:</strong> Open a GitHub Issue with the <code>bug</code> label</li>
+<li><strong>Feature Requests:</strong> Open a GitHub Issue with the <code>enhancement</code> label</li>
+<li><strong>Documentation Issues:</strong> Open a GitHub Issue with the <code>documentation</code> label</li>
+<li><strong>Security Issues:</strong> Contact the Technical Lead directly (do NOT open a public issue)</li>
+</ul>
+<hr>
+<div class="page-break"></div><h1 id="28-glossary">28 GLOSSARY</h1>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Abbreviation</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Accessibility Assessment Scheme Tool</strong></td>
+<td>AAST</td>
+<td>The full name of this software platform</td>
+</tr>
+<tr>
+<td><strong>Disability Type</strong></td>
+<td>DT</td>
+<td>One of 5 categories of disability (Physical, Sensory, Cognitive &amp; Neurodiverse, Communication &amp; Mental Health, Multiple/Situational)</td>
+</tr>
+<tr>
+<td><strong>Assessment Dimension</strong></td>
+<td>AD</td>
+<td>One of 5 dimensions of building accessibility (Spatial &amp; Physical, Safety &amp; Environmental, Cognitive &amp; Navigational, Digital Interaction, Social Inclusion)</td>
+</tr>
+<tr>
+<td><strong>Evaluation Criterion</strong></td>
+<td>EC</td>
+<td>A specific measurable aspect of accessibility, identified by code <code>EC{DT}.{AD}.{index}</code></td>
+</tr>
+<tr>
+<td><strong>Impact Score</strong></td>
+<td>IS</td>
+<td>The product of a criterion&#39;s value (importance weight) multiplied by its score (assessor rating): <code>IS = value × score</code></td>
+</tr>
+<tr>
+<td><strong>Total Impact Score</strong></td>
+<td>TIS</td>
+<td>The sum of IS for all criteria belonging to a specific Disability Type</td>
+</tr>
+<tr>
+<td><strong>Combined Impact Score</strong></td>
+<td>CIS</td>
+<td>The weighted sum of IS for all criteria belonging to a specific Assessment Dimension, using DT weights</td>
+</tr>
+<tr>
+<td><strong>Overall Building Score</strong></td>
+<td>OBS</td>
+<td>The final weighted score expressed as a percentage (0–100%)</td>
+</tr>
+<tr>
+<td><strong>National Evaluation of Buildings</strong></td>
+<td>NEB</td>
+<td>The certification classification derived from OBS (A+, A, B, No Rating)</td>
+</tr>
+<tr>
+<td><strong>Building Type</strong></td>
+<td>BT</td>
+<td>One of 7 building categories, each with unique DT and AD weight vectors</td>
+</tr>
+<tr>
+<td><strong>MAX_OBS</strong></td>
+<td>—</td>
+<td>The theoretical maximum OBS raw score, used to normalize to a percentage (configurable, default 25)</td>
+</tr>
+<tr>
+<td><strong>STRENGTH_THRESHOLD</strong></td>
+<td>—</td>
+<td>Minimum criterion score to be considered a strength (configurable, default 5)</td>
+</tr>
+<tr>
+<td><strong>WEAKNESS_THRESHOLD</strong></td>
+<td>—</td>
+<td>Maximum criterion score to be considered a weakness (configurable, default 2)</td>
+</tr>
+<tr>
+<td><strong>TOP_N_RESULTS</strong></td>
+<td>—</td>
+<td>Number of strengths and weaknesses to return (configurable, default 5)</td>
+</tr>
+<tr>
+<td><strong>DEFAULT_SCORE</strong></td>
+<td>—</td>
+<td>Score assigned to criteria when the assessor doesn&#39;t provide one (configurable, default 3)</td>
+</tr>
+<tr>
+<td><strong>EN 17210</strong></td>
+<td>—</td>
+<td>European Standard for accessibility and usability of the built environment</td>
+</tr>
+<tr>
+<td><strong>TypeORM</strong></td>
+<td>—</td>
+<td>Object-Relational Mapping library for TypeScript/Node.js</td>
+</tr>
+<tr>
+<td><strong>TanStack Query</strong></td>
+<td>—</td>
+<td>Server state management library for React (formerly React Query)</td>
+</tr>
+<tr>
+<td><strong>Next.js App Router</strong></td>
+<td>—</td>
+<td>File-based routing system in Next.js 13+</td>
+</tr>
+<tr>
+<td><strong>Progressive Web App</strong></td>
+<td>PWA</td>
+<td>Web application with offline support, installable on mobile devices</td>
+</tr>
+<tr>
+<td><strong>Infrastructure as Code</strong></td>
+<td>IaC</td>
+<td>Managing infrastructure through machine-readable definition files (Bicep)</td>
+</tr>
+<tr>
+<td><strong>Continuous Integration / Continuous Deployment</strong></td>
+<td>CI/CD</td>
+<td>Automated testing and deployment pipeline (GitHub Actions)</td>
+</tr>
+<tr>
+<td><strong>Helmet</strong></td>
+<td>—</td>
+<td>Express middleware that sets HTTP security headers</td>
+</tr>
+<tr>
+<td><strong>CORS</strong></td>
+<td>—</td>
+<td>Cross-Origin Resource Sharing — controls which domains can access the API</td>
+</tr>
+<tr>
+<td><strong>Zod</strong></td>
+<td>—</td>
+<td>TypeScript-first schema validation library</td>
+</tr>
+<tr>
+<td><strong>Framer Motion</strong></td>
+<td>—</td>
+<td>React animation library</td>
+</tr>
+<tr>
+<td><strong>Tailwind CSS</strong></td>
+<td>—</td>
+<td>Utility-first CSS framework</td>
+</tr>
+<tr>
+<td><strong>Axios</strong></td>
+<td>—</td>
+<td>Promise-based HTTP client for browser and Node.js</td>
+</tr>
+<tr>
+<td><strong>Docker Compose</strong></td>
+<td>—</td>
+<td>Tool for defining and running multi-container Docker applications</td>
+</tr>
+<tr>
+<td><strong>Application Insights</strong></td>
+<td>—</td>
+<td>Azure service for application performance monitoring and diagnostics</td>
+</tr>
+<tr>
+<td><strong>Log Analytics</strong></td>
+<td>—</td>
+<td>Azure service for centralized log collection and querying</td>
+</tr>
+</tbody></table>
+<hr>
+<div class="page-break"></div><div class="document-end"><hr>
+<p><strong>End of Document</strong></p>
+<p><em>AAS — Developer Onboarding &amp; Technical Overview</em><br><em>Version 1.0 — June 2026</em><br><em>Document ID: AAS-DOC-ONBOARD-001</em><br><em>Confidentiality: Internal — Engineering Team Only</em></p>
+<hr>
+<p>© 2026 AAS. All rights reserved.</p>
+</div>
+
+
+</body>
+</html>

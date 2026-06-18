@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AAS Backend Developer Guide — Enterprise Edition v1.0</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&family=Consolas:wght@400;700&display=swap');
+
+  :root {
+    --primary: #003D7A;
+    --primary-dark: #002850;
+    --primary-light: #005AAD;
+    --accent: #0078D4;
+    --text: #1A1A1A;
+    --text-secondary: #444444;
+    --bg: #FFFFFF;
+    --bg-alt: #F5F8FC;
+    --border: #D0D7DE;
+    --table-header: #003D7A;
+    --table-stripe: #F0F4FA;
+    --code-bg: #F6F8FA;
+    --code-text: #1A1A1A;
+    --code-border: #D0D7DE;
+    --success: #107C10;
+    --warning: #FF8C00;
+    --danger: #D13438;
+    --info: #0078D4;
+    --mermaid-bg: #FAFBFC;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 11pt;
+    max-width: 210mm;
+    margin: 0 auto;
+  }
+
+  /* ===== COVER PAGE ===== */
+  .cover-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 277mm;
+    padding: 40px;
+    background: linear-gradient(160deg, #003D7A 0%, #002850 40%, #001A35 100%);
+    color: #FFFFFF;
+    page-break-after: always;
+  }
+  .cover-page h1 {
+    font-size: 32pt;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    color: #FFFFFF;
+    line-height: 1.2;
+  }
+  .cover-page h1 + h1 {
+    font-size: 24pt;
+    font-weight: 300;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 40px;
+  }
+  .cover-page hr {
+    width: 120px;
+    border: 0;
+    border-top: 3px solid #0078D4;
+    margin: 30px auto;
+  }
+  .cover-page h2 {
+    font-size: 18pt;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .cover-page h3 {
+    font-size: 13pt;
+    font-weight: 400;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 50px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .cover-page p {
+    font-size: 10pt;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 12px;
+  }
+  .cover-page strong {
+    color: rgba(255,255,255,0.85);
+  }
+  .cover-page p:last-child {
+    margin-top: 60px;
+    font-style: italic;
+    color: rgba(255,255,255,0.5);
+    font-size: 9pt;
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  h1 {
+    font-size: 22pt;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 40px 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--primary);
+    page-break-before: always;
+    page-break-after: avoid;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+
+  h2 {
+    font-size: 16pt;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin: 28px 0 12px 0;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 13pt;
+    font-weight: 600;
+    color: var(--text);
+    margin: 22px 0 10px 0;
+    page-break-after: avoid;
+  }
+
+  h4 {
+    font-size: 11pt;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 18px 0 8px 0;
+    page-break-after: avoid;
+  }
+
+  p, li { margin-bottom: 8px; text-align: justify; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ===== TABLES ===== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 10pt;
+    page-break-inside: avoid;
+  }
+  thead th {
+    background: var(--table-header);
+    color: #FFFFFF;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 9.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  tbody td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even) { background: var(--table-stripe); }
+  tbody tr:hover { background: #E8F0FE; }
+
+  /* ===== CODE BLOCKS ===== */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin: 12px 0;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 9pt;
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    page-break-inside: avoid;
+    color: var(--code-text);
+  }
+  code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 9pt;
+    background: var(--code-bg);
+    padding: 2px 5px;
+    border-radius: 3px;
+    border: 1px solid var(--code-border);
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 9pt;
+  }
+
+  /* ===== BLOCKQUOTES ===== */
+  blockquote {
+    border-left: 4px solid var(--primary);
+    margin: 16px 0;
+    padding: 12px 20px;
+    background: var(--bg-alt);
+    border-radius: 0 4px 4px 0;
+    color: var(--text-secondary);
+    page-break-inside: avoid;
+  }
+  blockquote p:last-child { margin-bottom: 0; }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 24px 0;
+  }
+
+  ul, ol { margin: 8px 0 12px 24px; }
+  li { margin-bottom: 4px; }
+
+  strong { color: var(--primary-dark); }
+  em { color: var(--text-secondary); }
+
+  .page-break { page-break-after: always; }
+
+  .document-end {
+    text-align: center;
+    padding: 40px 0;
+    margin-top: 40px;
+    border-top: 2px solid var(--primary);
+    color: var(--text-secondary);
+    font-size: 9pt;
+  }
+
+  @media print {
+    @page {
+      size: A4;
+      margin: 20mm 18mm 20mm 18mm;
+      @bottom-center {
+        content: "AAS — Backend Developer Guide — Enterprise Edition v1.0";
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 7pt;
+        color: #888888;
+      }
+    }
+    body { max-width: none; padding: 0 10px; }
+    h1 { page-break-before: always; }
+    h1:first-of-type { page-break-before: avoid; }
+    h1, h2, h3, h4 { page-break-after: avoid; }
+    pre, table, blockquote { page-break-inside: avoid; }
+    .cover-page { page-break-after: always; }
+    .page-break { page-break-after: always; }
+  }
+
+  @media screen {
+    body { padding: 30px 40px; }
+  }
+</style>
+</head>
+<body>
+<!--
+================================================================================
+ACCESSIBILITY ASSESSMENT SCHEME TOOL (AAST)
+Backend Developer Guide — The "Kernel"
+Enterprise Edition — Version 1.0
+Document ID: AAST-DOC-BACKEND-001
+Confidentiality: Internal — Backend Engineering Team
+Release Date: 2026-06-17
+================================================================================
+--><div class="cover-page"><h1 id="accessibility-assessment-scheme-tool-aast">Accessibility Assessment Scheme Tool (AAST)</h1>
+<hr>
+<h2 id="backend-developer-guide">Backend Developer Guide</h2>
+<h3 id="express-middot-typescript-middot-mariadb-middot-en-17210">Express &middot; TypeScript &middot; MariaDB &middot; EN 17210</h3>
+<hr>
+<p><strong>Version:</strong> 1.0 | <strong>Release:</strong> 2026-06-17 | <strong>Document ID:</strong> AAST-DOC-BACKEND-001</p>
+<p><em>&copy; 2026 AAST. Internal &mdash; Backend Engineering Team.</em></p>
+</div><div class="page-break"></div><hr>
+<h1 id="1-executive-summary">1 EXECUTIVE SUMMARY</h1>
+<p>The AAST Backend (the &quot;Kernel&quot;) is a metadata-driven REST API implementing the <strong>EN 17210</strong> accessibility scoring framework. It is the single source of truth for all business logic, calculations, and data access.</p>
+<table>
+<thead>
+<tr>
+<th>Responsibility</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Calculation Engine</td>
+<td>5-layer EN 17210 algorithm (IS &rarr; TIS &rarr; CIS &rarr; OBS &rarr; NEB)</td>
+</tr>
+<tr>
+<td>Data Persistence</td>
+<td>TypeORM + MariaDB with 5 entities</td>
+</tr>
+<tr>
+<td>REST API</td>
+<td>14 endpoints across 6 controllers</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>Zod schemas for all POST/PUT</td>
+</tr>
+<tr>
+<td>Caching</td>
+<td>Lazy-initialized in-memory metadata cache</td>
+</tr>
+<tr>
+<td>Security</td>
+<td>Helmet, CORS, HTTPS, TLS 1.2</td>
+</tr>
+<tr>
+<td>Enforcement</td>
+<td>Static test suite bans hardcoded patterns</td>
+</tr>
+</tbody></table>
+<p><strong>Core principle:</strong> All configurable values live in the database &mdash; weights, thresholds, criteria, and configuration. Domain experts update the system via SQL or API. No code changes. No deployments.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Technology</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Runtime</td>
+<td>Node.js 20 LTS</td>
+</tr>
+<tr>
+<td>Framework</td>
+<td>Express.js 4.18</td>
+</tr>
+<tr>
+<td>Language</td>
+<td>TypeScript 5.1+ (ES2022, CommonJS)</td>
+</tr>
+<tr>
+<td>ORM</td>
+<td>TypeORM 0.3.17</td>
+</tr>
+<tr>
+<td>Database</td>
+<td>MariaDB 10.11</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>Zod 4.4+</td>
+</tr>
+<tr>
+<td>Containerization</td>
+<td>Docker Compose</td>
+</tr>
+<tr>
+<td>Cloud</td>
+<td>Azure (Bicep IaC)</td>
+</tr>
+<tr>
+<td>CI/CD</td>
+<td>GitHub Actions</td>
+</tr>
+</tbody></table>
+<hr>
+<div class="page-break"></div><h1 id="2-project-overview">2 PROJECT OVERVIEW</h1>
+<h2 id="architecture">Architecture</h2>
+<pre><code>Frontend (Next.js) --&gt; Backend (Express) --&gt; Database (MariaDB)
+     ^                      ^                      ^
+  &quot;Dumb client&quot;        &quot;The Kernel&quot;        &quot;Single source of truth&quot;
+  Zero business         All calculations    All configurable
+  logic                 All validation      values
+</code></pre>
+<h2 id="key-architectural-decisions">Key Architectural Decisions</h2>
+<ol>
+<li><strong>Metadata-Driven:</strong> All configurable values in the database, never in code</li>
+<li><strong>Single Source of Truth:</strong> Backend is sole authority for calculations</li>
+<li><strong>Dynamic Type Detection:</strong> DT 1&ndash;5 and AD 1&ndash;5 derived from criteria data</li>
+<li><strong>Config-Driven Thresholds:</strong> NEB breakpoints, strength/weakness, MAX_OBS are all DB rows</li>
+<li><strong>Lazy Metadata Caching:</strong> Initializes once, caches lookup data in memory</li>
+<li><strong>Static Test Enforcement:</strong> CI blocks deployment if hardcoded patterns detected</li>
+</ol>
+<h2 id="business-purpose">Business Purpose</h2>
+<p>The AAST evaluates buildings against <strong>63 canonical criteria</strong> across a 5&times;5 matrix:</p>
+<ul>
+<li><strong>5 Disability Types (DT):</strong> Physical, Sensory, Cognitive &amp; Neurodiverse, Communication &amp; Mental Health, Multiple/Situational</li>
+<li><strong>5 Assessment Dimensions (AD):</strong> Spatial &amp; Physical, Safety &amp; Environmental, Cognitive &amp; Navigational, Digital Interaction, Social Inclusion</li>
+</ul>
+<p>Each criterion has a unique code <code>EC{DT}.{AD}.{index}</code> (e.g., <code>EC1.1.1</code>).</p>
+<p><strong>Certification flow:</strong> Assessor selects building type &rarr; rates criteria 1&ndash;5 &rarr; Backend computes weighted OBS% &rarr; Maps to NEB class (A+/A/B/No Rating) &rarr; Returns strengths, weaknesses, per-DT/AD scores &rarr; Persists with full audit trail.</p>
+<p>Targets compliance with <strong>EN 17210</strong> and EU accessibility regulations.</p>
+<hr>
+<div class="page-break"></div><h1 id="3-system-architecture">3 SYSTEM ARCHITECTURE</h1>
+<pre><code>+-------------------------------------------------------------+
+|                   PRESENTATION LAYER                        |
+| Next.js Pages --&gt; React Components --&gt; Custom Hooks --&gt; Axios|
++-------------------------------------------------------------+
+|                      API GATEWAY                            |
+| Express Router -&gt; Helmet -&gt; CORS -&gt; JSON Parser -&gt; Error Handler |
++-------------------------------------------------------------+
+|                  BUSINESS LOGIC LAYER                       |
+| Calculation Service (5-layer engine) + Metadata Service     |
+| Zod Validation                                              |
++-------------------------------------------------------------+
+|                   DATA ACCESS LAYER                         |
+| TypeORM Repositories --&gt; Entities --&gt; Migrations            |
++-------------------------------------------------------------+
+|                  PERSISTENCE LAYER                          |
+|                     MariaDB 10.11                           |
++-------------------------------------------------------------+
+</code></pre>
+<p><strong>Data flow:</strong> User Input &rarr; Hook &rarr; Axios POST &rarr; Router &rarr; Controller &rarr; Service &rarr; Repository &rarr; MariaDB &rarr; Response &rarr; React Render</p>
+<hr>
+<div class="page-break"></div><h1 id="4-backend-overview">4 BACKEND OVERVIEW</h1>
+<h2 id="folder-structure">Folder Structure</h2>
+<pre><code>backend/
+├── docker-compose.yml              # MariaDB container
+├── docker-initdb.d/init.sql        # DB user/database creation
+├── package.json / tsconfig.json
+├── src/
+│   ├── index.ts                    # Express entry point
+│   ├── data-source.ts              # TypeORM DataSource config
+│   ├── controllers/                # 6 route handlers
+│   │   ├── evaluateController.ts   # POST /api/v1/evaluate
+│   │   ├── dataController.ts       # GET/POST criteria, types, thresholds, config
+│   │   ├── buildingsController.ts  # GET buildings
+│   │   ├── assessmentsController.ts# POST/GET assessments
+│   │   ├── reportsController.ts    # GET reports
+│   │   └── authController.ts       # POST /api/v1/auth/login
+│   ├── services/
+│   │   ├── calculationService.ts   # 5-layer EN 17210 engine
+│   │   └── metadataService.ts      # Lazy cache + validation
+│   ├── entities/                   # Criterion, BuildingType, Evaluation, NebThreshold, Config
+│   ├── migrations/                 # 3 sequential schema migrations
+│   ├── data/                       # Seed data (criteria.ts, building-types.json)
+│   ├── scripts/                    # seed.ts, runMigrations.ts, workbook scripts
+│   └── tests/                      # calculation.test.ts, static.test.ts, metadata.test.ts
+</code></pre>
+<h2 id="controllers">Controllers</h2>
+<p>Controllers handle request parsing, validation, and response formatting. <strong>No business logic</strong> &mdash; they delegate to services.</p>
+<table>
+<thead>
+<tr>
+<th>Controller</th>
+<th>Key Endpoints</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>evaluateController</code></td>
+<td><code>POST /evaluate</code></td>
+<td>Full EN 17210 evaluation</td>
+</tr>
+<tr>
+<td><code>dataController</code></td>
+<td><code>GET/POST /criteria</code>, <code>GET /building-types</code>, <code>GET /neb-thresholds</code>, <code>GET /config</code></td>
+<td>Dynamic data CRUD</td>
+</tr>
+<tr>
+<td><code>buildingsController</code></td>
+<td><code>GET /buildings</code>, <code>GET /buildings/:id</code></td>
+<td>Building directory</td>
+</tr>
+<tr>
+<td><code>assessmentsController</code></td>
+<td><code>POST /assessments</code>, <code>GET /assessments/:id</code></td>
+<td>Assessment persistence</td>
+</tr>
+<tr>
+<td><code>reportsController</code></td>
+<td><code>GET /reports</code></td>
+<td>Evaluation history</td>
+</tr>
+<tr>
+<td><code>authController</code></td>
+<td><code>POST /auth/login</code></td>
+<td>Mock JWT login</td>
+</tr>
+</tbody></table>
+<h2 id="services">Services</h2>
+<p><strong>Calculation Service</strong> &mdash; Implements the 5-layer scoring algorithm (see Section 6).</p>
+<p><strong>Metadata Service</strong> &mdash; Lazy-initialized cache:</p>
+<ul>
+<li>Initializes DataSource connection once</li>
+<li>Caches NEB thresholds (ordered DESC by <code>min</code>)</li>
+<li>Caches config values per key</li>
+<li>Provides <code>getBuildingType()</code>, <code>getAllCriteria()</code>, <code>validateMetadata()</code></li>
+<li>Validates all 4 core tables have data on startup; exits code 1 if not</li>
+</ul>
+<h2 id="static-test-enforcement">Static Test Enforcement</h2>
+<p><code>static.test.ts</code> greps ALL source files for banned hardcoded patterns:</p>
+<ul>
+<li>&#10060; <code>0.2,0.2,0.2,0.2,0.2</code> &mdash; equal weights must be DB-driven</li>
+<li>&#10060; <code>85, 60, 40</code> &mdash; NEB thresholds must be in <code>neb_thresholds</code> table</li>
+<li>&#10060; <code>MAX_OBS = 25</code> &mdash; config must be in <code>config</code> table</li>
+</ul>
+<p>This runs in CI and blocks deployment if violated.</p>
+<hr>
+<div class="page-break"></div><h1 id="5-database-overview">5 DATABASE OVERVIEW</h1>
+<h2 id="entity-relationship">Entity-Relationship</h2>
+<pre><code class="language-mermaid">erDiagram
+    building_types {
+        VARCHAR_36 id PK
+        VARCHAR_255 name UK
+        JSON disability_weights
+        JSON dimension_weights
+    }
+    criteria {
+        VARCHAR_36 id PK
+        VARCHAR_255 code UK
+        TEXT name definition justification
+        FLOAT value
+        INT disability dimension
+        INT score
+        JSON levels
+    }
+    evaluations {
+        VARCHAR_36 id PK
+        VARCHAR_255 user_id building_type
+        JSON scores result
+        DATETIME created_at
+        DOUBLE obs
+        VARCHAR neb_class
+        DOUBLE average_raw_score
+    }
+    neb_thresholds {
+        VARCHAR_36 id PK
+        INT min
+        VARCHAR_50 neb_class
+        VARCHAR_50 equivalent
+        TEXT meaning
+        INT neb_score ordinal
+    }
+    config {
+        VARCHAR_36 id PK
+        VARCHAR_255 key UK
+        TEXT value
+    }
+    evaluations ||--o{ building_types : &quot;building_type refs name&quot;
+</code></pre>
+<h2 id="table-details">Table Details</h2>
+<h3><code>building_types</code> (7 rows)</h3>
+<p>Stores per-type weight matrices for DT and AD.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>VARCHAR(255) UNIQUE</td>
+<td>e.g., &quot;Commercial Buildings&quot;</td>
+</tr>
+<tr>
+<td><code>disability_weights</code></td>
+<td>JSON</td>
+<td>5 floats for DT 1&ndash;5</td>
+</tr>
+<tr>
+<td><code>dimension_weights</code></td>
+<td>JSON</td>
+<td>5 floats for AD 1&ndash;5</td>
+</tr>
+</tbody></table>
+<p>Example: <code>{ &quot;name&quot;: &quot;Commercial Buildings&quot;, &quot;disability_weights&quot;: [0.28,0.22,0.18,0.12,0.2], &quot;dimension_weights&quot;: [0.30,0.25,0.18,0.12,0.15] }</code></p>
+<h3><code>criteria</code> (63 rows)</h3>
+<p>Canonical evaluation criteria. Each has <code>value</code> (importance weight 0&ndash;1), <code>disability</code> and <code>dimension</code> classification (1&ndash;5), default <code>score</code> (3), and <code>levels</code> (array of 5 descriptors). Example: <code>EC1.1.1</code> &mdash; &quot;Accessible Entrance Width&quot; &mdash; value 0.7, DT 1, AD 1.</p>
+<h3><code>evaluations</code> (variable rows)</h3>
+<p>One row per assessment. Stores <code>scores</code> (code&rarr;score map), computed <code>result</code> (full JSON), <code>obs</code> (%), <code>neb_class</code>, <code>average_raw_score</code>.</p>
+<h3><code>neb_thresholds</code> (4 rows)</h3>
+<table>
+<thead>
+<tr>
+<th>min</th>
+<th>neb_class</th>
+<th>meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>85</td>
+<td>A+</td>
+<td>Excellent / Best practice</td>
+</tr>
+<tr>
+<td>60</td>
+<td>A</td>
+<td>Good</td>
+</tr>
+<tr>
+<td>40</td>
+<td>B</td>
+<td>Acceptable</td>
+</tr>
+<tr>
+<td>0</td>
+<td>No Rating</td>
+<td>Non-compliant</td>
+</tr>
+</tbody></table>
+<h3><code>config</code> (5 rows)</h3>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>MAX_OBS</code></td>
+<td>25</td>
+<td>Maximum OBS raw score</td>
+</tr>
+<tr>
+<td><code>DEFAULT_SCORE</code></td>
+<td>3</td>
+<td>Fallback score</td>
+</tr>
+<tr>
+<td><code>STRENGTH_THRESHOLD</code></td>
+<td>5</td>
+<td>Min score for strength</td>
+</tr>
+<tr>
+<td><code>WEAKNESS_THRESHOLD</code></td>
+<td>2</td>
+<td>Max score for weakness</td>
+</tr>
+<tr>
+<td><code>TOP_N_RESULTS</code></td>
+<td>5</td>
+<td>Results to return</td>
+</tr>
+</tbody></table>
+<hr>
+<div class="page-break"></div><h1 id="6-calculation-engine">6 CALCULATION ENGINE</h1>
+<p>Implements the <strong>EN 17210 accessibility scoring framework</strong> &mdash; purely metadata-driven, no hardcoded formulas.</p>
+<h2 id="the-5-layer-algorithm">The 5-Layer Algorithm</h2>
+<pre><code>Layer 1: IS        Layer 2: TIS         Layer 3: CIS          Layer 4: OBS          Layer 5: NEB
+Impact Score       Total Impact         Combined Impact       Overall Building      Classification
+per criterion      Score per DT         Score per AD          Score %               Lookup
+    |                   |                    |                    |                    |
+IS = value x score  TIS = sum IS per DT  CIS = sum(dtW x IS)  OBS = sum(dtWxTIS)  Find 1st threshold
+                                          per AD               /MAX_OBS x 100       where OBS &gt;= min
+</code></pre>
+<h3 id="layer-1-is-impact-score">Layer 1: IS (Impact Score)</h3>
+<p><code>IS(c) = c.value &amp;times; c.score</code> &mdash; rounded to 4 decimal places.</p>
+<h3 id="layer-2-tis-total-impact-score">Layer 2: TIS (Total Impact Score)</h3>
+<p><code>TIS(dt) = &amp;Sigma; IS(c)</code> for all criteria where <code>c.disability === dt</code>. DT IDs are <strong>derived from data</strong> &mdash; not hardcoded.</p>
+<h3 id="layer-3-cis-combined-impact-score">Layer 3: CIS (Combined Impact Score)</h3>
+<p><code>CIS(ad) = &amp;Sigma; (dtWeight[dt] &amp;times; IS(c))</code> for all criteria where <code>c.dimension === ad</code>.</p>
+<h3 id="layer-4-obs-overall-building-score">Layer 4: OBS (Overall Building Score)</h3>
+<p><code>OBS_raw = &amp;Sigma; (dtWeight[dt] &amp;times; TIS(dt))</code> for all DTs. <code>OBS_pct = (OBS_raw / MAX_OBS) &amp;times; 100</code>. MAX_OBS is read from <code>config</code> table (value: 25). Rounded to 2 decimal places.</p>
+<h3 id="layer-5-neb-classification">Layer 5: NEB Classification</h3>
+<p>Thresholds loaded DESC by <code>min</code>: 85, 60, 40, 0. Find first where OBS% &ge; threshold.min &rarr; A+ (&ge;85), A (&ge;60), B (&ge;40), No Rating (&lt;40).</p>
+<h2 id="additional-computations">Additional Computations</h2>
+<ul>
+<li><strong>Strengths/Weaknesses:</strong> Top N where score &ge; STRENGTH_THRESHOLD or &le; WEAKNESS_THRESHOLD (from <code>config</code>)</li>
+<li><strong>Per-DT/AD averages:</strong> Arithmetic mean of scores grouped by DT/AD</li>
+</ul>
+<h2 id="metadata-driven-design">Metadata-Driven Design</h2>
+<p>Every configurable value lives in the database, never in code:</p>
+<table>
+<thead>
+<tr>
+<th>Hardcoded (&cross;)</th>
+<th>Metadata-Driven (&check;)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>const NEB = [85, 60, 40]</code></td>
+<td><code>SELECT * FROM neb_thresholds ORDER BY min DESC</code></td>
+</tr>
+<tr>
+<td><code>const MAX_OBS = 25</code></td>
+<td><code>SELECT value FROM config WHERE key=&#39;MAX_OBS&#39;</code></td>
+</tr>
+<tr>
+<td>Fixed DT/AD arrays</td>
+<td>Derived from <code>criteria.disability</code>/<code>.dimension</code></td>
+</tr>
+<tr>
+<td>Redeploy to change</td>
+<td>Update DB row &mdash; instant effect</td>
+</tr>
+</tbody></table>
+<p><strong>Key guarantees:</strong> DT/AD sets derived from data; weights per building type from DB; NEB thresholds are DB rows; MAX_OBS is configurable; static tests enforce compliance.</p>
+<hr>
+<div class="page-break"></div><h1 id="7-api-architecture">7 API ARCHITECTURE</h1>
+<ul>
+<li><strong>Base URL:</strong> <code>/api/v1</code></li>
+<li><strong>Response Envelope:</strong> <code>{ ok: boolean, data?: any, error?: string }</code></li>
+<li><strong>Status Codes:</strong> 200, 201, 400, 404, 409, 500</li>
+</ul>
+<h2 id="endpoint-reference">Endpoint Reference</h2>
+<h3 id="evaluation">Evaluation</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>POST</td>
+<td><code>/evaluate</code></td>
+<td>No</td>
+<td>Full EN 17210 computation</td>
+</tr>
+</tbody></table>
+<p><strong>Request:</strong> <code>{ &quot;buildingType&quot;: &quot;Commercial Buildings&quot;, &quot;scores&quot;: { &quot;EC1.1.1&quot;: 5 } }</code></p>
+<p><strong>Response:</strong> <code>{ ok: true, result: { obs, nebClass, nebMeaning, nebScore, averageRawScore, avgRawScoreByDT, avgRawScoreByAD, strengths, weaknesses, tisByDT, cisByAD, criteria } }</code></p>
+<h3 id="data-crud">Data CRUD</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td><code>/criteria</code></td>
+<td>All 63 criteria</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/criteria/:code</code></td>
+<td>Single criterion</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/criteria</code></td>
+<td>Add criterion dynamically</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/building-types</code></td>
+<td>7 building types with weights</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/neb-thresholds</code></td>
+<td>NEB classification thresholds</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/config</code></td>
+<td>All config key-values</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/disability-types</code></td>
+<td>5 DT labels</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/assessment-dimensions</code></td>
+<td>5 AD labels</td>
+</tr>
+</tbody></table>
+<h3 id="assessments-and-reports">Assessments &amp; Reports</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td><code>/buildings</code></td>
+<td>All buildings (joined with evaluations)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/buildings/:id</code></td>
+<td>Building detail</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/assessments</code></td>
+<td>Create &amp; save assessment</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/assessments/:id</code></td>
+<td>Retrieve saved assessment</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/reports</code></td>
+<td>Evaluation history</td>
+</tr>
+</tbody></table>
+<h3 id="auth">Auth</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>POST</td>
+<td><code>/auth/login</code></td>
+<td>Mock JWT login</td>
+</tr>
+</tbody></table>
+<h2 id="dynamic-criteria-system">Dynamic Criteria System</h2>
+<p>Adding a criterion is a single API call or SQL INSERT &mdash; no code changes, no deployment:</p>
+<pre><code class="language-bash">curl -X POST http://localhost:4000/api/v1/criteria \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;code&quot;:&quot;EC1.1.10&quot;,&quot;name&quot;:&quot;...&quot;,&quot;definition&quot;:&quot;...&quot;,&quot;value&quot;:0.15,&quot;disability&quot;:1,&quot;dimension&quot;:1,&quot;levels&quot;:[&quot;L1&quot;,&quot;L2&quot;,&quot;L3&quot;,&quot;L4&quot;,&quot;L5&quot;]}&#39;
+</code></pre>
+<p><strong>Validation rules:</strong> <code>code</code> must match <code>/^EC\d+\.\d+\.\d+$/</code>, <code>value</code> 0&ndash;1, <code>disability</code>/<code>dimension</code> 1&ndash;5, <code>levels</code> exactly 5 strings, duplicate code &rarr; 409. The next evaluation automatically includes the new criterion.</p>
+<hr>
+<div class="page-break"></div><h1 id="8-request-lifecycle">8 REQUEST LIFECYCLE</h1>
+<h2 id="evaluation-request-flow">Evaluation Request Flow</h2>
+<pre><code>Browser -&gt; Next.js Hook -&gt; Axios POST /api/v1/evaluate
+  -&gt; Express: Helmet -&gt; CORS -&gt; JSON parse
+    -&gt; evaluateController: validates body shape
+      -&gt; calculationService.evaluate(buildingType, scores)
+        -&gt; Read MAX_OBS, thresholds, weights from metadata cache
+        -&gt; Load all 63 criteria, apply scores
+        -&gt; Compute IS -&gt; TIS -&gt; CIS -&gt; OBS -&gt; NEB
+        -&gt; Compute strengths, weaknesses, averages
+        -&gt; Return result object
+      -&gt; Controller: res.json({ ok: true, result })
+    -&gt; Express: 200 JSON response
+  -&gt; Axios: unwrap result
+-&gt; React: re-render with OBS gauge, NEB class, strengths, weaknesses
+</code></pre>
+<h2 id="controller-validation">Controller Validation</h2>
+<p><code>evaluateController.ts</code> checks <code>buildingType</code> is string/undefined and <code>scores</code> is object/undefined. Returns 400 with specific message on failure.</p>
+<h2 id="response-object-shape">Response Object Shape</h2>
+<p><code>obs</code>, <code>nebClass</code>, <code>nebEquivalent</code>, <code>nebMeaning</code>, <code>nebScore</code>, <code>averageRawScore</code>, <code>avgRawScoreByDT</code>, <code>avgRawScoreByAD</code>, <code>strengths</code> (top 5), <code>weaknesses</code> (top 5), <code>tisByDT</code>, <code>cisByAD</code>, <code>criteria</code> (all 63 with computed IS).</p>
+<hr>
+<div class="page-break"></div><h1 id="9-local-development-setup">9 LOCAL DEVELOPMENT SETUP</h1>
+<h2 id="prerequisites">Prerequisites</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Min Version</th>
+<th>Check</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Node.js</td>
+<td>18 LTS (20 rec.)</td>
+<td><code>node --version</code></td>
+</tr>
+<tr>
+<td>npm</td>
+<td>9+</td>
+<td><code>npm --version</code></td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>24+</td>
+<td><code>docker --version</code></td>
+</tr>
+</tbody></table>
+<h2 id="quick-start">Quick Start</h2>
+<pre><code class="language-bash"># 1. Clone and install
+git clone &lt;repo-url&gt; &amp;&amp; cd aast-project/backend &amp;&amp; npm install
+
+# 2. Start MariaDB
+docker compose up -d mariadb
+# Wait ~10s, verify: docker compose ps
+
+# 3. Seed database
+npx ts-node src/scripts/seed.ts
+# Output: &quot;DataSource initialized&quot; / &quot;Seeding complete&quot;
+
+# 4. Start backend
+npm start
+# Output: &quot;Backend listening on 4000&quot;
+
+# 5. Verify
+curl http://localhost:4000/health         # -&gt; {&quot;status&quot;:&quot;ok&quot;}
+curl http://localhost:4000/api/v1/criteria # -&gt; 63 criteria
+</code></pre>
+<h2 id="docker-environment">Docker Environment</h2>
+<p>MariaDB only runs in Docker; backend/frontend run natively.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Image</td>
+<td><code>mariadb:10.11</code></td>
+</tr>
+<tr>
+<td>Host Port</td>
+<td><code>3306</code></td>
+</tr>
+<tr>
+<td>Database</td>
+<td><code>mydb</code></td>
+</tr>
+<tr>
+<td>User/Pass</td>
+<td><code>myuser</code> / <code>mypassword</code></td>
+</tr>
+<tr>
+<td>Root Pass</td>
+<td><code>rootpass</code></td>
+</tr>
+<tr>
+<td>Data Volume</td>
+<td><code>db_data</code></td>
+</tr>
+</tbody></table>
+<h2 id="environment-variables">Environment Variables</h2>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>PORT</code></td>
+<td><code>4000</code></td>
+</tr>
+<tr>
+<td><code>DATABASE_URL</code></td>
+<td><code>mysql://myuser:mypassword@127.0.0.1:3306/mydb</code></td>
+</tr>
+<tr>
+<td><code>DB_TYPE</code></td>
+<td><code>mariadb</code></td>
+</tr>
+<tr>
+<td><code>TYPEORM_SYNCHRONIZE</code></td>
+<td><code>false</code></td>
+</tr>
+</tbody></table>
+<h2 id="npm-scripts">NPM Scripts</h2>
+<table>
+<thead>
+<tr>
+<th>Script</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>npm start</code></td>
+<td>Start backend</td>
+</tr>
+<tr>
+<td><code>npm test</code></td>
+<td>Run calculation tests</td>
+</tr>
+<tr>
+<td><code>npm run test:automated</code></td>
+<td>Full suite (metadata + static + calculation)</td>
+</tr>
+<tr>
+<td><code>npm run seed</code></td>
+<td>Seed database</td>
+</tr>
+<tr>
+<td><code>npm run migrate</code></td>
+<td>Run migrations</td>
+</tr>
+<tr>
+<td><code>npm run verify:workbook</code></td>
+<td>Verify Excel workbook mapping</td>
+</tr>
+</tbody></table>
+<h2 id="setup-troubleshooting">Setup Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ECONNREFUSED :3306</code></td>
+<td><code>docker compose up -d mariadb</code></td>
+</tr>
+<tr>
+<td><code>Access denied</code></td>
+<td>Check DATABASE_URL matches docker-compose.yml</td>
+</tr>
+<tr>
+<td><code>Table doesn&#39;t exist</code></td>
+<td><code>npx ts-node src/scripts/seed.ts</code></td>
+</tr>
+<tr>
+<td><code>Metadata validation failed</code></td>
+<td>Run seed script</td>
+</tr>
+<tr>
+<td><code>Port 4000 in use</code></td>
+<td><code>netstat -ano | findstr 4000</code> then kill PID</td>
+</tr>
+</tbody></table>
+<hr>
+<div class="page-break"></div><h1 id="10-running-the-project">10 RUNNING THE PROJECT</h1>
+<h2 id="manual-startup-windows">Manual Startup (Windows)</h2>
+<p><strong>Terminal 1 &mdash; MariaDB:</strong> <code>cd backend &amp;&amp; docker compose up -d mariadb</code></p>
+<p><strong>Terminal 2 &mdash; Backend:</strong> <code>cd backend &amp;&amp; npm start</code></p>
+<p><strong>Terminal 3 &mdash; Frontend (optional):</strong> <code>cd frontend &amp;&amp; npm run dev</code></p>
+<h2 id="dev-shell-scripts">Dev Shell Scripts</h2>
+<table>
+<thead>
+<tr>
+<th>Script</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>start-dev.sh</code></td>
+<td>Start all services</td>
+</tr>
+<tr>
+<td><code>stop-dev.sh</code></td>
+<td>Stop all services</td>
+</tr>
+<tr>
+<td><code>status-dev.sh</code></td>
+<td>Check service status</td>
+</tr>
+<tr>
+<td><code>logs-dev.sh</code></td>
+<td>View service logs</td>
+</tr>
+</tbody></table>
+<h2 id="quick-verification">Quick Verification</h2>
+<pre><code class="language-bash">curl localhost:4000/health    # -&gt; {&quot;status&quot;:&quot;ok&quot;}
+
+curl -X POST localhost:4000/api/v1/evaluate \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;buildingType&quot;:&quot;Commercial Buildings&quot;}&#39;   # -&gt; full result JSON
+</code></pre>
+<hr>
+<div class="page-break"></div><h1 id="11-common-workflows">11 COMMON WORKFLOWS</h1>
+<h2 id="1-add-a-new-criterion">1. Add a New Criterion</h2>
+<pre><code class="language-bash">curl -X POST localhost:4000/api/v1/criteria -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;code&quot;:&quot;EC1.1.10&quot;,&quot;name&quot;:&quot;...&quot;,&quot;definition&quot;:&quot;...&quot;,&quot;value&quot;:0.15,&quot;disability&quot;:1,&quot;dimension&quot;:1,&quot;levels&quot;:[&quot;L1&quot;,&quot;L2&quot;,&quot;L3&quot;,&quot;L4&quot;,&quot;L5&quot;]}&#39;
+</code></pre>
+<p>Or via SQL:</p>
+<pre><code class="language-sql">INSERT INTO criteria (id, code, name, definition, justification, value, disability, dimension, score, levels)
+VALUES (UUID(), &#39;EC1.1.10&#39;, &#39;...&#39;, &#39;...&#39;, &#39;...&#39;, 0.15, 1, 1, 3, &#39;[&quot;L1&quot;,&quot;L2&quot;,&quot;L3&quot;,&quot;L4&quot;,&quot;L5&quot;]&#39;);
+</code></pre>
+<h2 id="2-adjust-neb-thresholds">2. Adjust NEB Thresholds</h2>
+<pre><code class="language-sql">UPDATE neb_thresholds SET min = 65 WHERE neb_class = &#39;A&#39;;
+INSERT INTO neb_thresholds VALUES (UUID(), 95, &#39;A++&#39;, &#39;5+&#39;, &#39;Outstanding&#39;, 5, 0);
+</code></pre>
+<h2 id="3-create-a-building-type">3. Create a Building Type</h2>
+<pre><code class="language-sql">INSERT INTO building_types VALUES (
+  UUID(), &#39;Healthcare Buildings&#39;, &#39;[0.20,0.25,0.20,0.20,0.15]&#39;, &#39;[0.30,0.30,0.15,0.10,0.15]&#39;
+);
+</code></pre>
+<h2 id="4-update-config-values">4. Update Config Values</h2>
+<pre><code class="language-sql">UPDATE config SET value = &#39;30&#39; WHERE `key` = &#39;MAX_OBS&#39;;
+UPDATE config SET value = &#39;4&#39; WHERE `key` = &#39;STRENGTH_THRESHOLD&#39;;
+</code></pre>
+<h2 id="5-run-tests-before-commit">5. Run Tests Before Commit</h2>
+<pre><code class="language-bash">npm run test:automated
+# Expected: &quot;Metadata validation passed&quot; / &quot;Static checks passed&quot; / &quot;All tests passed&quot;
+</code></pre>
+<h2 id="6-debug-a-calculation">6. Debug a Calculation</h2>
+<p>Send test evaluation via curl &rarr; examine <code>tisByDT</code>, <code>cisByAD</code>, <code>criteria[0].is</code> &rarr; compare against Excel workbook reference.</p>
+<h2 id="7-database-backup-and-restore">7. Database Backup &amp; Restore</h2>
+<pre><code class="language-bash">docker exec mariadb mysqldump -u myuser -pmypassword mydb &gt; backup.sql
+docker exec -i mariadb mysql -u myuser -pmypassword mydb &lt; backup.sql
+</code></pre>
+<h2 id="8-reset-database">8. Reset Database</h2>
+<pre><code class="language-bash">docker compose down -v &amp;&amp; docker compose up -d mariadb &amp;&amp; npx ts-node src/scripts/seed.ts
+</code></pre>
+<hr>
+<div class="page-break"></div><h1 id="12-debugging-guide">12 DEBUGGING GUIDE</h1>
+<h2 id="top-5-errors">Top 5 Errors</h2>
+<h3 id="1-quotdatasource-init-failedquot">1. &quot;DataSource init failed&quot;</h3>
+<p><strong>Causes:</strong> MariaDB not running, wrong DATABASE_URL, port conflict.
+<strong>Fix:</strong> <code>docker compose up -d mariadb</code>; verify credentials match docker-compose.yml.</p>
+<h3 id="2-quotmetadata-validation-failedquot-exit-code-1">2. &quot;Metadata validation failed&quot; (exit code 1)</h3>
+<p><strong>Fix:</strong> Run <code>npx ts-node src/scripts/seed.ts</code>. Check all 4 core tables have data.</p>
+<h3 id="3-quoteconnrefused-1270014000quot">3. &quot;ECONNREFUSED 127.0.0.1:4000&quot;</h3>
+<p><strong>Fix:</strong> Backend not running &mdash; <code>npm start</code>.</p>
+<h3 id="4-cors-errors-in-browser">4. CORS Errors in Browser</h3>
+<p><strong>Fix:</strong> Backend uses <code>cors()</code> middleware. If frontend port changed, update CORS config in <code>index.ts</code>.</p>
+<h3 id="5-quotmissing-configuration-max_obsquot">5. &quot;Missing configuration: MAX_OBS&quot;</h3>
+<p><strong>Fix:</strong> Re-run seed or insert manually:</p>
+<pre><code class="language-sql">INSERT INTO config VALUES (UUID(), &#39;MAX_OBS&#39;, &#39;25&#39;);
+</code></pre>
+<h2 id="log-locations">Log Locations</h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>How to View</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Backend</td>
+<td>Terminal where <code>npm start</code> runs (stdout)</td>
+</tr>
+<tr>
+<td>MariaDB</td>
+<td><code>docker compose logs mariadb</code></td>
+</tr>
+<tr>
+<td>Docker</td>
+<td><code>docker compose logs</code></td>
+</tr>
+</tbody></table>
+<hr>
+<div class="page-break"></div><h1 id="13-troubleshooting">13 TROUBLESHOOTING</h1>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Problem</th>
+<th>Likely Fix</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Backend won&#39;t start</td>
+<td><code>docker compose up -d mariadb</code> then <code>npm start</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>&quot;Access denied for user&quot;</td>
+<td>Verify DATABASE_URL matches docker-compose.yml</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Tables don&#39;t exist</td>
+<td><code>npx ts-node src/scripts/seed.ts</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>OBS always 0</td>
+<td>Check <code>SELECT * FROM config WHERE key=&#39;MAX_OBS&#39;</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>NEB always &quot;No Rating&quot;</td>
+<td>Re-seed <code>neb_thresholds</code> table</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Empty strengths/weaknesses</td>
+<td>Check STRENGTH_THRESHOLD &amp; WEAKNESS_THRESHOLD in config</td>
+</tr>
+<tr>
+<td>7</td>
+<td>&quot;entity.parse.failed&quot;</td>
+<td>Invalid JSON in request body &mdash; validate payload</td>
+</tr>
+<tr>
+<td>8</td>
+<td>TypeORM &quot;EntityMetadataNotFound&quot;</td>
+<td>Verify all 5 entities in <code>data-source.ts</code> entities array</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Docker pull fails</td>
+<td>Check network; <code>docker pull mariadb:10.11</code> manually</td>
+</tr>
+<tr>
+<td>10</td>
+<td>TypeScript compilation errors</td>
+<td><code>npm install</code> then <code>npx tsc --noEmit</code></td>
+</tr>
+<tr>
+<td>11</td>
+<td>Static test fails in CI</td>
+<td>Remove hardcoded values; use DB config</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Data lost after restart</td>
+<td>Verify <code>db_data</code> volume exists: <code>docker volume ls</code></td>
+</tr>
+</tbody></table>
+<hr>
+<div class="page-break"></div><h1 id="14-coding-standards">14 CODING STANDARDS</h1>
+<h2 id="core-principles">Core Principles</h2>
+<ol>
+<li><strong>Metadata-Driven First:</strong> Never hardcode a database-worthy value</li>
+<li><strong>Backend Owns Logic:</strong> All calculations &amp; business rules in services</li>
+<li><strong>TypeScript Strict:</strong> <code>strict: true</code>, no implicit <code>any</code></li>
+<li><strong>Single Source of Truth:</strong> Canonical seed data in <code>src/data/</code></li>
+</ol>
+<h2 id="naming-conventions">Naming Conventions</h2>
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Convention</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Files</td>
+<td>kebab-case</td>
+<td><code>calculation-service.ts</code></td>
+</tr>
+<tr>
+<td>Classes/Entities</td>
+<td>PascalCase</td>
+<td><code>NebThreshold</code></td>
+</tr>
+<tr>
+<td>Functions/variables</td>
+<td>camelCase</td>
+<td><code>getBuildingType()</code></td>
+</tr>
+<tr>
+<td>DB tables/columns</td>
+<td>snake_case</td>
+<td><code>neb_thresholds</code>, <code>building_type</code></td>
+</tr>
+<tr>
+<td>API paths</td>
+<td>kebab-case</td>
+<td><code>/api/v1/building-types</code></td>
+</tr>
+</tbody></table>
+<h2 id="service-and-controller-rules">Service &amp; Controller Rules</h2>
+<ul>
+<li>Services export <strong>async functions</strong>, never classes</li>
+<li>Services use metadata service for data access (not direct repos)</li>
+<li>Calculation service is the <strong>only</strong> place formulas exist</li>
+<li>Controllers validate shape before calling services</li>
+<li>Controllers use <code>try/catch</code> &rarr; 400 for validation, 500 for internal errors</li>
+<li>Success responses always include <code>ok: true</code></li>
+</ul>
+<h2 id="prohibited-patterns-ci-enforced">Prohibited Patterns (CI-enforced)</h2>
+<pre><code class="language-typescript">// WRONG - hardcoded
+const weights = [0.2, 0.2, 0.2, 0.2, 0.2];
+const NEB = [85, 60, 40];
+const MAX_OBS = 25;
+
+// CORRECT - from database
+const weights = bt.disability_weights;
+const neb = await metadata.getNebThresholds();
+const MAX_OBS = await metadata.getConfigNumber(&#39;MAX_OBS&#39;);
+</code></pre>
+<p><strong>Formatting:</strong> 2-space indent, no trailing whitespace, files end with newline, semicolons required.</p>
+<hr>
+<div class="page-break"></div><h1 id="15-git-workflow">15 GIT WORKFLOW</h1>
+<p><strong>Branch strategy:</strong> <code>main</code> (production) &larr; <code>develop</code> (integration) &larr; <code>feature/*</code> / <code>fix/*</code> / <code>chore/*</code></p>
+<p><strong>Commit format:</strong> <code>&lt;type&gt;(&lt;scope&gt;): &lt;description&gt;</code> &mdash; types: <code>feat</code>, <code>fix</code>, <code>chore</code>, <code>docs</code>, <code>test</code>, <code>refactor</code></p>
+<p><strong>PR process:</strong> Create feature branch &rarr; commit &rarr; <code>npm run test:automated</code> &rarr; push &rarr; PR to <code>develop</code> &rarr; CI runs &rarr; code review &rarr; merge.</p>
+<p><strong>CI pipeline (on push to main):</strong> test-backend &rarr; build-backend &rarr; deploy-backend &rarr; build-frontend &rarr; deploy-frontend (5 jobs, GitHub Actions).</p>
+<hr>
+<div class="page-break"></div><h1 id="16-deployment">16 DEPLOYMENT</h1>
+<h2>Azure Resources (via <code>main.bicep</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>SKU</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>App Service Plan</td>
+<td>B1 Basic Linux</td>
+</tr>
+<tr>
+<td>Backend App Service</td>
+<td>Node 20 LTS</td>
+</tr>
+<tr>
+<td>Static Web App</td>
+<td>Standard</td>
+</tr>
+<tr>
+<td>MariaDB Server</td>
+<td>10.3, TLS 1.2</td>
+</tr>
+<tr>
+<td>Application Insights + Log Analytics</td>
+<td>Monitoring</td>
+</tr>
+</tbody></table>
+<h2 id="deploy">Deploy</h2>
+<pre><code class="language-bash">az deployment sub create \
+  --location westeurope \
+  --template-file azure/main.bicep \
+  --parameters dbPassword=&#39;&lt;password&gt;&#39; dbAdminPassword=&#39;&lt;admin&gt;&#39;
+</code></pre>
+<h2 id="production-app-settings">Production App Settings</h2>
+<pre><code>PORT=4000
+WEBSITES_PORT=4000
+DATABASE_URL=mysql://myuser:&lt;pwd&gt;@mariadb-aas-production.mariadb.database.azure.com:3306/mydb
+DB_TYPE=mariadb
+TYPEORM_SYNCHRONIZE=false
+</code></pre>
+<hr>
+<div class="page-break"></div><h1 id="17-faq">17 FAQ</h1>
+<p><strong>Q: Why TypeORM and not Prisma?</strong>
+A: Mature MariaDB support, entity decorators, built-in migration system, and repository pattern.</p>
+<p><strong>Q: Why lazy metadata initialization?</strong>
+A: Defers DB connection to first request &mdash; server starts even if DB is temporarily unavailable.</p>
+<p><strong>Q: Why derive DT/AD from data instead of config?</strong>
+A: System auto-adapts when criteria are added/removed without code changes.</p>
+<p><strong>Q: How do I reset the database?</strong>
+A: <code>docker compose down -v &amp;&amp; docker compose up -d mariadb &amp;&amp; npx ts-node src/scripts/seed.ts</code></p>
+<p><strong>Q: Migrations vs seed?</strong>
+A: Migrations = schema (DDL), seed = data (DML). Migrations create tables; seed populates canonical values.</p>
+<p><strong>Q: Can I use PostgreSQL?</strong>
+A: Changing <code>DB_TYPE</code> to <code>postgres</code> and updating the connection string should work but is untested.</p>
+<hr>
+<div class="page-break"></div><h1 id="18-useful-commands">18 USEFUL COMMANDS</h1>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>docker compose up -d mariadb</code></td>
+<td>Start MariaDB</td>
+</tr>
+<tr>
+<td><code>docker compose down</code></td>
+<td>Stop MariaDB</td>
+</tr>
+<tr>
+<td><code>docker compose logs -f mariadb</code></td>
+<td>Follow DB logs</td>
+</tr>
+<tr>
+<td><code>docker exec -it mariadb mariadb -u myuser -pmypassword mydb</code></td>
+<td>DB CLI</td>
+</tr>
+<tr>
+<td><code>npm start</code></td>
+<td>Start backend</td>
+</tr>
+<tr>
+<td><code>npm run test:automated</code></td>
+<td>Full test suite</td>
+</tr>
+<tr>
+<td><code>npm run seed</code></td>
+<td>Seed database</td>
+</tr>
+<tr>
+<td><code>curl localhost:4000/health</code></td>
+<td>Health check</td>
+</tr>
+<tr>
+<td><code>curl localhost:4000/api/v1/criteria</code></td>
+<td>Get all criteria</td>
+</tr>
+<tr>
+<td><code>curl localhost:4000/api/v1/building-types</code></td>
+<td>Get building types</td>
+</tr>
+<tr>
+<td><code>curl localhost:4000/api/v1/neb-thresholds</code></td>
+<td>Get NEB thresholds</td>
+</tr>
+<tr>
+<td><code>curl localhost:4000/api/v1/config</code></td>
+<td>Get config</td>
+</tr>
+<tr>
+<td><code>SHOW TABLES;</code></td>
+<td>List DB tables</td>
+</tr>
+<tr>
+<td><code>SELECT COUNT(*) FROM criteria;</code></td>
+<td>Should return 63</td>
+</tr>
+</tbody></table>
+<hr>
+<div class="page-break"></div><h1 id="19-glossary">19 GLOSSARY</h1>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>AAST</strong></td>
+<td>Accessibility Assessment Scheme Tool</td>
+</tr>
+<tr>
+<td><strong>AD</strong></td>
+<td>Assessment Dimension (1&ndash;5): Spatial, Safety, Cognitive, Digital, Social</td>
+</tr>
+<tr>
+<td><strong>CIS</strong></td>
+<td>Combined Impact Score &mdash; weighted sum per AD</td>
+</tr>
+<tr>
+<td><strong>DT</strong></td>
+<td>Disability Type (1&ndash;5): Physical, Sensory, Cognitive, Communication, Multiple</td>
+</tr>
+<tr>
+<td><strong>EN 17210</strong></td>
+<td>European Standard for built environment accessibility</td>
+</tr>
+<tr>
+<td><strong>IS</strong></td>
+<td>Impact Score = value &times; score per criterion</td>
+</tr>
+<tr>
+<td><strong>TIS</strong></td>
+<td>Total Impact Score = &Sigma; IS per DT</td>
+</tr>
+<tr>
+<td><strong>OBS</strong></td>
+<td>Overall Building Score = weighted percentage (0&ndash;100)</td>
+</tr>
+<tr>
+<td><strong>NEB</strong></td>
+<td>National Evaluation Benchmark (A+, A, B, No Rating)</td>
+</tr>
+<tr>
+<td><strong>MAX_OBS</strong></td>
+<td>Maximum possible OBS raw value (25, configurable)</td>
+</tr>
+<tr>
+<td><strong>TypeORM</strong></td>
+<td>TypeScript ORM for Node.js</td>
+</tr>
+<tr>
+<td><strong>Zod</strong></td>
+<td>TypeScript-first schema validation</td>
+</tr>
+<tr>
+<td><strong>Bicep</strong></td>
+<td>Azure infrastructure-as-code language</td>
+</tr>
+<tr>
+<td><strong>Seed</strong></td>
+<td>Initial data population process</td>
+</tr>
+<tr>
+<td><strong>Static Test</strong></td>
+<td>Test scanning source code for banned hardcoded patterns</td>
+</tr>
+</tbody></table>
+
+</body>
+</html>

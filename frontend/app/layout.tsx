@@ -6,6 +6,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { PWAProvider } from "@/components/PWAProvider";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import Providers from "@/components/Providers";
+import SplashScreen from "@/components/SplashScreen";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -47,6 +48,7 @@ export default function RootLayout({
             <ThemeProvider>
               <OfflineIndicator />
               <PWAProvider />
+              <SplashScreen />
               {children}
               <footer className="border-t border-slate-800 py-6 text-center text-sm text-slate-500">
                 AASTool by Serg | Dev by Y

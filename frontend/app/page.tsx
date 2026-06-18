@@ -150,13 +150,6 @@ export default function Home() {
             ))}
           </div>
         </section>
-
-        {/* FOOTER */}
-        <footer className="max-w-7xl mx-auto pb-12 text-center">
-          <p className="text-slate-500 text-sm">
-            AASTool by Serg | Dev by Y
-          </p>
-        </footer>
       </main>
     </div>
   );
