@@ -121,6 +121,7 @@ app.get('/api/v1/health', async (_req, res) => {
 });
 
 app.get('/api/v1/buildings', getBuildings);
+app.get('/api/v1/buildings/:id', getBuilding);
 app.post('/api/v1/assessments', createAssessment);
 app.get('/api/v1/assessments/:id', getAssessment);
 app.get('/api/v1/reports', getReports);
