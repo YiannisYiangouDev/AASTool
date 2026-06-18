@@ -53,7 +53,7 @@ coverage/
 # Docs — tracked separately
 
 #scripts
-*.sh
+
 
 #az
 azure/

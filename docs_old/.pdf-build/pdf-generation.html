@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AASTool PDF Generation</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  body{font-family:'Inter','DejaVu Sans','Segoe UI',system-ui,sans-serif;font-size:10.5pt;line-height:1.7;color:#1a1a2e;max-width:190mm;margin:0 auto;padding:10mm 0 20mm 0}
+  .title-page{text-align:center;padding:40mm 10mm 0 10mm;page-break-after:always}
+  .title-page .project{font-size:11pt;font-weight:600;color:#1a56db;letter-spacing:3px;text-transform:uppercase;margin-bottom:8mm}
+  .title-page h1{font-size:28pt;font-weight:700;color:#1a1a2e;margin:0 0 6mm 0;line-height:1.2}
+  .title-page .meta{font-size:9pt;color:#718096;margin-top:20mm;line-height:2}
+  .title-page .meta strong{color:#1a56db}
+  .title-page .divider{width:60mm;height:3px;background:#1a56db;margin:10mm auto;border-radius:2px}
+  nav#TOC{page-break-after:always}
+  nav#TOC h2{font-size:16pt;color:#1a56db;border-bottom:2px solid #1a56db;padding-bottom:3mm;margin-bottom:6mm}
+  nav#TOC ul{list-style:none;padding-left:0}
+  nav#TOC li{margin:1.5mm 0}
+  nav#TOC a{color:#1a56db;text-decoration:none;font-weight:500}
+  h1{font-size:18pt;color:#1a1a2e;margin:12mm 0 5mm 0;page-break-before:always}
+  h1:first-of-type{page-break-before:avoid}
+  h2{font-size:14pt;color:#1a56db;margin:8mm 0 4mm 0;border-bottom:1px solid #e2e8f0;padding-bottom:2mm}
+  h3{font-size:12pt;color:#2d3748;margin:6mm 0 3mm 0}
+  h4{font-size:11pt;color:#4a5568;margin:4mm 0 2mm 0}
+  p{margin:2mm 0}
+  a{color:#1a56db;text-decoration:none}
+  strong{color:#1a1a2e;font-weight:600}
+  code{font-family:'Cascadia Code','Fira Code','DejaVu Sans Mono',monospace;font-size:9pt;background:#f7fafc;padding:1px 5px;border-radius:3px;color:#c7254e}
+  pre{background:#1a1a2e;color:#e2e8f0;padding:4mm 5mm;border-radius:4px;font-size:8.5pt;line-height:1.5;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+  pre code{background:none;color:inherit;padding:0;border-radius:0}
+  table{width:100%;border-collapse:collapse;margin:4mm 0;font-size:9.5pt}
+  th{background:#1a56db;color:#fff;padding:2mm 3mm;text-align:left;font-weight:600}
+  td{padding:2mm 3mm;border-bottom:1px solid #e2e8f0}
+  tr:nth-child(even) td{background:#f7fafc}
+  blockquote{border-left:4px solid #1a56db;margin:4mm 0;padding:2mm 5mm;background:#ebf4ff;border-radius:0 4px 4px 0;color:#2c5282}
+  ul,ol{margin:2mm 0;padding-left:8mm}
+  li{margin:1mm 0}
+  hr{border:none;border-top:1px solid #e2e8f0;margin:6mm 0}
+  @media print{
+    body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    @page{size:A4;margin:20mm 18mm}
+  }
+</style>
+</head>
+<body>
+<div class="title-page">
+  <div class="project">AASTool Enterprise Documentation</div>
+  <div class="divider"></div>
+  <h1>AASTool PDF Generation</h1>
+  <div class="meta">
+    <strong>Version:</strong> 1.0.0<br>
+    <strong>Date:</strong> June 18, 2026<br>
+    <strong>Author:</strong> AASTool by Serg | Dev by Y
+  </div>
+</div>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>pdf-generation-body</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#aastool-pdf-generation-subsystem"
+id="toc-aastool-pdf-generation-subsystem">AASTool — PDF Generation
+Subsystem</a>
+<ul>
+<li><a href="#table-of-contents" id="toc-table-of-contents">Table of
+Contents</a></li>
+<li><a href="#overview" id="toc-overview">Overview</a>
+<ul>
+<li><a href="#key-requirements" id="toc-key-requirements">Key
+Requirements</a></li>
+</ul></li>
+<li><a href="#architecture" id="toc-architecture">Architecture</a></li>
+<li><a href="#report-types" id="toc-report-types">Report Types</a>
+<ul>
+<li><a href="#full-certification-report-30-pages"
+id="toc-full-certification-report-30-pages">1. Full Certification Report
+(~30 pages)</a></li>
+<li><a href="#summary-report-5-pages" id="toc-summary-report-5-pages">2.
+Summary Report (~5 pages)</a></li>
+<li><a href="#criteria-workbook-15-pages"
+id="toc-criteria-workbook-15-pages">3. Criteria Workbook (~15
+pages)</a></li>
+</ul></li>
+<li><a href="#pdf-generation-pipeline"
+id="toc-pdf-generation-pipeline">PDF Generation Pipeline</a>
+<ul>
+<li><a href="#technology-stack" id="toc-technology-stack">Technology
+Stack</a></li>
+<li><a href="#alternative-markdown-pdf"
+id="toc-alternative-markdown-pdf">Alternative: Markdown → PDF</a></li>
+</ul></li>
+<li><a href="#template-structure" id="toc-template-structure">Template
+Structure</a>
+<ul>
+<li><a href="#html-template-handlebars"
+id="toc-html-template-handlebars">HTML Template (Handlebars)</a></li>
+<li><a href="#data-binding" id="toc-data-binding">Data Binding</a></li>
+</ul></li>
+<li><a href="#data-sources" id="toc-data-sources">Data Sources</a>
+<ul>
+<li><a href="#from-database" id="toc-from-database">From
+Database</a></li>
+<li><a href="#from-calculation-engine"
+id="toc-from-calculation-engine">From Calculation Engine</a></li>
+<li><a href="#from-api" id="toc-from-api">From API</a></li>
+</ul></li>
+<li><a href="#implementation-guide"
+id="toc-implementation-guide">Implementation Guide</a>
+<ul>
+<li><a href="#backend-endpoint" id="toc-backend-endpoint">Backend
+Endpoint</a></li>
+<li><a href="#register-route" id="toc-register-route">Register
+Route</a></li>
+<li><a href="#frontend-integration"
+id="toc-frontend-integration">Frontend Integration</a></li>
+</ul></li>
+<li><a href="#neb-certification-output"
+id="toc-neb-certification-output">NEB Certification Output</a>
+<ul>
+<li><a href="#cover-page-layout" id="toc-cover-page-layout">Cover Page
+Layout</a></li>
+<li><a href="#results-table" id="toc-results-table">Results
+Table</a></li>
+<li><a href="#score-distribution-chart"
+id="toc-score-distribution-chart">Score Distribution Chart</a></li>
+</ul></li>
+<li><a href="#styling-branding" id="toc-styling-branding">Styling &amp;
+Branding</a>
+<ul>
+<li><a href="#print-css-specifications"
+id="toc-print-css-specifications">Print CSS Specifications</a></li>
+<li><a href="#color-palette" id="toc-color-palette">Color
+Palette</a></li>
+</ul></li>
+<li><a href="#rendering-pipeline" id="toc-rendering-pipeline">Rendering
+Pipeline</a>
+<ul>
+<li><a href="#dependency-installation"
+id="toc-dependency-installation">Dependency Installation</a></li>
+<li><a href="#azure-app-service-configuration"
+id="toc-azure-app-service-configuration">Azure App Service
+Configuration</a></li>
+<li><a href="#memory-management" id="toc-memory-management">Memory
+Management</a></li>
+</ul></li>
+<li><a href="#performance-considerations"
+id="toc-performance-considerations">Performance Considerations</a>
+<ul>
+<li><a href="#async-generation-pattern"
+id="toc-async-generation-pattern">Async Generation Pattern</a></li>
+</ul></li>
+<li><a href="#testing-pdf-output" id="toc-testing-pdf-output">Testing
+PDF Output</a>
+<ul>
+<li><a href="#manual-verification-checklist"
+id="toc-manual-verification-checklist">Manual Verification
+Checklist</a></li>
+<li><a href="#automated-tests" id="toc-automated-tests">Automated
+Tests</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="aastool-pdf-generation-subsystem">AASTool — PDF Generation
+Subsystem</h1>
+<p><strong>Enterprise Edition | Version 1.0.0</strong></p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol type="1">
+<li><a href="#overview">Overview</a></li>
+<li><a href="#architecture">Architecture</a></li>
+<li><a href="#report-types">Report Types</a></li>
+<li><a href="#pdf-generation-pipeline">PDF Generation Pipeline</a></li>
+<li><a href="#template-structure">Template Structure</a></li>
+<li><a href="#data-sources">Data Sources</a></li>
+<li><a href="#implementation-guide">Implementation Guide</a></li>
+<li><a href="#neb-certification-output">NEB Certification
+Output</a></li>
+<li><a href="#styling--branding">Styling &amp; Branding</a></li>
+<li><a href="#rendering-pipeline">Rendering Pipeline</a></li>
+<li><a href="#performance-considerations">Performance
+Considerations</a></li>
+<li><a href="#testing-pdf-output">Testing PDF Output</a></li>
+</ol>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>The PDF generation subsystem produces formal accessibility
+certification reports from evaluation results. Reports are generated
+server-side from the Express backend, combining evaluation data from the
+database with branded templates to produce EN 17210-aligned
+certification documents.</p>
+<h3 id="key-requirements">Key Requirements</h3>
+<ul>
+<li><strong>Server-side generation</strong> — PDFs are produced by the
+backend, not the browser</li>
+<li><strong>Data-driven</strong> — All scores, classifications, and
+criteria come from the database</li>
+<li><strong>Branded</strong> — Reports carry the AASTool/SERG brand
+identity</li>
+<li><strong>Structured</strong> — Consistent sections: header, building
+info, scores, NEB classification, recommendations, appendices</li>
+<li><strong>Printable</strong> — A4 format, print-ready with proper
+margins and page breaks</li>
+<li><strong>Accessible</strong> — Tagged PDF structure for screen reader
+compatibility</li>
+</ul>
+<hr />
+<h2 id="architecture">Architecture</h2>
+<pre><code>┌────────────────────────────────────────────────────────────────┐
+│                    PDF GENERATION PIPELINE                     │
+│                                                                │
+│  1. DATA COLLECTION                                             │
+│     ├── Evaluation record (from DB)                            │
+│     ├── Building type weights (from DB)                        │
+│     ├── Criteria list (from DB)                                │
+│     ├── NEB thresholds (from DB)                               │
+│     └── Assessment results (from evaluation)                   │
+│                │                                               │
+│                ▼                                               │
+│  2. TEMPLATE RENDERING                                         │
+│     ├── HTML/CSS template engine                              │
+│     ├── Data binding (populate placeholders)                   │
+│     ├── Chart generation (score distribution, radar)           │
+│     └── Logo &amp; branding injection                              │
+│                │                                               │
+│                ▼                                               │
+│  3. PDF CONVERSION                                             │
+│     ├── HTML → PDF engine (Puppeteer/Playwright)               │
+│     ├── A4 page formatting                                     │
+│     ├── Headers/footers with page numbers                      │
+│     └── Table of contents generation                           │
+│                │                                               │
+│                ▼                                               │
+│  4. OUTPUT                                                     │
+│     ├── Save to disk / blob storage                            │
+│     ├── Return as download to client                           │
+│     └── Archive for report history                             │
+└────────────────────────────────────────────────────────────────┘</code></pre>
+<hr />
+<h2 id="report-types">Report Types</h2>
+<h3 id="full-certification-report-30-pages">1. Full Certification Report
+(~30 pages)</h3>
+<p>The complete accessibility audit report, suitable for formal
+certification submission.</p>
+<p><strong>Sections</strong>: 1. <strong>Cover Page</strong> — Title,
+building name, date, NEB class badge, AASTool branding 2.
+<strong>Executive Summary</strong> — OBS score, NEB classification, key
+findings (1 page) 3. <strong>Building Profile</strong> — Building type,
+DT weights, AD weights, assessment metadata 4.
+<strong>Methodology</strong> — EN 17210 alignment, scoring scale, weight
+derivation 5. <strong>Overall Results</strong> — OBS, NEB class, score
+distribution chart, average scores 6. <strong>DT Analysis</strong> — Per
+disability type: TIS scores, average scores, strengths/weaknesses 7.
+<strong>AD Analysis</strong> — Per assessment dimension: CIS scores,
+average scores, recommendations 8. <strong>Strengths &amp;
+Weaknesses</strong> — Top 5 strengths, top 5 weaknesses with details 9.
+<strong>Criterion Details</strong> — Full 63-criterion table with
+scores, IS values, level assignments 10.
+<strong>Recommendations</strong> — Prioritized improvement actions by
+impact 11. <strong>Appendices</strong> — Raw data tables, methodology
+references, glossary</p>
+<h3 id="summary-report-5-pages">2. Summary Report (~5 pages)</h3>
+<p>A condensed version for stakeholders who need key metrics only.</p>
+<p><strong>Sections</strong>: 1. Cover info 2. OBS &amp; NEB
+classification 3. Score distribution chart 4. Top 5 strengths and
+weaknesses 5. Key recommendations</p>
+<h3 id="criteria-workbook-15-pages">3. Criteria Workbook (~15
+pages)</h3>
+<p>The full criteria catalog with definitions and levels — used for
+scoring workshops.</p>
+<p><strong>Sections</strong>: 1. DT/AD matrix overview 2. Complete
+criteria table (code, name, definition, levels 1–5) 3. Scoring guide</p>
+<hr />
+<h2 id="pdf-generation-pipeline">PDF Generation Pipeline</h2>
+<h3 id="technology-stack">Technology Stack</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Component</th>
+<th>Technology</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Template engine</td>
+<td>Handlebars / EJS</td>
+<td>HTML template with data binding</td>
+</tr>
+<tr class="even">
+<td>HTML→PDF converter</td>
+<td>Puppeteer</td>
+<td>Headless Chrome rendering to PDF</td>
+</tr>
+<tr class="odd">
+<td>Charts</td>
+<td>Chart.js (node-canvas)</td>
+<td>Score distribution, radar charts</td>
+</tr>
+<tr class="even">
+<td>Fonts</td>
+<td>Google Fonts (Inter, Roboto)</td>
+<td>Brand typography in PDF</td>
+</tr>
+<tr class="odd">
+<td>Storage</td>
+<td>Filesystem / Azure Blob</td>
+<td>Generated PDF storage</td>
+</tr>
+</tbody>
+</table>
+<h3 id="alternative-markdown-pdf">Alternative: Markdown → PDF</h3>
+<p>For documentation-only PDFs (e.g., this documentation package), use
+Pandoc:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> docs/<span class="pp">*</span>.md <span class="at">-o</span> AASTool-Documentation.pdf <span class="dt">\</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--pdf-engine</span><span class="op">=</span>xelatex <span class="dt">\</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--toc</span> <span class="at">--toc-depth</span><span class="op">=</span>3 <span class="dt">\</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--template</span><span class="op">=</span>eisvogel <span class="dt">\</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--metadata</span> title=<span class="st">&quot;AASTool Enterprise Documentation&quot;</span></span></code></pre></div>
+<hr />
+<h2 id="template-structure">Template Structure</h2>
+<h3 id="html-template-handlebars">HTML Template (Handlebars)</h3>
+<pre><code>templates/
+├── report-full.hbs          # Full certification report
+├── report-summary.hbs       # Summary report
+├── report-criteria.hbs      # Criteria workbook
+├── partials/
+│   ├── header.hbs           # Page header with logo
+│   ├── footer.hbs           # Page footer with numbers
+│   ├── cover.hbs            # Cover page
+│   ├── neb-badge.hbs        # NEB classification badge
+│   ├── score-chart.hbs      # Score distribution chart
+│   ├── criteria-table.hbs   # Full criteria table
+│   └── recommendations.hbs  # Recommendations section
+├── styles/
+│   └── report.css           # Print-specific CSS
+└── assets/
+    ├── logo.png             # AASTool logo
+    ├── serg-logo.png        # SERG logo
+    └── fonts/               # Embedded fonts</code></pre>
+<h3 id="data-binding">Data Binding</h3>
+<p>The template receives a context object:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> ReportContext {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Building info</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  building<span class="op">:</span> {</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    id<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    name<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    type<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    disability_weights<span class="op">:</span> <span class="dt">number</span>[]<span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    dimension_weights<span class="op">:</span> <span class="dt">number</span>[]<span class="op">;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Evaluation results</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  evaluation<span class="op">:</span> {</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    id<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    obs<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    nebClass<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    nebEquivalent<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    nebMeaning<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    nebScore<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    averageRawScore<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    avgRawScoreByDT<span class="op">:</span> <span class="bu">Record</span><span class="op">&lt;</span><span class="dt">number</span><span class="op">,</span> <span class="dt">number</span><span class="op">&gt;;</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    avgRawScoreByAD<span class="op">:</span> <span class="bu">Record</span><span class="op">&lt;</span><span class="dt">number</span><span class="op">,</span> <span class="dt">number</span><span class="op">&gt;;</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    scoreDistribution<span class="op">:</span> <span class="bu">Record</span><span class="op">&lt;</span><span class="dt">number</span><span class="op">,</span> <span class="dt">number</span><span class="op">&gt;;</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    strengths<span class="op">:</span> CriterionResult[]<span class="op">;</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    weaknesses<span class="op">:</span> CriterionResult[]<span class="op">;</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    tisByDT<span class="op">:</span> <span class="bu">Record</span><span class="op">&lt;</span><span class="dt">number</span><span class="op">,</span> <span class="dt">number</span><span class="op">&gt;;</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    cisByAD<span class="op">:</span> <span class="bu">Record</span><span class="op">&lt;</span><span class="dt">number</span><span class="op">,</span> <span class="dt">number</span><span class="op">&gt;;</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    criteria<span class="op">:</span> CriterionResult[]<span class="op">;</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Metadata</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  metadata<span class="op">:</span> {</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    generatedAt<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>    reportNumber<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    version<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    assessmentDate<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    assessorName<span class="op">?:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Reference data</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>  reference<span class="op">:</span> {</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    dtLabels<span class="op">:</span> { id<span class="op">:</span> <span class="dt">number</span><span class="op">;</span> name<span class="op">:</span> <span class="dt">string</span> }[]<span class="op">;</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    adLabels<span class="op">:</span> { id<span class="op">:</span> <span class="dt">number</span><span class="op">;</span> name<span class="op">:</span> <span class="dt">string</span> }[]<span class="op">;</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    nebThresholds<span class="op">:</span> { min<span class="op">:</span> <span class="dt">number</span><span class="op">;</span> neb_class<span class="op">:</span> <span class="dt">string</span><span class="op">;</span> equivalent<span class="op">:</span> <span class="dt">string</span> }[]<span class="op">;</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<hr />
+<h2 id="data-sources">Data Sources</h2>
+<h3 id="from-database">From Database</h3>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 50%" />
+<col style="width: 26%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Data</th>
+<th>Source Table</th>
+<th>Query</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Evaluation results</td>
+<td><code>evaluations</code></td>
+<td><code>findOne({ where: { id } })</code></td>
+</tr>
+<tr class="even">
+<td>Building type weights</td>
+<td><code>building_types</code></td>
+<td><code>findOne({ where: { name } })</code></td>
+</tr>
+<tr class="odd">
+<td>Criteria definitions</td>
+<td><code>criteria</code></td>
+<td><code>find()</code></td>
+</tr>
+<tr class="even">
+<td>NEB thresholds</td>
+<td><code>neb_thresholds</code></td>
+<td><code>find({ order: { min: 'DESC' } })</code></td>
+</tr>
+<tr class="odd">
+<td>Config</td>
+<td><code>config</code></td>
+<td><code>find()</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="from-calculation-engine">From Calculation Engine</h3>
+<p>The <code>evaluate()</code> function already returns all data needed
+for PDF generation: - <code>obs</code>, <code>nebClass</code>,
+<code>nebEquivalent</code>, <code>nebMeaning</code>,
+<code>nebScore</code> - <code>averageRawScore</code>,
+<code>avgRawScoreByDT</code>, <code>avgRawScoreByAD</code> -
+<code>scoreDistribution</code> - <code>strengths[]</code>,
+<code>weaknesses[]</code> - <code>tisByDT</code>, <code>cisByAD</code> -
+<code>criteria[]</code> with computed <code>is</code> values</p>
+<h3 id="from-api">From API</h3>
+<p>The frontend can also trigger PDF generation via API:</p>
+<pre><code>POST /api/v1/reports/generate
+Body: { evaluationId: &quot;uuid&quot; }
+Response: PDF binary (Content-Type: application/pdf)</code></pre>
+<hr />
+<h2 id="implementation-guide">Implementation Guide</h2>
+<h3 id="backend-endpoint">Backend Endpoint</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// reportsController.ts — add to existing controller</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> puppeteer <span class="im">from</span> <span class="st">&#39;puppeteer&#39;</span><span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> Handlebars <span class="im">from</span> <span class="st">&#39;handlebars&#39;</span><span class="op">;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> fs <span class="im">from</span> <span class="st">&#39;fs/promises&#39;</span><span class="op">;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">async</span> <span class="kw">function</span> <span class="fu">generateReportPdf</span>(req<span class="op">:</span> Request<span class="op">,</span> res<span class="op">:</span> Response) {</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span> {</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> { evaluationId } <span class="op">=</span> req<span class="op">.</span><span class="at">params</span><span class="op">;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 1. Load data</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> repo <span class="op">=</span> AppDataSource<span class="op">.</span><span class="fu">getRepository</span>(Evaluation)<span class="op">;</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> ev <span class="op">=</span> <span class="cf">await</span> repo<span class="op">.</span><span class="fu">findOne</span>({ where<span class="op">:</span> { id<span class="op">:</span> evaluationId } })<span class="op">;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>ev) <span class="cf">return</span> res<span class="op">.</span><span class="fu">status</span>(<span class="dv">404</span>)<span class="op">.</span><span class="fu">json</span>({ ok<span class="op">:</span> <span class="kw">false</span><span class="op">,</span> error<span class="op">:</span> <span class="st">&#39;Evaluation not found&#39;</span> })<span class="op">;</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> bt <span class="op">=</span> <span class="cf">await</span> metadataService<span class="op">.</span><span class="fu">getBuildingType</span>(ev<span class="op">.</span><span class="at">building_type</span>)<span class="op">;</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> nebThresholds <span class="op">=</span> <span class="cf">await</span> metadataService<span class="op">.</span><span class="fu">getNebThresholds</span>()<span class="op">;</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> dtLabels <span class="op">=</span> <span class="cf">await</span> <span class="fu">getDisabilityTypeLabels</span>()<span class="op">;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> adLabels <span class="op">=</span> <span class="cf">await</span> <span class="fu">getAssessmentDimensionLabels</span>()<span class="op">;</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 2. Build context</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> context<span class="op">:</span> ReportContext <span class="op">=</span> {</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>      building<span class="op">:</span> {</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        id<span class="op">:</span> bt<span class="op">.</span><span class="at">id</span><span class="op">,</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        name<span class="op">:</span> bt<span class="op">.</span><span class="at">name</span><span class="op">,</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        type<span class="op">:</span> bt<span class="op">.</span><span class="at">name</span><span class="op">,</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        disability_weights<span class="op">:</span> bt<span class="op">.</span><span class="at">disability_weights</span><span class="op">,</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        dimension_weights<span class="op">:</span> bt<span class="op">.</span><span class="at">dimension_weights</span><span class="op">,</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>      }<span class="op">,</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>      evaluation<span class="op">:</span> ev<span class="op">.</span><span class="at">result</span><span class="op">,</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>      metadata<span class="op">:</span> {</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>        generatedAt<span class="op">:</span> <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>        reportNumber<span class="op">:</span> <span class="cf">await</span> <span class="fu">getNextReportNumber</span>()<span class="op">,</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        version<span class="op">:</span> <span class="st">&#39;1.0.0&#39;</span><span class="op">,</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>        assessmentDate<span class="op">:</span> ev<span class="op">.</span><span class="at">created_at</span><span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>      }<span class="op">,</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>      reference<span class="op">:</span> {</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>        dtLabels<span class="op">,</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>        adLabels<span class="op">,</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>        nebThresholds<span class="op">,</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>      }<span class="op">,</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 3. Render HTML</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> template <span class="op">=</span> <span class="cf">await</span> fs<span class="op">.</span><span class="fu">readFile</span>(<span class="st">&#39;templates/report-full.hbs&#39;</span><span class="op">,</span> <span class="st">&#39;utf-8&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> compiled <span class="op">=</span> Handlebars<span class="op">.</span><span class="fu">compile</span>(template)<span class="op">;</span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> html <span class="op">=</span> <span class="fu">compiled</span>(context)<span class="op">;</span></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 4. Convert to PDF</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> browser <span class="op">=</span> <span class="cf">await</span> puppeteer<span class="op">.</span><span class="fu">launch</span>({ headless<span class="op">:</span> <span class="kw">true</span> })<span class="op">;</span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> page <span class="op">=</span> <span class="cf">await</span> browser<span class="op">.</span><span class="fu">newPage</span>()<span class="op">;</span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">setContent</span>(html<span class="op">,</span> { waitUntil<span class="op">:</span> <span class="st">&#39;networkidle0&#39;</span> })<span class="op">;</span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> pdf <span class="op">=</span> <span class="cf">await</span> page<span class="op">.</span><span class="fu">pdf</span>({</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>      format<span class="op">:</span> <span class="st">&#39;A4&#39;</span><span class="op">,</span></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>      printBackground<span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>      margin<span class="op">:</span> { top<span class="op">:</span> <span class="st">&#39;20mm&#39;</span><span class="op">,</span> bottom<span class="op">:</span> <span class="st">&#39;20mm&#39;</span><span class="op">,</span> left<span class="op">:</span> <span class="st">&#39;15mm&#39;</span><span class="op">,</span> right<span class="op">:</span> <span class="st">&#39;15mm&#39;</span> }<span class="op">,</span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>      displayHeaderFooter<span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>      headerTemplate<span class="op">:</span> <span class="st">&#39;&lt;div style=&quot;font-size:8px;text-align:center;width:100%&quot;&gt;AASTool Certification Report&lt;/div&gt;&#39;</span><span class="op">,</span></span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>      footerTemplate<span class="op">:</span> <span class="st">&#39;&lt;div style=&quot;font-size:8px;text-align:center;width:100%&quot;&gt;Page &lt;span class=&quot;pageNumber&quot;&gt;&lt;/span&gt; of &lt;span class=&quot;totalPages&quot;&gt;&lt;/span&gt;&lt;/div&gt;&#39;</span><span class="op">,</span></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> browser<span class="op">.</span><span class="fu">close</span>()<span class="op">;</span></span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 5. Return PDF</span></span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>    res<span class="op">.</span><span class="fu">setHeader</span>(<span class="st">&#39;Content-Type&#39;</span><span class="op">,</span> <span class="st">&#39;application/pdf&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>    res<span class="op">.</span><span class="fu">setHeader</span>(<span class="st">&#39;Content-Disposition&#39;</span><span class="op">,</span> <span class="vs">`attachment; filename=&quot;AASTool-Report-</span><span class="sc">${</span>evaluationId<span class="sc">}</span><span class="vs">.pdf&quot;`</span>)<span class="op">;</span></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>    res<span class="op">.</span><span class="fu">send</span>(pdf)<span class="op">;</span></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">catch</span> (err) {</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">error</span>(<span class="st">&#39;PDF generation error:&#39;</span><span class="op">,</span> err)<span class="op">;</span></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>    res<span class="op">.</span><span class="fu">status</span>(<span class="dv">500</span>)<span class="op">.</span><span class="fu">json</span>({ ok<span class="op">:</span> <span class="kw">false</span><span class="op">,</span> error<span class="op">:</span> <span class="st">&#39;PDF generation failed&#39;</span> })<span class="op">;</span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="register-route">Register Route</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">// In index.ts</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>app<span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;/api/v1/reports/:evaluationId/pdf&#39;</span><span class="op">,</span> generateReportPdf)<span class="op">;</span></span></code></pre></div>
+<h3 id="frontend-integration">Frontend Integration</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode ts"><code class="sourceCode typescript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// lib/api/endpoints.ts — add</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>downloadReportPdf<span class="op">:</span> (evaluationId<span class="op">:</span> <span class="dt">string</span>) <span class="kw">=&gt;</span> {</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> url <span class="op">=</span> <span class="vs">`</span><span class="sc">${</span>baseURL<span class="sc">}</span><span class="vs">/reports/</span><span class="sc">${</span>evaluationId<span class="sc">}</span><span class="vs">/pdf`</span><span class="op">;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="bu">window</span><span class="op">.</span><span class="fu">open</span>(url<span class="op">,</span> <span class="st">&#39;_blank&#39;</span>)<span class="op">;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>}<span class="op">,</span></span></code></pre></div>
+<hr />
+<h2 id="neb-certification-output">NEB Certification Output</h2>
+<h3 id="cover-page-layout">Cover Page Layout</h3>
+<pre><code>┌─────────────────────────────────────────┐
+│                                         │
+│            [AASTool Logo]               │
+│                                         │
+│     ACCESSIBILITY CERTIFICATION         │
+│            REPORT                       │
+│                                         │
+│    ╔═══════════════════════════╗        │
+│    ║     NEB CLASS: A         ║        │
+│    ║     Very Good            ║        │
+│    ╚═══════════════════════════╝        │
+│                                         │
+│    Building: Commercial Buildings       │
+│    OBS Score: 72.45%                    │
+│    Date: June 15, 2026                  │
+│    Report #: 2026-0042                  │
+│                                         │
+│    AASTool by Serg | Dev by Y           │
+│    Smart Engineering Research Group     │
+│                                         │
+└─────────────────────────────────────────┘</code></pre>
+<h3 id="results-table">Results Table</h3>
+<table>
+<thead>
+<tr class="header">
+<th>DT</th>
+<th>Disability Type</th>
+<th>Avg Score</th>
+<th>TIS</th>
+<th>Weight</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>DT1</td>
+<td>Physical</td>
+<td>4.1</td>
+<td>85.50</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td>DT2</td>
+<td>Sensory</td>
+<td>3.5</td>
+<td>72.30</td>
+<td>0.8</td>
+</tr>
+<tr class="odd">
+<td>DT3</td>
+<td>Cognitive</td>
+<td>3.9</td>
+<td>81.00</td>
+<td>1.2</td>
+</tr>
+<tr class="even">
+<td>DT4</td>
+<td>Intellectual</td>
+<td>3.8</td>
+<td>79.20</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td>DT5</td>
+<td>Psychosocial</td>
+<td>3.8</td>
+<td>79.20</td>
+<td>0.9</td>
+</tr>
+</tbody>
+</table>
+<h3 id="score-distribution-chart">Score Distribution Chart</h3>
+<pre><code>     ┌────┐
+  25 │    │
+     │    │         ┌────┐
+  20 │    │         │    │         ┌────┐
+     │    │         │    │         │    │
+  15 │    │         │    │         │    │         ┌────┐
+     │    │         │    │         │    │         │    │
+  10 │    │         │    │         │    │         │    │
+     │    │         │    │         │    │  ┌────┐ │    │
+   5 │    │  ┌────┐ │    │         │    │  │    │ │    │
+     │    │  │    │ │    │         │    │  │    │ │    │
+   0 └────┴──┴────┴─┴────┴─────────┴────┴──┴────┴─┴────┘
+        1      2        3             4       5
+                    Score Level</code></pre>
+<hr />
+<h2 id="styling-branding">Styling &amp; Branding</h2>
+<h3 id="print-css-specifications">Print CSS Specifications</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* report.css — Print-specific styles */</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="im">@page</span> {</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  size: A4<span class="op">;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">margin</span>: <span class="dv">20</span><span class="dt">mm</span> <span class="dv">15</span><span class="dt">mm</span><span class="op">;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="im">@bottom-center</span> {</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">content</span>: <span class="st">&quot;Page &quot;</span> <span class="fu">counter(</span>page<span class="fu">)</span> <span class="st">&quot; of &quot;</span> <span class="fu">counter(</span>pages<span class="fu">)</span><span class="op">;</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">font-size</span>: <span class="dv">8</span><span class="dt">pt</span><span class="op">;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">color</span>: <span class="cn">#666</span><span class="op">;</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>body {</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span>: <span class="st">&#39;Inter&#39;</span><span class="op">,</span> <span class="st">&#39;Roboto&#39;</span><span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span>: <span class="dv">10</span><span class="dt">pt</span><span class="op">;</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="kw">line-height</span>: <span class="dv">1.6</span><span class="op">;</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span>: <span class="cn">#1a1a1a</span><span class="op">;</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="fu">.page-break</span> {</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  <span class="kw">page-break-before</span>: <span class="dv">always</span><span class="op">;</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="fu">.cover-page</span> {</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="kw">display</span>: <span class="dv">flex</span><span class="op">;</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  <span class="kw">flex-direction</span>: <span class="dv">column</span><span class="op">;</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>  <span class="kw">justify-content</span>: <span class="dv">center</span><span class="op">;</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>  <span class="kw">align-items</span>: <span class="dv">center</span><span class="op">;</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>  <span class="kw">height</span>: <span class="dv">100</span><span class="dt">vh</span><span class="op">;</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>  <span class="kw">text-align</span>: <span class="dv">center</span><span class="op">;</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="fu">.neb-badge</span> {</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>  <span class="kw">border</span>: <span class="dv">3</span><span class="dt">px</span> <span class="dv">solid</span> <span class="cn">#2563eb</span><span class="op">;</span></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>  <span class="kw">border-radius</span>: <span class="dv">12</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>  <span class="kw">padding</span>: <span class="dv">20</span><span class="dt">px</span> <span class="dv">40</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>  <span class="kw">margin</span>: <span class="dv">30</span><span class="dt">px</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a><span class="fu">.neb-class</span> {</span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span>: <span class="dv">36</span><span class="dt">pt</span><span class="op">;</span></span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-weight</span>: <span class="dv">800</span><span class="op">;</span></span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span>: <span class="cn">#2563eb</span><span class="op">;</span></span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>table {</span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>  <span class="kw">width</span>: <span class="dv">100</span><span class="dt">%</span><span class="op">;</span></span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>  <span class="kw">border-collapse</span>: <span class="dv">collapse</span><span class="op">;</span></span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>  <span class="kw">margin</span>: <span class="dv">12</span><span class="dt">px</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>th {</span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background</span>: <span class="cn">#f3f4f6</span><span class="op">;</span></span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-weight</span>: <span class="dv">600</span><span class="op">;</span></span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>  <span class="kw">text-align</span>: <span class="dv">left</span><span class="op">;</span></span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>  <span class="kw">padding</span>: <span class="dv">8</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a>td {</span>
+<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a>  <span class="kw">padding</span>: <span class="dv">6</span><span class="dt">px</span> <span class="dv">8</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a>  <span class="kw">border-bottom</span>: <span class="dv">1</span><span class="dt">px</span> <span class="dv">solid</span> <span class="cn">#e5e7eb</span><span class="op">;</span></span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a><span class="fu">.strength-row</span> { <span class="kw">border-left</span>: <span class="dv">3</span><span class="dt">px</span> <span class="dv">solid</span> <span class="cn">#16a34a</span><span class="op">;</span> }</span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a><span class="fu">.weakness-row</span> { <span class="kw">border-left</span>: <span class="dv">3</span><span class="dt">px</span> <span class="dv">solid</span> <span class="cn">#dc2626</span><span class="op">;</span> }</span></code></pre></div>
+<h3 id="color-palette">Color Palette</h3>
+<table>
+<thead>
+<tr class="header">
+<th>Element</th>
+<th>Color</th>
+<th>Hex</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Primary (NEB badges, headings)</td>
+<td>Blue</td>
+<td><code>#2563eb</code></td>
+</tr>
+<tr class="even">
+<td>Strengths</td>
+<td>Green</td>
+<td><code>#16a34a</code></td>
+</tr>
+<tr class="odd">
+<td>Weaknesses</td>
+<td>Red</td>
+<td><code>#dc2626</code></td>
+</tr>
+<tr class="even">
+<td>Neutral (tables, borders)</td>
+<td>Gray</td>
+<td><code>#e5e7eb</code></td>
+</tr>
+<tr class="odd">
+<td>Background</td>
+<td>White</td>
+<td><code>#ffffff</code></td>
+</tr>
+<tr class="even">
+<td>Text</td>
+<td>Near-black</td>
+<td><code>#1a1a1a</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="rendering-pipeline">Rendering Pipeline</h2>
+<h3 id="dependency-installation">Dependency Installation</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> backend</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install puppeteer handlebars</span></code></pre></div>
+<p>Puppeteer downloads a Chromium binary (~300MB). For production (Azure
+App Service), use:</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install puppeteer-core @sparticuz/chromium</span></code></pre></div>
+<h3 id="azure-app-service-configuration">Azure App Service
+Configuration</h3>
+<p>For PDF generation in the Azure Linux App Service (restricted
+environment):</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode ts"><code class="sourceCode typescript"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> puppeteer <span class="im">from</span> <span class="st">&#39;puppeteer-core&#39;</span><span class="op">;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> chromium <span class="im">from</span> <span class="st">&#39;@sparticuz/chromium&#39;</span><span class="op">;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> browser <span class="op">=</span> <span class="cf">await</span> puppeteer<span class="op">.</span><span class="fu">launch</span>({</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  args<span class="op">:</span> chromium<span class="op">.</span><span class="at">args</span><span class="op">,</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  executablePath<span class="op">:</span> <span class="cf">await</span> chromium<span class="op">.</span><span class="fu">executablePath</span>()<span class="op">,</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  headless<span class="op">:</span> chromium<span class="op">.</span><span class="at">headless</span><span class="op">,</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<h3 id="memory-management">Memory Management</h3>
+<ul>
+<li>Close browser instances after PDF generation</li>
+<li>Use a browser pool for concurrent requests (max 3 instances)</li>
+<li>Set timeouts: 30 seconds for HTML render, 60 seconds total</li>
+<li>Clean up temp files in <code>/tmp</code> after generation</li>
+</ul>
+<hr />
+<h2 id="performance-considerations">Performance Considerations</h2>
+<table>
+<colgroup>
+<col style="width: 47%" />
+<col style="width: 52%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concern</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Large HTML (63 criteria × detail rows)</td>
+<td>Lazy render sections, use CSS page breaks</td>
+</tr>
+<tr class="even">
+<td>Chart rendering</td>
+<td>Pre-render charts as PNG with node-canvas, embed as base64</td>
+</tr>
+<tr class="odd">
+<td>Browser memory</td>
+<td>Pool browsers, close after use, max 3 concurrent</td>
+</tr>
+<tr class="even">
+<td>Response time</td>
+<td>Generate async, poll for completion, email when ready</td>
+</tr>
+<tr class="odd">
+<td>File size</td>
+<td>Compress with <code>--compress</code> flag, target &lt; 5MB</td>
+</tr>
+<tr class="even">
+<td>Font embedding</td>
+<td>Subset fonts to only used glyphs using <code>subset-font</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="async-generation-pattern">Async Generation Pattern</h3>
+<p>For reports that take &gt;5 seconds to generate:</p>
+<pre><code>POST /api/v1/reports/generate-async
+→ { ok: true, jobId: &quot;uuid&quot; }
+
+GET /api/v1/reports/jobs/:jobId
+→ { status: &quot;processing&quot; } or { status: &quot;done&quot;, downloadUrl: &quot;...&quot; }</code></pre>
+<hr />
+<h2 id="testing-pdf-output">Testing PDF Output</h2>
+<h3 id="manual-verification-checklist">Manual Verification
+Checklist</h3>
+<ul class="task-list">
+<li><label><input type="checkbox" />Cover page renders with correct
+building name and NEB class</label></li>
+<li><label><input type="checkbox" />OBS percentage matches evaluation
+result</label></li>
+<li><label><input type="checkbox" />Score distribution chart matches
+data</label></li>
+<li><label><input type="checkbox" />All 63 criteria appear in the detail
+table</label></li>
+<li><label><input type="checkbox" />Strengths and weaknesses lists are
+populated</label></li>
+<li><label><input type="checkbox" />Page numbers appear on every
+page</label></li>
+<li><label><input type="checkbox" />Table of contents has correct page
+references</label></li>
+<li><label><input type="checkbox" />PDF is searchable (text, not
+images)</label></li>
+<li><label><input type="checkbox" />PDF passes PDF/UA accessibility
+checker</label></li>
+<li><label><input type="checkbox" />File size under 10MB</label></li>
+</ul>
+<h3 id="automated-tests">Automated Tests</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode ts"><code class="sourceCode typescript"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">// tests/pdf-generation.test.ts</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(<span class="st">&#39;PDF Generation&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">it</span>(<span class="st">&#39;should generate a valid PDF buffer&#39;</span><span class="op">,</span> <span class="kw">async</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> pdf <span class="op">=</span> <span class="cf">await</span> <span class="fu">generateReportPdf</span>(testEvaluationId)<span class="op">;</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(pdf)<span class="op">.</span><span class="fu">toBeInstanceOf</span>(<span class="bu">Buffer</span>)<span class="op">;</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(pdf<span class="op">.</span><span class="at">length</span>)<span class="op">.</span><span class="fu">toBeGreaterThan</span>(<span class="dv">1000</span>)<span class="op">;</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Check PDF magic bytes</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(pdf<span class="op">.</span><span class="fu">slice</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">5</span>)<span class="op">.</span><span class="fu">toString</span>())<span class="op">.</span><span class="fu">toBe</span>(<span class="st">&#39;%PDF-&#39;</span>)<span class="op">;</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">it</span>(<span class="st">&#39;should include NEB classification in output&#39;</span><span class="op">,</span> <span class="kw">async</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> pdf <span class="op">=</span> <span class="cf">await</span> <span class="fu">generateReportPdf</span>(testEvaluationId)<span class="op">;</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> text <span class="op">=</span> <span class="cf">await</span> <span class="fu">pdfToText</span>(pdf)<span class="op">;</span> <span class="co">// use pdf-parse</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(text)<span class="op">.</span><span class="fu">toContain</span>(<span class="st">&#39;NEB CLASS&#39;</span>)<span class="op">;</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(text)<span class="op">.</span><span class="fu">toContain</span>(<span class="st">&#39;Overall Building Score&#39;</span>)<span class="op">;</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<hr />
+<p><em>AASTool by Serg | Dev by Y</em></p>
+</body>
+</html>
+</body></html>
