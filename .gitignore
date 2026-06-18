@@ -53,6 +53,6 @@ coverage/
 docs/
 
 #scripts
-start-dev.sh
-status-dev.sh
-stop-dev.sh
+*.start-dev.sh
+*.status-dev.sh
+*.stop-dev.sh
