@@ -154,7 +154,7 @@ export default function Home() {
         {/* FOOTER */}
         <footer className="max-w-7xl mx-auto pb-12 text-center">
           <p className="text-slate-500 text-sm">
-            AAS — Accessibility Assessment Scheme
+            AASTool by Serg | Dev by Y
           </p>
         </footer>
       </main>

@@ -819,7 +819,7 @@ export default function DashboardPage() {
         </div>
 
         <p className="text-center text-slate-600 text-xs mt-16">
-          AAS — Accessibility Assessment Scheme
+          AASTool by Serg | Dev by Y
         </p>
       </main>
 

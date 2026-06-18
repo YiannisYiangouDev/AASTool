@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "AASTool",
-  description: "AAS — Accessibility Assessment Scheme",
+  description: "AASTool — Accessibility Assessment Scheme | by Serg | Dev by Y",
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",
@@ -49,7 +49,7 @@ export default function RootLayout({
               <PWAProvider />
               {children}
               <footer className="border-t border-slate-800 py-6 text-center text-sm text-slate-500">
-                AAS — Accessibility Assessment Scheme
+                AASTool by Serg | Dev by Y
               </footer>
             </ThemeProvider>
           </ErrorBoundary>
