@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useTheme } from "components/layout/mobile-nav";
+import { useTheme } from "@/components/layout/mobile-nav";
 
 const NAV_ITEMS = [
   {

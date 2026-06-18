@@ -45,6 +45,7 @@ coverage/
 
 # Misc
 .cache/
+.hintrc
 *.pdf
 *.xlsx
 *.xls

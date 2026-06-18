@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "components/layout/mobile-nav";
-import { ErrorBoundary } from "components/ErrorBoundary";
-import { PWAProvider } from "components/PWAProvider";
-import { OfflineIndicator } from "components/OfflineIndicator";
-import Providers from "components/Providers";
+import { ThemeProvider } from "@/components/layout/mobile-nav";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { PWAProvider } from "@/components/PWAProvider";
+import { OfflineIndicator } from "@/components/OfflineIndicator";
+import Providers from "@/components/Providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
