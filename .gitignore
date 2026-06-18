@@ -51,7 +51,7 @@ coverage/
 *.xls
 
 # Docs — tracked separately
-docs_old/
+
 #scripts
 *.sh
 
