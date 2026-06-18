@@ -452,7 +452,7 @@ const toggleExpand = (code: string) => {
 
         {/* Footer info */}
         <p className="text-center text-slate-600 text-xs mt-16">
-          AASTool by Serg · Developed by Y
+          AAS — Accessibility Assessment Scheme
         </p>
       </main>
 

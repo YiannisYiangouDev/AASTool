@@ -2,7 +2,7 @@
 
 ## Overview
 
-SERG-ASSTool handles building accessibility data. While not processing sensitive personal data, the following security practices are implemented.
+AAS handles building accessibility data. While not processing sensitive personal data, the following security practices are implemented.
 
 ## Current Security Measures
 

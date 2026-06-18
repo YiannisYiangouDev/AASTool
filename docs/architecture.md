@@ -1,4 +1,4 @@
-# Architecture — SERG-ASSTool
+# Architecture — AAS
 
 ## System Overview
 

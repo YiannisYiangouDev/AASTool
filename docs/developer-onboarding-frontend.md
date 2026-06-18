@@ -1,9 +1,9 @@
 <!--
 ================================================================================
-SERG-ASSTool
+AAS
 Frontend Developer Guide — The "Client Shell"
 Enterprise Edition — Version 1.0
-Document ID: SERG-TECH-001
+Document ID: AAS-TECH-001
 Confidentiality: Internal — Frontend Engineering Team
 Release Date: 2026-06-17
 ================================================================================
@@ -11,7 +11,7 @@ Release Date: 2026-06-17
 
 <div class="cover-page">
 
-# SERG-ASSTool
+# AAS
 
 ---
 
@@ -21,9 +21,9 @@ Release Date: 2026-06-17
 
 ---
 
-**Version:** 1.0 | **Release:** 2026-06-17 | **Document ID:** SERG-TECH-001
+**Version:** 1.0 | **Release:** 2026-06-17 | **Document ID:** AAS-TECH-001
 
-*&copy; 2026 SERG-ASSTool. Internal &mdash; Frontend Engineering Team.*
+*&copy; 2026 AAS. Internal &mdash; Frontend Engineering Team.*
 
 </div>
 
@@ -33,7 +33,7 @@ Release Date: 2026-06-17
 
 # 1 EXECUTIVE SUMMARY
 
-The SERG-ASSTool Frontend (the "Client Shell") is a modern, responsive PWA built with **Next.js 16 (App Router)** and **React 19**. It is a **pure presentation layer with zero business logic**.
+The AAS Frontend (the "Client Shell") is a modern, responsive PWA built with **Next.js 16 (App Router)** and **React 19**. It is a **pure presentation layer with zero business logic**.
 
 ## Core Principle: Zero Business Logic
 
@@ -279,7 +279,7 @@ User <- React Re-render <- Hook updates cache <- Axios unwrap <- JSON response
 
 ```bash
 # 1. Install
-git clone <repo-url> && cd serg-asstool/frontend && npm install
+git clone <repo-url> && cd AASTool/frontend && npm install
 
 # 2. Configure (optional — defaults to localhost:4000)
 echo "NEXT_PUBLIC_API_URL=http://localhost:4000/api/v1" > .env.local
@@ -538,7 +538,7 @@ A: Set `NEXT_PUBLIC_API_URL` in `.env.local` (dev) or Azure Portal (prod).
 
 | Term | Definition |
 |------|------------|
-| **SERG-ASSTool** | SERG Accessibility Assessment Scheme Tool |
+| **AAS** | Accessibility Assessment Scheme |
 | **App Router** | Next.js 13+ file-based routing via `app/` directory |
 | **Axios** | Promise-based HTTP client |
 | **Client Component** | React component with `"use client"` &mdash; runs in browser |

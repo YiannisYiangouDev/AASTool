@@ -1,4 +1,4 @@
-# API Reference — SERG-ASSTool
+# API Reference — AAS
 
 **Base URL**: `http://localhost:4000/api/v1`
 **Content-Type**: `application/json`

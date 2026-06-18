@@ -1,6 +1,6 @@
 # AASTool — Accessibility Assessment Scheme
 
-**By Serg · Developed by Y**
+**Accessibility Assessment Scheme · Open Source**
 
 An enterprise platform for evaluating building accessibility across five disability types and five assessment dimensions. Produces OBS (Overall Building Score), NEB classification, TIS/CIS breakdowns, and certification reports.
 

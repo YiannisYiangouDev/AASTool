@@ -1,5 +1,5 @@
 #!/bin/bash
-# Stop all services for SERG-ASSTool
+# Stop all services for AAS
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'

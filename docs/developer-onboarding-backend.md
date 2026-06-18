@@ -1,9 +1,9 @@
 <!--
 ================================================================================
-SERG-ASSTool
+AAS
 Backend Developer Guide — The "Kernel"
 Enterprise Edition — Version 1.0
-Document ID: SERG-TECH-001
+Document ID: AAS-TECH-001
 Confidentiality: Internal — Backend Engineering Team
 Release Date: 2026-06-17
 ================================================================================
@@ -11,7 +11,7 @@ Release Date: 2026-06-17
 
 <div class="cover-page">
 
-# SERG-ASSTool
+# AAS
 
 ---
 
@@ -21,9 +21,9 @@ Release Date: 2026-06-17
 
 ---
 
-**Version:** 1.0 | **Release:** 2026-06-17 | **Document ID:** SERG-TECH-001
+**Version:** 1.0 | **Release:** 2026-06-17 | **Document ID:** AAS-TECH-001
 
-*&copy; 2026 SERG-ASSTool. Internal &mdash; Backend Engineering Team.*
+*&copy; 2026 AAS. Internal &mdash; Backend Engineering Team.*
 
 </div>
 
@@ -33,7 +33,7 @@ Release Date: 2026-06-17
 
 # 1 EXECUTIVE SUMMARY
 
-The SERG-ASSTool Backend (the "Kernel") is a metadata-driven REST API implementing the **EN 17210** accessibility scoring framework. It is the single source of truth for all business logic, calculations, and data access.
+The AAS Backend (the "Kernel") is a metadata-driven REST API implementing the **EN 17210** accessibility scoring framework. It is the single source of truth for all business logic, calculations, and data access.
 
 | Responsibility | Implementation |
 |---------------|---------------|
@@ -86,7 +86,7 @@ Frontend (Next.js) --> Backend (Express) --> Database (MariaDB)
 
 ## Business Purpose
 
-SERG-ASSTool evaluates buildings against **63 canonical criteria** across a 5&times;5 matrix:
+AAS evaluates buildings against **63 canonical criteria** across a 5&times;5 matrix:
 
 - **5 Disability Types (DT):** Physical, Sensory, Cognitive &amp; Neurodiverse, Communication &amp; Mental Health, Multiple/Situational
 - **5 Assessment Dimensions (AD):** Spatial &amp; Physical, Safety &amp; Environmental, Cognitive &amp; Navigational, Digital Interaction, Social Inclusion
@@ -438,7 +438,7 @@ Browser -> Next.js Hook -> Axios POST /api/v1/evaluate
 
 ```bash
 # 1. Clone and install
-git clone <repo-url> && cd serg-asstool/backend && npm install
+git clone <repo-url> && cd AASTool/backend && npm install
 
 # 2. Start MariaDB
 docker compose up -d mariadb
@@ -795,7 +795,7 @@ A: Changing `DB_TYPE` to `postgres` and updating the connection string should wo
 
 | Term | Definition |
 |------|------------|
-| **SERG-ASSTool** | SERG Accessibility Assessment Scheme Tool |
+| **AAS** | Accessibility Assessment Scheme |
 | **AD** | Assessment Dimension (1&ndash;5): Spatial, Safety, Cognitive, Digital, Social |
 | **CIS** | Combined Impact Score &mdash; weighted sum per AD |
 | **DT** | Disability Type (1&ndash;5): Physical, Sensory, Cognitive, Communication, Multiple |

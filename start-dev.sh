@@ -1,5 +1,5 @@
 #!/bin/bash
-# Start all services for SERG-ASSTool
+# Start all services for AAS
 # MariaDB in Docker, Backend + Frontend via npm
 
 set -e
@@ -41,7 +41,7 @@ print_error() {
 }
 
 echo -e "${BLUE}════════════════════════════════════════════════════${NC}"
-echo -e "${BLUE}  SERG-ASSTool Development Environment${NC}"
+echo -e "${BLUE}  AAS — Development Environment${NC}"
 echo -e "${BLUE}════════════════════════════════════════════════════${NC}"
 echo ""
 

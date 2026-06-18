@@ -1,4 +1,4 @@
-// Azure Bicep — SERG-ASSTool Resource-Group Resources
+// Azure Bicep — AAS Resource-Group Resources
 // Referenced as a module from main.bicep
 
 param location string

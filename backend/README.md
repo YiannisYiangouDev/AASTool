@@ -1,4 +1,4 @@
-# Backend — SERG-ASSTool
+# Backend — AAS
 
 Express + TypeScript + TypeORM REST API. **Sole source of truth** for all business logic, calculations, and persistence.
 

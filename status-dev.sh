@@ -1,5 +1,5 @@
 #!/bin/bash
-# Check status of all SERG-ASSTool services
+# Check status of all AAS services
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -8,7 +8,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 echo -e "${BLUE}════════════════════════════════════════════════════${NC}"
-echo -e "${BLUE}  SERG-ASSTool — Services Status${NC}"
+echo -e "${BLUE}  AAS — Services Status${NC}"
 echo -e "${BLUE}════════════════════════════════════════════════════${NC}"
 echo ""
 

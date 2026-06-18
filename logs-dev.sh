@@ -1,5 +1,5 @@
 #!/bin/bash
-# View logs for SERG-ASSTool services
+# View logs for AAS services
 # Usage: ./logs-dev.sh [backend|frontend|database]
 
 SERVICE="${1:-all}"

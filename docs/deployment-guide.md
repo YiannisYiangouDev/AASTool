@@ -1,4 +1,4 @@
-# SERG-ASSTool — Deployment Guide
+# AAS — Deployment Guide
 
 **Version:** 1.0  
 **Date:** 2026-06-17  
@@ -303,7 +303,7 @@ Use GitHub as the central source of truth with CI/CD to any cloud.
 ### Step 6.1: Push to GitHub
 
 ```bash
-cd c:\Users\yiannis\Desktop\Serg
+cd c:\Users\yiannis\Desktop\Serg\proj
 
 # Initialize Git
 git init
@@ -325,7 +325,7 @@ Thumbs.db
 GITIGNORE
 
 git add .
-git commit -m "Initial commit — SERG-ASSTool"
+git commit -m "Initial commit — AAS"
 
 # Push to GitHub
 git remote add origin https://github.com/YOUR_USERNAME/accessibility-assessment.git
@@ -791,7 +791,7 @@ Save as `deploy-azure.sh`:
 #!/bin/bash
 set -e
 
-echo "=== SERG-ASSTool — Azure Deployment ==="
+echo "=== AAS — Azure Deployment ==="
 
 # Check prerequisites
 command -v az >/dev/null 2>&1 || { echo "Install Azure CLI first"; exit 1; }

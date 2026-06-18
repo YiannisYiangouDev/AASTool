@@ -1,4 +1,4 @@
-# SERG-ASSTool Frontend
+# AAS Frontend
 
 Next.js 16 App Router application. **Pure REST API consumer** — contains zero business logic.
 

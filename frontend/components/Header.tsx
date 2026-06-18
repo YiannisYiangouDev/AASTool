@@ -261,7 +261,7 @@ export default function Header() {
                 AASTool
               </span>
               <span className="text-[10px] text-slate-500 font-medium hidden sm:block -mt-0.5">
-                by Serg
+                AAS
               </span>
             </div>
           </Link>

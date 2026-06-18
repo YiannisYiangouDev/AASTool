@@ -1,4 +1,4 @@
-// Azure Bicep — SERG-ASSTool Enterprise Infrastructure
+// Azure Bicep — AAS Enterprise Infrastructure
 // Deploy: az deployment sub create --location westeurope --template-file main.bicep
 
 targetScope = 'subscription'

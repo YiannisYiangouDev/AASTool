@@ -1,4 +1,4 @@
-# SERG-ASSTool Kernel REST API Specification
+# AAS Kernel REST API Specification
 
 Base URL: /api/v1
 Auth: JWT (Bearer) for protected endpoints. Public read endpoints may be unprotected.
