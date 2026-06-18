@@ -5,7 +5,9 @@
   "description": "SERG-ASSTool — Enterprise Accessibility Assessment Scheme Platform — Kernel Backend",
   "type": "commonjs",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
     "test": "ts-node src/tests/calculation.test.ts",
     "test:automated": "ts-node src/tests/metadata.test.ts && ts-node src/tests/static.test.ts && ts-node src/tests/calculation.test.ts",
     "verify:workbook": "ts-node src/scripts/extract_workbook_mappings.ts",
