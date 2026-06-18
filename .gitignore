@@ -54,3 +54,6 @@ docs/
 
 #scripts
 *.sh
+
+#az
+azure/
