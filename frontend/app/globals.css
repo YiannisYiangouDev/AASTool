@@ -1,0 +1,300 @@
+@import "tailwindcss";
+
+    :root {
+      --bg: #0b1120;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --border: rgba(255, 255, 255, .06);
+      --bottom-nav-h: 68px;
+    }
+
+    html[data-theme='light'] {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: rgba(15, 23, 42, .08);
+    }
+
+    * {
+      font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      overflow-x: hidden;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      transition: .3s ease;
+    }
+
+    .glass {
+      background: var(--card);
+      border: 1px solid var(--border);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .sidebar-link {
+      transition: .2s ease;
+    }
+
+    .sidebar-link:hover {
+      background: rgba(20, 184, 166, .12);
+    }
+
+    .sidebar-link.active {
+      background: linear-gradient(90deg, #14b8a6, #0ea5e9);
+      color: white;
+    }
+
+    /* ── CARDS ───────────────────────────────── */
+
+    @media(hover:hover) {
+      .card-hover:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 35px rgba(0, 0, 0, .25);
+      }
+
+      .criteria-card:hover {
+        transform: translateY(-2px);
+      }
+    }
+
+    .criteria-card {
+      transition: .25s ease;
+    }
+
+    /* ── HERO GRID ───────────────────────────── */
+
+    /* ── MOBILE OVERLAY SIDEBAR ──────────────── */
+
+    .mobile-sidebar {
+      transform: translateX(-100%);
+      transition: .3s ease;
+    }
+
+    .mobile-sidebar.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .55);
+      z-index: 40;
+      -webkit-backdrop-filter: blur(2px);
+      backdrop-filter: blur(2px);
+    }
+
+    .sidebar-overlay.open {
+      display: block;
+    }
+
+    .bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-h);
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      z-index: 30;
+      padding: 0 4px;
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+    }
+
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 8px 2px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: .2s ease;
+      border: none;
+      background: none;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .bottom-nav-item .nav-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .bottom-nav-item.active {
+      color: #14b8a6;
+    }
+
+    .bottom-nav-item.active .nav-icon {
+      filter: drop-shadow(0 0 6px #14b8a6aa);
+    }
+
+    input[type=range] {
+      height: 6px;
+      cursor: pointer;
+      accent-color: #14b8a6;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* ── SELECT ──────────────────────────────── */
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2394a3b8' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px !important;
+    }
+
+    /* ── TEXTAREA ────────────────────────────── */
+    textarea {
+      font-size: 14px !important;
+    }
+
+    /* ── MOBILE OVERRIDES ────────────────────── */
+
+    @media(max-width:1023px) {
+      .bottom-nav {
+        display: flex;
+      }
+
+      /* title shrink */
+      h1.text-4xl {
+        font-size: 1.6rem !important;
+        line-height: 1.2;
+      }
+
+      h2.text-4xl {
+        font-size: 1.5rem !important;
+      }
+
+      /* topbar stack */
+      .topbar-inner {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+      }
+
+      .topbar-actions {
+        width: 100%;
+        justify-content: flex-end !important;
+      }
+
+      /* hide menu toggle — using bottom nav instead */
+      .lg\:hidden.mb-4 {
+        display: none !important;
+      }
+
+      /* dashboard cards — horizontal scroll row */
+      .dash-cards {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        gap: 12px !important;
+        padding-bottom: 8px !important;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none;
+      }
+
+      .dash-cards::-webkit-scrollbar {
+        display: none;
+      }
+
+      .dash-cards>div {
+        flex: 0 0 140px !important;
+        min-width: 140px !important;
+      }
+
+      .dash-cards h2 {
+        font-size: 1.6rem !important;
+      }
+
+      /* filter selects full width */
+      #filterDT,
+      #filterAD,
+      #filterScore {
+        width: 100% !important;
+        flex: 1 1 calc(50% - 6px) !important;
+      }
+
+      #searchInput {
+        width: 100% !important;
+      }
+
+      /* certification cards stack */
+      .cert-grid {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* building weights grid stack */
+      .weights-grid {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* overview steps scroll */
+      .steps-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+
+      /* criteria search row */
+      .criteria-topbar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+      }
+
+      .criteria-topbar>div:last-child {
+        flex-wrap: wrap !important;
+      }
+
+      /* TIS/CIS breakdown stack */
+      .breakdown-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    @media(max-width:480px) {
+      main {
+        padding: 12px !important;
+        padding-bottom: calc(var(--bottom-nav-h) + 12px) !important;
+      }
+
+      .dash-cards>div {
+        flex: 0 0 120px !important;
+        min-width: 120px !important;
+      }
+
+      .steps-grid {
+        grid-template-columns: 1fr !important;
+      }
+
+      #filterDT,
+      #filterAD,
+      #filterScore {
+        flex: 1 1 100% !important;
+      }
+    }

@@ -1,0 +1,55 @@
+{
+    "buildingTypes": [
+        "Residential Buildings",
+        "Commercial Buildings",
+        "Industrial Buildings",
+        "Institutional Buildings",
+        "Religious Buildings",
+        "Recreational Buildings",
+        "Special - Purpose Buildings"
+    ],
+    "disabilityTypes": [
+        "DT 1 — Physical Disability",
+        "DT 2 — Sensory Disability",
+        "DT 3 — Cognitive & Neurodiverse",
+        "DT 4 — Communication & Mental Health",
+        "DT 5 — Multiple / Situational"
+    ],
+    "dimensions": [
+        "AD 1 — Spatial & Physical Accessibility",
+        "AD 2 — Safety & Environmental Comfort",
+        "AD 3 — Cognitive & Navigational Accessibility",
+        "AD 4 — Digital Interaction & Smart Usability",
+        "AD 5 — Social Inclusion & Human Experience"
+    ],
+    "weights": {
+        "Residential Buildings": {
+            "disability": [0.3, 0.2, 0.18, 0.12, 0.2],
+            "dimension": [0.35, 0.25, 0.15, 0.05, 0.2]
+        },
+        "Commercial Buildings": {
+            "disability": [0.28, 0.22, 0.18, 0.12, 0.2],
+            "dimension": [0.3, 0.25, 0.18, 0.12, 0.15]
+        },
+        "Industrial Buildings": {
+            "disability": [0.32, 0.2, 0.16, 0.1, 0.22],
+            "dimension": [0.38, 0.3, 0.12, 0.08, 0.12]
+        },
+        "Institutional Buildings": {
+            "disability": [0.25, 0.2, 0.22, 0.15, 0.18],
+            "dimension": [0.3, 0.25, 0.25, 0.1, 0.1]
+        },
+        "Religious Buildings": {
+            "disability": [0.22, 0.18, 0.2, 0.15, 0.25],
+            "dimension": [0.25, 0.2, 0.18, 0.07, 0.3]
+        },
+        "Recreational Buildings": {
+            "disability": [0.25, 0.2, 0.2, 0.2, 0.15],
+            "dimension": [0.27, 0.22, 0.2, 0.11, 0.2]
+        },
+        "Special - Purpose Buildings": {
+            "disability": [0.35, 0.18, 0.17, 0.1, 0.2],
+            "dimension": [0.4, 0.25, 0.15, 0.08, 0.12]
+        }
+    }
+}

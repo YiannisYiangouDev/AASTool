@@ -1,0 +1,5 @@
+INSERT IGNORE INTO config (`key`, value, id) VALUES
+('DEFAULT_SCORE', '3', UUID()),
+('STRENGTH_THRESHOLD', '5', UUID()),
+('WEAKNESS_THRESHOLD', '2', UUID()),
+('TOP_N_RESULTS', '5', UUID());
