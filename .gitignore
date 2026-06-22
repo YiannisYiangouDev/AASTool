@@ -59,5 +59,6 @@ docs_oldeasd/
 azure/
 
 #hc
-types/
-scripts
+/types/
+/scripts
+.playwright-mcp/
