@@ -4,23 +4,10 @@ import { Criterion } from '../entities/Criterion';
 import { BuildingType } from '../entities/BuildingType';
 import { NebThreshold } from '../entities/NebThreshold';
 import { Config } from '../entities/Config';
+import { DisabilityType } from '../entities/DisabilityType';
+import { AssessmentDimension } from '../entities/AssessmentDimension';
 
-// Framework schema constants — the 5 disability types and 5 assessment dimensions
-const DISABILITY_TYPE_NAMES: Record<number, string> = {
-  1: 'Physical Disability',
-  2: 'Sensory Disability',
-  3: 'Cognitive & Neurodiverse',
-  4: 'Communication & Mental Health',
-  5: 'Multiple / Situational',
-};
-
-const DIMENSION_NAMES: Record<number, string> = {
-  1: 'Spatial & Physical Accessibility',
-  2: 'Safety & Environmental Comfort',
-  3: 'Cognitive & Navigational Accessibility',
-  4: 'Digital Interaction & Smart Usability',
-  5: 'Social Inclusion & Human Experience',
-};
+// No hardcoded maps — all DT/AD data lives in the database.
 
 export async function getCriteria(_req: Request, res: Response) {
   try {
@@ -85,10 +72,17 @@ export async function getConfig(_req: Request, res: Response) {
 
 export async function getDisabilityTypes(_req: Request, res: Response) {
   try {
-    const result = Object.entries(DISABILITY_TYPE_NAMES).map(([id, name]) => ({
-      id: Number(id),
-      name,
-      description: `DT ${id} \u2014 ${name}`,
+    const repo = AppDataSource.getRepository(DisabilityType);
+    const items = await repo.find({ order: { id: 'ASC' } });
+    const result = items.map((dt) => ({
+      id: dt.id,
+      name: dt.name,
+      description: `DT ${dt.id} \u2014 ${dt.name}`,
+      icon: dt.icon,
+      gradient: dt.gradient,
+      bg_color: dt.bg_color,
+      text_color: dt.text_color,
+      border_color: dt.border_color,
     }));
     res.json({ ok: true, data: result });
   } catch (err) {
@@ -151,10 +145,17 @@ export async function createCriterion(req: Request, res: Response) {
 
 export async function getAssessmentDimensions(_req: Request, res: Response) {
   try {
-    const result = Object.entries(DIMENSION_NAMES).map(([id, name]) => ({
-      id: Number(id),
-      name,
-      description: `AD ${id} \u2014 ${name}`,
+    const repo = AppDataSource.getRepository(AssessmentDimension);
+    const items = await repo.find({ order: { id: 'ASC' } });
+    const result = items.map((ad) => ({
+      id: ad.id,
+      name: ad.name,
+      description: `AD ${ad.id} \u2014 ${ad.name}`,
+      icon: ad.icon,
+      gradient: ad.gradient,
+      bg_color: ad.bg_color,
+      text_color: ad.text_color,
+      border_color: ad.border_color,
     }));
     res.json({ ok: true, data: result });
   } catch (err) {

@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { endpoints } from "../api/endpoints";
+import { setMetadata, type MetadataItem } from "../theme";
 
 interface DtAdItem {
   id: number;
   name: string;
   description: string;
 }
+
+let themeInitialized = false;
 
 export function useMetadata() {
   const [dtLabels, setDtLabels] = useState<Record<number, string>>({});
@@ -33,6 +36,12 @@ export function useMetadata() {
         }
         setDtLabels(dtMap);
         setAdLabels(adMap);
+
+        // Populate theme color cache — single source of truth for all UI colors
+        if (!themeInitialized) {
+          setMetadata(dt as MetadataItem[], ad as MetadataItem[]);
+          themeInitialized = true;
+        }
       } catch (err) {
         console.error("Failed to load metadata:", err);
       } finally {

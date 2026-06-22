@@ -58,6 +58,8 @@ const ChevronUp = () => (
 
 export default function CriteriaPage() {
   const { dtLabels, adLabels } = useMetadata();
+  const dtIds = Object.keys(dtLabels).map(Number).sort((a, b) => a - b);
+  const adIds = Object.keys(adLabels).map(Number).sort((a, b) => a - b);
   const { data: criteria = [], isLoading, error } = useCriteria();
   const year = useMemo(() => new Date().getFullYear(), []);
   
@@ -207,7 +209,7 @@ const toggleExpand = (code: string) => {
                            outline-none focus:border-teal-500/80 focus:ring-1 focus:ring-teal-500/40 transition-all duration-150"
               >
                 <option value="all">All Disabilities</option>
-                {[1, 2, 3, 4, 5].map((dt) => (
+                {dtIds.map((dt) => (
                   <option key={dt} value={dt}>DT {dt} — {dtLabels[dt]}</option>
                 ))}
               </select>
@@ -226,7 +228,7 @@ const toggleExpand = (code: string) => {
                            outline-none focus:border-teal-500/80 focus:ring-1 focus:ring-teal-500/40 transition-all duration-150"
               >
                 <option value="all">All Dimensions</option>
-                {[1, 2, 3, 4, 5].map((ad) => (
+                {adIds.map((ad) => (
                   <option key={ad} value={ad}>AD {ad} — {adLabels[ad]}</option>
                 ))}
               </select>

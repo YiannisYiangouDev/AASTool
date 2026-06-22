@@ -5,6 +5,8 @@ import { BuildingType } from './entities/BuildingType';
 import { Evaluation } from './entities/Evaluation';
 import { NebThreshold } from './entities/NebThreshold';
 import { Config } from './entities/Config';
+import { DisabilityType } from './entities/DisabilityType';
+import { AssessmentDimension } from './entities/AssessmentDimension';
 
 const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
@@ -22,7 +24,7 @@ export const AppDataSource = new DataSource({
   url: databaseUrl,
   synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true',
   logging: false,
-  entities: [Criterion, BuildingType, Evaluation, NebThreshold, Config],
+  entities: [Criterion, BuildingType, Evaluation, NebThreshold, Config, DisabilityType, AssessmentDimension],
   migrations: [__dirname + '/migrations/*.{ts,js}'],
 });
 

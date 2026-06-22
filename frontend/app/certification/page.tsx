@@ -55,6 +55,8 @@ const SearchIcon = () => (
 
 export default function CertificationPage() {
   const { dtLabels, adLabels } = useMetadata();
+  const dtIds = Object.keys(dtLabels).map(Number).sort((a, b) => a - b);
+  const adIds = Object.keys(adLabels).map(Number).sort((a, b) => a - b);
 
   // Fetch building types from API — no hardcoded list
   const { data: buildingTypes = [] } = useQuery({
@@ -381,7 +383,7 @@ export default function CertificationPage() {
             </button>
 
             {/* Code Filters */}
-            {[1, 2, 3, 4, 5].map((ec) => (
+            {dtIds.map((ec) => (
               <button
                 key={`ec${ec}`}
                 onClick={() => setFilterMode(`ec${ec}` as FilterMode)}
@@ -401,7 +403,7 @@ export default function CertificationPage() {
             <span className="w-px h-6 bg-white/10 mx-1 self-center" />
 
             {/* Disability Filters */}
-            {[1, 2, 3, 4, 5].map((dt) => (
+            {dtIds.map((dt) => (
               <button
                 key={`dt${dt}`}
                 onClick={() => setFilterMode(`dt${dt}` as FilterMode)}
@@ -418,7 +420,7 @@ export default function CertificationPage() {
             ))}
 
             {/* Dimension Filters */}
-            {[1, 2, 3, 4, 5].map((ad) => (
+            {adIds.map((ad) => (
               <button
                 key={ad}
                 onClick={() => setFilterMode(`ad${ad}` as FilterMode)}

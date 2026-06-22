@@ -213,6 +213,8 @@ function ServerStatusWidget() {
 
 export default function DashboardPage() {
   const { dtLabels, adLabels } = useMetadata();
+  const dtIds = Object.keys(dtLabels).map(Number).sort((a, b) => a - b);
+  const adIds = Object.keys(adLabels).map(Number).sort((a, b) => a - b);
 
   // Fetch building types from API — no hardcoded list
   const { data: buildingTypes = [] } = useQuery({
@@ -543,7 +545,7 @@ export default function DashboardPage() {
               <span className="w-2 h-2 rounded-full bg-teal-400" />
               TIS(i) — Disability Type Breakdown
             </h3>
-            {[1, 2, 3, 4, 5].map((dt) => {
+            {dtIds.map((dt) => {
               const tis = (results.tisByDT as any)[dt] || 0;
               const avg = avgByDT[dt] || 0;
               const pctOfMax = Math.min(100, (tis / 25) * 100);
@@ -584,7 +586,7 @@ export default function DashboardPage() {
               <span className="w-2 h-2 rounded-full bg-blue-400" />
               CIS(j) — Assessment Dimension Breakdown
             </h3>
-            {[1, 2, 3, 4, 5].map((ad) => {
+            {adIds.map((ad) => {
               const cis = (results.cisByAD as any)[ad] || 0;
               const avg = avgByAD[ad] || 0;
               const pctOfMax = Math.min(100, (cis / 5) * 100);
@@ -706,12 +708,12 @@ export default function DashboardPage() {
                 className="bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-2 text-xs text-white"
               >
                 <option value="all">All Criteria</option>
-                {[1, 2, 3, 4, 5].map((dt) => (
+                {dtIds.map((dt) => (
                   <option key={`dt${dt}`} value={`dt${dt}`}>
                     DT {dt} – {dtLabels[dt]}
                   </option>
                 ))}
-                {[1, 2, 3, 4, 5].map((ad) => (
+                {adIds.map((ad) => (
                   <option key={`ad${ad}`} value={`ad${ad}`}>
                     AD {ad} – {adLabels[ad]}
                   </option>
