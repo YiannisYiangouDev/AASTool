@@ -81,6 +81,7 @@ export default function CertificationPage() {
     avgRawScoreByAD: {},
     strengths: [],
     weaknesses: [],
+    scoreDistribution: {},
     tisByDT: {},
     cisByAD: {},
     criteria: [],

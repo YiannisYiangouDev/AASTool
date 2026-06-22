@@ -240,6 +240,7 @@ export default function DashboardPage() {
     avgRawScoreByAD: {},
     strengths: [],
     weaknesses: [],
+    scoreDistribution: {},
     tisByDT: {},
     cisByAD: {},
     criteria: [],
