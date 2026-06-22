@@ -18,16 +18,9 @@
     "incremental": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "baseUrl": ".",
     "paths": {
-      "@/components/*": [
-        "components/*"
-      ],
-      "@/lib/*": [
-        "lib/*"
-      ],
-      "@/types/*": [
-        "types/*"
+      "@/*": [
+        "./*"
       ]
     },
     "plugins": [

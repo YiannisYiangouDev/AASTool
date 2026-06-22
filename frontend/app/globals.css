@@ -221,8 +221,13 @@
         overflow-x: auto !important;
         gap: 12px !important;
         padding-bottom: 8px !important;
-        scrollbar-width: none; /* Firefox */
         -ms-overflow-style: none;
+      }
+
+      @supports (scrollbar-width: none) {
+        .dash-cards {
+          scrollbar-width: none;
+        }
       }
 
       .dash-cards::-webkit-scrollbar {
@@ -236,6 +241,15 @@
 
       .dash-cards h2 {
         font-size: 1.6rem !important;
+      }
+
+      /* dashboard dynamic bar fills (avoids inline style lint) */
+      .dash-bar-fill-v {
+        height: var(--bar-h);
+        margin-top: var(--bar-mt);
+      }
+      .dash-bar-fill-h {
+        width: var(--bar-w);
       }
 
       /* filter selects full width */
