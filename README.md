@@ -121,6 +121,21 @@ cd backend && npm install && cd ..
 cd frontend && npm install && cd ..
 ```
 
+### 1b. Configure Environment
+
+```bash
+# Backend — copy example env and edit secrets
+cd backend
+cp .env.example .env
+# Edit .env with your actual JWT_SECRET and database credentials if needed
+cd ..
+
+# Frontend
+cd frontend
+cp .env.example .env.local
+cd ..
+```
+
 ### 2. Start Database (Docker)
 
 ```bash
@@ -133,8 +148,16 @@ docker compose up -d mariadb
 
 ```bash
 cd backend
-export DATABASE_URL=mysql://myuser:mypassword@127.0.0.1:3306/mydb
-node scripts/seed-mariadb.js
+
+# Seed disability types & assessment dimensions (requires npm run build first)
+npm run build
+node scripts/seed-dt-ad.js
+
+# Seed config keys
+node scripts/seed-config.js
+
+# Full seed: building types, criteria, NEB thresholds, config, disability types, dimensions
+npx ts-node src/scripts/seed.ts
 ```
 
 ### 4. Start Backend
@@ -169,7 +192,6 @@ npm run dev    # Turbopack → http://localhost:3000
 AASTool/
 │
 ├── README.md                      # This file
-├── DEVELOPMENT.md                 # Developer onboarding guide
 ├── start-dev.sh                   # Start all services
 ├── stop-dev.sh                    # Stop all services
 ├── status-dev.sh                  # Health check all services
@@ -182,7 +204,11 @@ AASTool/
 │   ├── docker-initdb.d/
 │   │   └── init.sql               # DB user/database bootstrap
 │   ├── scripts/
-│   │   └── seed-mariadb.js        # Database seeding script
+│   │   ├── seed-dt-ad.js          # Seed disability types & dimensions
+│   │   ├── seed-config.js         # Seed config keys
+│   │   ├── add-config-keys.sql    # Raw SQL config inserts
+│   │   ├── test-obs.sh            # OBS calculation test
+│   │   └── test-obs-vary.sh       # OBS variance test
 │   └── src/
 │       ├── index.ts               # Express app entry point
 │       ├── data-source.ts         # TypeORM DataSource configuration
@@ -593,7 +619,6 @@ rm -rf .next && npm run build
 | [docs/AASTool-PDF-Generation-Subsystem.pdf](docs/AASTool-PDF-Generation-Subsystem.pdf) | PDF generation subsystem documentation |
 | [docs/azure-migration.md](docs/azure-migration.md) | Azure cloud infrastructure & migration guide |
 | [docs/.pdf-build/](docs/.pdf-build/) | Markdown sources for all documentation PDFs |
-| [DEVELOPMENT.md](DEVELOPMENT.md) | Developer onboarding and contribution guide |
 
 ---
 
