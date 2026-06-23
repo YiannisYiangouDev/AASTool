@@ -20,13 +20,13 @@ export interface EvaluationResult {
   nebMeaning: string;
   nebScore: number;
   averageRawScore: number;
-  avgRawScoreByDT: Record<string, number>;
-  avgRawScoreByAD: Record<string, number>;
+  avgRawScoreByDT: Record<number, number>;
+  avgRawScoreByAD: Record<number, number>;
   strengths: Criterion[];
   weaknesses: Criterion[];
-  scoreDistribution: Record<string, number>;
-  tisByDT: Record<string, number>;
-  cisByAD: Record<string, number>;
+  scoreDistribution: Record<number, number>;
+  tisByDT: Record<number, number>;
+  cisByAD: Record<number, number>;
   criteria: Criterion[];
 }
 

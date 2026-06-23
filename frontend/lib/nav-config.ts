@@ -10,7 +10,7 @@ export const MAIN_NAV: NavItem[] = [
   { label: 'Criteria', href: '/criteria', icon: '📋' },
   { label: 'Disability', href: '/disability', icon: '♿' },
   { label: 'Dimensions', href: '/dimensions', icon: '📐' },
-  { label: 'Reports', href: '/reports', icon: '📈' },
+  // { label: 'Reports', href: '/reports', icon: '📈' }, // TODO: create reports page
 ];
 
 export function isActive(href: string, pathname: string): boolean {

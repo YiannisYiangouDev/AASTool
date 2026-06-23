@@ -547,7 +547,7 @@ export default function DashboardPage() {
               TIS(i) — Disability Type Breakdown
             </h3>
             {dtIds.map((dt) => {
-              const tis = (results.tisByDT as any)[dt] || 0;
+              const tis = results.tisByDT[dt] || 0;
               const avg = avgByDT[dt] || 0;
               const pctOfMax = Math.min(100, (tis / 25) * 100);
 
@@ -588,7 +588,7 @@ export default function DashboardPage() {
               CIS(j) — Assessment Dimension Breakdown
             </h3>
             {adIds.map((ad) => {
-              const cis = (results.cisByAD as any)[ad] || 0;
+              const cis = results.cisByAD[ad] || 0;
               const avg = avgByAD[ad] || 0;
               const pctOfMax = Math.min(100, (cis / 5) * 100);
 

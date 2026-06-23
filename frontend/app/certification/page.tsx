@@ -12,7 +12,7 @@ import Header from "../../components/Header";
 import BottomNav from "../../components/BottomNav";
 import { useQuery } from "@tanstack/react-query";
 import { endpoints } from "../../lib/api/endpoints";
-import { DT_COLORS, AD_COLORS } from "../../lib/theme";
+import { DT_COLORS, AD_COLORS, getNebBadgeGradient } from "../../lib/theme";
 import { loadState, saveState, STORAGE_KEY, CERTIFICATION_KEY } from "../../lib/storage";
 
 import type { EvaluationResult, Criterion } from "../../types";
@@ -220,15 +220,7 @@ export default function CertificationPage() {
   const obs = Number.isFinite(results.obs) ? results.obs : 0;
 
   // Derive color from NEB class returned by backend (no hardcoded thresholds)
-  const nebClass = (results.nebClass || "").trim().toUpperCase();
-  const nebColorGradient =
-    nebClass === "A" || nebClass === "A+"
-      ? "from-teal-500 to-cyan-500"
-      : nebClass === "B"
-        ? "from-blue-500 to-indigo-500"
-        : nebClass === "C"
-          ? "from-amber-500 to-yellow-500"
-          : "from-red-500 to-orange-500";
+  const nebColorGradient = getNebBadgeGradient(results.nebClass);
 
   if (loading) {
     return (

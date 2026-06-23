@@ -48,7 +48,8 @@ async function run() {
     { min: 85, neb_class: 'A+', equivalent: '5', meaning: 'Excellent / Best practice', neb_score: 5, ordinal: 1 },
     { min: 60, neb_class: 'A', equivalent: '4', meaning: 'Good', neb_score: 4, ordinal: 2 },
     { min: 40, neb_class: 'B', equivalent: '3', meaning: 'Acceptable', neb_score: 3, ordinal: 3 },
-    { min: 0, neb_class: 'No Rating', equivalent: 'N/A', meaning: 'Non-compliant', neb_score: 1, ordinal: 4 },
+    { min: 20, neb_class: 'C', equivalent: '2', meaning: 'Below Average', neb_score: 2, ordinal: 4 },
+    { min: 0, neb_class: 'No Rating', equivalent: 'N/A', meaning: 'Non-compliant', neb_score: 1, ordinal: 5 },
   ];
   for (const n of nebDefaults) {
     const en = new NebThreshold();
