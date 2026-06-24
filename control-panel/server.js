@@ -17,6 +17,27 @@ const LOG_DIR = IS_WINDOWS
   ? path.join(os.tmpdir(), 'aastool-logs')
   : '/tmp/aastool-logs';
 
+// Detect if WSL is available (Windows running with WSL)
+let HAS_WSL = false;
+if (IS_WINDOWS) {
+  try {
+    execSync('wsl exit 0', { stdio: 'ignore', timeout: 5000 });
+    HAS_WSL = true;
+  } catch {}
+}
+
+// Helper: wrap command with wsl prefix if needed
+function wslCmd(cmd) {
+  if (IS_WINDOWS && HAS_WSL) return `wsl bash -lc "${cmd.replace(/"/g, '\\"')}"`;
+  return cmd;
+}
+
+// Helper: run a command and suppress stderr noise
+function runSync(cmd, opts = {}) {
+  const fullCmd = wslCmd(cmd);
+  return execSync(fullCmd, { ...opts, stdio: opts.stdio || 'pipe', timeout: opts.timeout || 10000, encoding: 'utf8' });
+}
+
 // Ensure log directory exists
 try { fs.mkdirSync(LOG_DIR, { recursive: true }); } catch {}
 
@@ -34,7 +55,14 @@ const processes = {
 function isPortOpen(port) {
   try {
     if (IS_WINDOWS) {
-      const out = execSync(`netstat -ano | findstr ":${port}.*LISTENING"`, { encoding: 'utf8', timeout: 3000 }).trim();
+      // On Windows + WSL, also check via WSL
+      if (HAS_WSL) {
+        try {
+          const out = execSync(`wsl bash -c "ss -tlnp 2>/dev/null | grep -q ':${port} ' && echo open"`, { encoding: 'utf8', timeout: 5000 }).trim();
+          if (out === 'open') return true;
+        } catch {}
+      }
+      const out = execSync(`netstat -ano | findstr ":${port}.*LISTENING" >nul 2>&1`, { encoding: 'utf8', timeout: 3000 }).trim();
       return !!out;
     }
     // Linux/WSL: try lsof first, then ss, then netstat
@@ -96,6 +124,10 @@ function getPidsOnPort(port) {
 
 function killPort(port) {
   const pids = getPidsOnPort(port);
+  if (IS_WINDOWS && HAS_WSL) {
+    // Kill in WSL via pkill
+    try { execSync(`wsl bash -c "pkill -f 'node dist/index.js' 2>/dev/null; pkill -f 'next-server' 2>/dev/null; pkill -f 'next dev' 2>/dev/null"`, { stdio: 'ignore', timeout: 5000 }); } catch {}
+  }
   if (IS_WINDOWS) {
     // On Windows, use taskkill
     pids.forEach(pid => {
@@ -122,16 +154,17 @@ function killPort(port) {
 
 function getDockerStatus() {
   try {
-    const out = execSync('docker ps --format "{{.Names}}" 2>/dev/null', { encoding: 'utf8', timeout: 3000 });
-    const containers = out.trim().split('\n').filter(Boolean);
+    const out = IS_WINDOWS && HAS_WSL
+      ? execSync(`wsl bash -lc "docker ps --format '{{.Names}}'"`, { encoding: 'utf8', timeout: 10000 }).trim()
+      : execSync(`docker ps --format "{{.Names}}" 2>/dev/null`, { encoding: 'utf8', timeout: 10000 }).trim();
+    const containers = out.split('\n').filter(Boolean);
     return {
       available: true,
       running: containers.some(c => c === 'mariadb' || c === 'aastool-db'),
       containers
     };
   } catch {
-    const available = (() => { try { execSync('docker --version', { stdio: 'ignore', timeout: 3000 }); return true; } catch { return false; } })();
-    return { available, running: false, containers: [] };
+    return { available: false, running: false, containers: [] };
   }
 }
 
@@ -443,6 +476,22 @@ app.post('/api/start/backend', (_req, res) => {
     }
   }
 
+  if (IS_WINDOWS && HAS_WSL) {
+    // Run via WSL
+    const wslPath = backendDir.replace(/\\/g, '/').replace(/^([A-Z]):/, '/mnt/$1').toLowerCase();
+    const child = spawn('wsl', ['bash', '-c', `cd ${wslPath} && node dist/index.js`], {
+      stdio: 'pipe',
+      detached: true
+    });
+    child.stdout.on('data', d => { appendLog('backend', d.toString()); });
+    child.stderr.on('data', d => { appendLog('backend', d.toString()); });
+    child.on('exit', code => appendLog('backend', `[${new Date().toISOString()}] Process exited with code ${code}\n`));
+    child.unref();
+    processes.backend = child;
+    appendLog('backend', `[${new Date().toISOString()}] Backend starting in WSL (PID ${child.pid})...\n`);
+    return res.json({ ok: true, message: 'Backend starting in WSL...', pid: child.pid });
+  }
+
   const env = { ...process.env };
   const envFile = path.join(backendDir, '.env');
   if (fs.existsSync(envFile)) {
@@ -510,6 +559,21 @@ app.post('/api/start/frontend', (_req, res) => {
   }
 
   const frontendDir = path.join(PROJECT_ROOT, 'frontend');
+
+  if (IS_WINDOWS && HAS_WSL) {
+    const wslPath = frontendDir.replace(/\\/g, '/').replace(/^([A-Z]):/, '/mnt/$1').toLowerCase();
+    const child = spawn('wsl', ['bash', '-c', `cd ${wslPath} && PORT=3000 npm run dev`], {
+      stdio: 'pipe', detached: true
+    });
+    child.stdout.on('data', d => { appendLog('frontend', d.toString()); });
+    child.stderr.on('data', d => { appendLog('frontend', d.toString()); });
+    child.on('exit', code => appendLog('frontend', `[${new Date().toISOString()}] Process exited with code ${code}\n`));
+    child.unref();
+    processes.frontend = child;
+    appendLog('frontend', `[${new Date().toISOString()}] Frontend starting in WSL (PID ${child.pid})...\n`);
+    return res.json({ ok: true, message: 'Frontend starting in WSL...', pid: child.pid });
+  }
+
   if (!fs.existsSync(path.join(frontendDir, 'node_modules'))) {
     try {
       appendLog('frontend', `[${new Date().toISOString()}] Installing frontend dependencies...\n`);
