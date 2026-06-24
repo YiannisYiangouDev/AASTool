@@ -2,7 +2,7 @@
 title AAS Control Panel
 color 0B
 
-set "CP_DIR=%~dp0control-panel"
+set "CP_DIR=%~dp0..\control-panel"
 
 echo.
 echo ════════════════════════════════════════════════════

@@ -285,7 +285,7 @@ app.post('/api/db/install-docker', (_req, res) => {
 app.post('/api/db/setup', (_req, res) => {
   // Run setup-db.sh (Linux/WSL) or setup-db.bat (Windows)
   const script = IS_WINDOWS ? 'setup-db.bat' : 'setup-db.sh';
-  const scriptPath = path.join(PROJECT_ROOT, script);
+  const scriptPath = path.join(PROJECT_ROOT, 'scripts', script);
 
   if (!fs.existsSync(scriptPath)) {
     return res.json({ ok: false, error: `Setup script not found: ${script}. Run it manually from the project root.` });
@@ -296,7 +296,7 @@ app.post('/api/db/setup', (_req, res) => {
 
   try {
     appendLog('db', `[${new Date().toISOString()}] ${script} started (interactive — switch to the control-panel terminal to provide input)\n`);
-    const child = spawn(IS_WINDOWS ? 'cmd.exe' : 'bash', IS_WINDOWS ? ['/c', script] : [scriptPath], {
+    const child = spawn(IS_WINDOWS ? 'cmd.exe' : 'bash', IS_WINDOWS ? ['/c', path.join('scripts', script)] : [scriptPath], {
       cwd: PROJECT_ROOT,
       stdio: 'inherit',  // inherit stdin so user can type credentials when prompted
       shell: false
