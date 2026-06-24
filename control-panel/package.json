@@ -1,0 +1,13 @@
+{
+  "name": "aas-control-panel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AAS Tool — GUI Control Panel to start/stop all services",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AAS Tool — Control Panel</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --card: #1a1d27;
+      --border: #2a2d3a;
+      --text: #e1e4ec;
+      --muted: #7b8296;
+      --accent: #6366f1;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #eab308;
+      --blue: #3b82f6;
+      --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -200px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .header h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .header p { color: var(--muted); font-size: 0.95rem; }
+    .datetime { margin-top: 8px; font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+    .master-actions {
+      display: flex; gap: 16px; justify-content: center;
+      margin-bottom: 40px; flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 32px; border-radius: 14px;
+      font-size: 1rem; font-weight: 600; cursor: pointer;
+      border: none; transition: all 0.2s ease;
+      position: relative; overflow: hidden;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-start-all {
+      background: var(--gradient); color: #fff;
+      box-shadow: 0 4px 20px rgba(99,102,241,0.3);
+    }
+    .btn-start-all:hover {
+      box-shadow: 0 6px 28px rgba(99,102,241,0.45);
+      transform: translateY(-1px);
+    }
+    .btn-stop-all {
+      background: var(--card); color: var(--red);
+      border: 1px solid rgba(239,68,68,0.3);
+    }
+    .btn-stop-all:hover {
+      background: rgba(239,68,68,0.1);
+      border-color: rgba(239,68,68,0.5);
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top: 2px solid #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    .btn.loading .spinner { display: block; }
+    .btn.loading .btn-text { opacity: 0.6; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Service Cards ── */
+    .cards { display: grid; gap: 20px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 28px;
+      display: flex; align-items: center; gap: 24px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+    .card:hover {
+      border-color: rgba(99,102,241,0.3);
+      box-shadow: 0 0 30px rgba(99,102,241,0.05);
+    }
+    .card-icon {
+      width: 56px; height: 56px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; flex-shrink: 0;
+      background: rgba(99,102,241,0.08);
+    }
+    .card-icon.db { background: rgba(59,130,246,0.1); }
+    .card-icon.backend { background: rgba(34,197,94,0.1); }
+    .card-icon.frontend { background: rgba(168,85,247,0.1); }
+    .card-info { flex: 1; min-width: 0; }
+    .card-name { font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; }
+    .card-detail { font-size: 0.85rem; color: var(--muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .card-url a { color: var(--accent); text-decoration: none; font-size: 0.85rem; }
+    .card-url a:hover { text-decoration: underline; }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 20px;
+      font-size: 0.8rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .status-badge.online { background: rgba(34,197,94,0.12); color: var(--green); }
+    .status-badge.offline { background: rgba(239,68,68,0.1); color: var(--red); }
+    .status-badge.starting { background: rgba(234,179,8,0.12); color: var(--yellow); }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: currentColor; animation: pulse 2s infinite;
+    }
+    .offline .status-dot { animation: none; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    .card-actions { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
+    .btn-sm {
+      padding: 8px 16px; border-radius: 10px;
+      font-size: 0.8rem; font-weight: 600; cursor: pointer;
+      border: none; transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 5px;
+      white-space: nowrap;
+    }
+    .btn-sm:active { transform: scale(0.96); }
+    .btn-sm.start { background: rgba(34,197,94,0.12); color: var(--green); }
+    .btn-sm.start:hover { background: rgba(34,197,94,0.2); }
+    .btn-sm.stop { background: rgba(239,68,68,0.1); color: var(--red); }
+    .btn-sm.stop:hover { background: rgba(239,68,68,0.2); }
+    .btn-sm.open { background: rgba(99,102,241,0.1); color: var(--accent); }
+    .btn-sm.open:hover { background: rgba(99,102,241,0.2); }
+    .btn-sm.setup { background: rgba(59,130,246,0.1); color: var(--blue); }
+    .btn-sm.setup:hover { background: rgba(59,130,246,0.2); }
+    .btn-sm.seed { background: rgba(168,85,247,0.1); color: #a855f7; }
+    .btn-sm.seed:hover { background: rgba(168,85,247,0.2); }
+    .btn-sm.download { background: rgba(234,179,8,0.1); color: var(--yellow); }
+    .btn-sm.download:hover { background: rgba(234,179,8,0.2); }
+    .btn-sm:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* ── DB Modal ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6); z-index: 99;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 32px; max-width: 480px;
+      width: 90%; max-height: 80vh; overflow-y: auto;
+    }
+    .modal h3 { margin-bottom: 16px; font-size: 1.2rem; }
+    .modal p { color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; line-height: 1.5; }
+    .modal a { color: var(--accent); word-break: break-all; }
+    .modal .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .modal .btn-close {
+      background: rgba(239,68,68,0.1); color: var(--red);
+      padding: 8px 20px; border-radius: 10px; cursor: pointer; border: none; font-weight: 600;
+    }
+
+    /* ── Logs Panel ── */
+    .logs-section { margin-top: 32px; }
+    .logs-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 12px; cursor: pointer;
+    }
+    .logs-header h2 { font-size: 1.15rem; font-weight: 700; }
+    .logs-toggle {
+      font-size: 0.85rem; color: var(--accent);
+      background: none; border: none; cursor: pointer;
+    }
+    .log-tabs { display: flex; gap: 4px; margin-bottom: 0; }
+    .log-tab {
+      padding: 10px 20px; border-radius: 10px 10px 0 0;
+      background: rgba(255,255,255,0.03); border: 1px solid transparent;
+      color: var(--muted); cursor: pointer; font-size: 0.85rem;
+      font-weight: 600; transition: all 0.2s;
+    }
+    .log-tab.active {
+      background: var(--card); border-color: var(--border);
+      border-bottom-color: var(--card); color: var(--text);
+    }
+    .log-tab:hover:not(.active) { color: var(--text); }
+    .log-viewer {
+      background: #0a0c13; border: 1px solid var(--border);
+      border-radius: 0 12px 12px 12px;
+      padding: 16px; height: 320px; overflow-y: auto;
+      font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
+      font-size: 0.78rem; line-height: 1.6;
+      white-space: pre-wrap; word-break: break-all;
+      color: #a8b2c2;
+    }
+    .log-viewer .dim { color: #555; }
+    .log-actions {
+      display: flex; gap: 8px; margin-top: 8px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 30px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--card); border: 1px solid var(--border);
+      padding: 12px 28px; border-radius: 12px;
+      font-size: 0.9rem; font-weight: 500;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+      z-index: 100; animation: slideUp 0.3s ease;
+      display: none;
+    }
+    .toast.show { display: block; }
+    .toast.success { border-color: rgba(34,197,94,0.4); }
+    .toast.error { border-color: rgba(239,68,68,0.4); }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    .footer { text-align: center; margin-top: 48px; font-size: 0.8rem; color: var(--muted); }
+
+    @media (max-width: 720px) {
+      .container { padding: 24px 16px 60px; }
+      .header h1 { font-size: 1.6rem; }
+      .card { flex-direction: column; text-align: center; }
+      .card-actions { flex-direction: column; width: 100%; }
+      .btn-sm { justify-content: center; width: 100%; }
+      .card-detail { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>⚡ AAS Tool</h1>
+      <p>Development Control Panel</p>
+      <div class="datetime" id="datetime">Loading...</div>
+    </div>
+
+    <!-- Master Buttons -->
+    <div class="master-actions">
+      <button class="btn btn-start-all" id="btnStartAll" onclick="startAll()">
+        <span class="spinner"></span>
+        <span class="btn-text">▶ &nbsp;Start All Services</span>
+      </button>
+      <button class="btn btn-stop-all" id="btnStopAll" onclick="stopAll()">
+        <span class="spinner"></span>
+        <span class="btn-text">■ &nbsp;Stop All Services</span>
+      </button>
+    </div>
+
+    <!-- Service Cards -->
+    <div class="cards">
+      <!-- Database -->
+      <div class="card" id="card-db">
+        <div class="card-icon db">🗄️</div>
+        <div class="card-info">
+          <div class="card-name">MariaDB Database</div>
+          <div class="card-detail">Port 3306 <span style="color:var(--muted)">•</span> <span id="db-type">...</span> <span style="color:var(--muted)">•</span> <span id="db-url-label"></span></div>
+        </div>
+        <div class="card-actions" id="db-actions">
+          <button class="btn-sm setup" id="btn-db-docker" onclick="installDockerDB()" title="Start MariaDB in Docker">🐳 Docker</button>
+          <button class="btn-sm setup" id="btn-db-setup" onclick="setupDB()" title="Run setup-db script (terminal)">⚡ Setup</button>
+          <button class="btn-sm seed" id="btn-db-seed" onclick="seedDB()" title="Seed database with initial data">🌱 Seed</button>
+          <button class="btn-sm download" id="btn-db-dl" onclick="showDownloadModal()" title="Download MariaDB/MySQL">⬇ Get DB</button>
+        </div>
+        <span class="status-badge" id="status-db"><span class="status-dot"></span> Checking...</span>
+      </div>
+
+      <!-- Backend -->
+      <div class="card" id="card-backend">
+        <div class="card-icon backend">⚙️</div>
+        <div class="card-info">
+          <div class="card-name">Express Backend</div>
+          <div class="card-url"><a href="http://localhost:4000" target="_blank" id="link-backend">localhost:4000</a></div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-sm start" id="btn-start-backend" onclick="startBackend()">▶ Start</button>
+          <button class="btn-sm stop" id="btn-stop-backend" onclick="stopBackend()">■ Stop</button>
+          <button class="btn-sm open" onclick="window.open('http://localhost:4000')">↗ Open</button>
+        </div>
+        <span class="status-badge" id="status-backend"><span class="status-dot"></span> Checking...</span>
+      </div>
+
+      <!-- Frontend -->
+      <div class="card" id="card-frontend">
+        <div class="card-icon frontend">🎨</div>
+        <div class="card-info">
+          <div class="card-name">Next.js Frontend</div>
+          <div class="card-url"><a href="http://localhost:3000" target="_blank" id="link-frontend">localhost:3000</a></div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-sm start" id="btn-start-frontend" onclick="startFrontend()">▶ Start</button>
+          <button class="btn-sm stop" id="btn-stop-frontend" onclick="stopFrontend()">■ Stop</button>
+          <button class="btn-sm open" onclick="window.open('http://localhost:3000')">↗ Open</button>
+        </div>
+        <span class="status-badge" id="status-frontend"><span class="status-dot"></span> Checking...</span>
+      </div>
+    </div>
+
+    <!-- Logs Panel -->
+    <div class="logs-section">
+      <div class="logs-header" onclick="toggleLogs()">
+        <h2>📋 Logs</h2>
+        <button class="logs-toggle" id="logs-toggle-btn">Show</button>
+      </div>
+      <div id="logs-body" style="display:none;">
+        <div class="log-tabs">
+          <button class="log-tab active" data-service="backend" onclick="switchLogTab('backend', this)">Backend</button>
+          <button class="log-tab" data-service="frontend" onclick="switchLogTab('frontend', this)">Frontend</button>
+          <button class="log-tab" data-service="db" onclick="switchLogTab('db', this)">Database</button>
+        </div>
+        <div class="log-viewer" id="log-viewer">No logs yet. Start a service to see logs here.</div>
+        <div class="log-actions">
+          <button class="btn-sm start" onclick="refreshLogs()">🔄 Refresh</button>
+          <button class="btn-sm stop" onclick="clearLogs()">🗑 Clear</button>
+          <span style="font-size:0.75rem;color:var(--muted);margin-left:8px;display:flex;align-items:center;">
+            <span id="log-live-dot" style="display:none;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:4px;animation:pulse 2s infinite;"></span>
+            <span id="log-live-text"></span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>© 2026 AAS Tool — All Rights Reserved</p>
+    </div>
+  </div>
+
+  <!-- Download Modal -->
+  <div class="modal-overlay" id="download-modal">
+    <div class="modal">
+      <h3>⬇ Download Database</h3>
+      <p>You need MariaDB or MySQL running on <strong>port 3306</strong>. Choose an option:</p>
+      <p><strong>Option 1 — Docker (recommended):</strong><br>
+        <a href="https://www.docker.com/products/docker-desktop/" target="_blank">Download Docker Desktop</a>, then click <strong>🐳 Docker</strong> on the DB card.
+      </p>
+      <p><strong>Option 2 — MariaDB:</strong><br>
+        <a href="https://mariadb.org/download/" target="_blank">mariadb.org/download</a>
+      </p>
+      <p><strong>Option 3 — MySQL:</strong><br>
+        <a href="https://dev.mysql.com/downloads/installer/" target="_blank">dev.mysql.com/downloads</a>
+      </p>
+      <p>After installing, run the <strong>⚡ Setup</strong> button to create the database and user.</p>
+      <div class="btn-row">
+        <button class="btn-sm setup" onclick="closeDownloadModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ── Globals ──
+    let currentLogService = 'backend';
+    let logsVisible = false;
+    let logEventSource = null;
+
+    function $(id) { return document.getElementById(id); }
+
+    function toast(msg, type = 'success') {
+      const t = $('toast');
+      t.textContent = msg;
+      t.className = 'toast show ' + type;
+      clearTimeout(t._timeout);
+      t._timeout = setTimeout(() => t.classList.remove('show'), 4000);
+    }
+
+    function setStatus(el, running, text) {
+      const badge = typeof el === 'string' ? $(el) : el;
+      if (running) {
+        badge.className = 'status-badge online';
+        badge.innerHTML = '<span class="status-dot"></span> ' + (text || 'RUNNING');
+      } else if (running === null || running === 'starting') {
+        badge.className = 'status-badge starting';
+        badge.innerHTML = '<span class="status-dot"></span> STARTING...';
+      } else {
+        badge.className = 'status-badge offline';
+        badge.innerHTML = '<span class="status-dot"></span> ' + (text || 'OFFLINE');
+      }
+    }
+
+    // ── Status Polling ──
+    async function refreshStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+
+        // DB
+        const db = data.services.database;
+        setStatus('status-db', db.running);
+        const typeStr = db.dockerRunning ? '🐳 docker' : (db.running ? 'local' : 'offline');
+        $('db-type').textContent = typeStr;
+        $('db-url-label').textContent = db.url ? db.url.replace(/:[^:@]+@/, ':****@') : '';
+        $('btn-db-docker').disabled = db.dockerRunning;
+        $('btn-db-setup').disabled = false; // always allow setup
+        $('btn-db-seed').disabled = !db.running;
+
+        // Backend
+        const be = data.services.backend;
+        setStatus('status-backend', be.running);
+        $('btn-start-backend').disabled = be.running;
+        $('btn-stop-backend').disabled = !be.running;
+
+        // Frontend
+        const fe = data.services.frontend;
+        setStatus('status-frontend', fe.running);
+        $('btn-start-frontend').disabled = fe.running;
+        $('btn-stop-frontend').disabled = !fe.running;
+
+        // Master buttons
+        const allUp = db.running && be.running && fe.running;
+        const allDown = !be.running && !fe.running;
+        $('btnStartAll').disabled = allUp;
+        $('btnStopAll').disabled = allDown;
+
+        $('datetime').textContent = new Date(data.timestamp).toLocaleString();
+      } catch (e) {
+        // Control panel may be starting
+      }
+    }
+
+    // ── API Helper ──
+    async function apiCall(url, opts = {}) {
+      try {
+        const res = await fetch(url, { method: opts.method || 'POST', ...opts });
+        const data = await res.json();
+        return data;
+      } catch (e) {
+        return { ok: false, error: e.message };
+      }
+    }
+
+    // ── DB Actions ──
+    async function installDockerDB() {
+      $('btn-db-docker').disabled = true;
+      setStatus('status-db', null);
+      toast('Starting MariaDB Docker container...');
+      const r = await apiCall('/api/db/install-docker');
+      if (r.ok) {
+        toast(r.message);
+        // Poll until ready
+        let attempts = 0;
+        const iv = setInterval(async () => {
+          const s = await (await fetch('/api/status')).json();
+          if (s.services.database.running || ++attempts > 20) {
+            clearInterval(iv);
+            refreshStatus();
+            if (s.services.database.running) toast('Database is ready!');
+          }
+        }, 1500);
+      } else {
+        toast(r.error || 'Failed', 'error');
+        $('btn-db-docker').disabled = false;
+        // If no Docker, show download modal
+        if (r.dockerUrl) showDownloadModal();
+      }
+    }
+
+    async function setupDB() {
+      $('btn-db-setup').disabled = true;
+      toast('Running setup-db script in terminal... Watch the control-panel terminal!', 'success');
+      const r = await apiCall('/api/db/setup');
+      if (r.ok) {
+        toast(r.note || r.message);
+        // Re-check after a while
+        setTimeout(refreshStatus, 10000);
+      } else {
+        toast(r.error || 'Failed', 'error');
+      }
+      setTimeout(() => { $('btn-db-setup').disabled = false; }, 5000);
+    }
+
+    async function seedDB() {
+      $('btn-db-seed').disabled = true;
+      toast('Seeding database...');
+      const r = await apiCall('/api/db/seed');
+      if (r.ok) {
+        toast('Database seeded!');
+      } else {
+        toast(r.error || 'Seed failed', 'error');
+      }
+      $('btn-db-seed').disabled = false;
+      refreshStatus();
+    }
+
+    function showDownloadModal() {
+      $('download-modal').classList.add('show');
+    }
+    function closeDownloadModal() {
+      $('download-modal').classList.remove('show');
+    }
+    // Close modal on overlay click
+    $('download-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeDownloadModal();
+    });
+
+    // ── Logs ──
+    function toggleLogs() {
+      logsVisible = !logsVisible;
+      const body = $('logs-body');
+      body.style.display = logsVisible ? 'block' : 'none';
+      $('logs-toggle-btn').textContent = logsVisible ? 'Hide' : 'Show';
+      if (logsVisible) {
+        startLogStream();
+        refreshLogs();
+      } else {
+        stopLogStream();
+      }
+    }
+
+    function switchLogTab(service, tabEl) {
+      currentLogService = service;
+      document.querySelectorAll('.log-tab').forEach(t => t.classList.remove('active'));
+      tabEl.classList.add('active');
+      stopLogStream();
+      refreshLogs();
+      startLogStream();
+    }
+
+    async function refreshLogs() {
+      try {
+        const res = await fetch(`/api/logs/${currentLogService}?lines=300`);
+        const data = await res.json();
+        if (data.ok && data.logs) {
+          $('log-viewer').textContent = data.logs || '(empty)';
+          $('log-viewer').scrollTop = $('log-viewer').scrollHeight;
+        } else {
+          $('log-viewer').textContent = '(empty)';
+        }
+      } catch {
+        $('log-viewer').textContent = '(failed to load logs)';
+      }
+    }
+
+    async function clearLogs() {
+      try {
+        await fetch(`/api/logs/${currentLogService}`, { method: 'DELETE' });
+      } catch {}
+      $('log-viewer').textContent = '(cleared)';
+    }
+
+    function startLogStream() {
+      stopLogStream();
+      if (!logsVisible) return;
+
+      $('log-live-dot').style.display = 'inline-block';
+      $('log-live-text').textContent = 'Live';
+
+      logEventSource = new EventSource(`/api/logs/${currentLogService}/stream`);
+
+      logEventSource.addEventListener('message', (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          if (data.type === 'init') {
+            if (data.content) {
+              $('log-viewer').textContent = data.content;
+              $('log-viewer').scrollTop = $('log-viewer').scrollHeight;
+            }
+          } else if (data.type === 'append') {
+            if (data.content) {
+              $('log-viewer').textContent += data.content;
+              $('log-viewer').scrollTop = $('log-viewer').scrollHeight;
+            }
+          }
+        } catch {}
+      });
+
+      logEventSource.onerror = () => {
+        $('log-live-dot').style.display = 'none';
+        $('log-live-text').textContent = 'Disconnected';
+        stopLogStream();
+      };
+    }
+
+    function stopLogStream() {
+      if (logEventSource) {
+        logEventSource.close();
+        logEventSource = null;
+      }
+      $('log-live-dot').style.display = 'none';
+      $('log-live-text').textContent = '';
+    }
+
+    // ── Backend Actions ──
+    async function startBackend() {
+      $('btn-start-backend').disabled = true;
+      setStatus('status-backend', null);
+      const r = await apiCall('/api/start/backend');
+      toast(r.ok ? r.message : (r.error || 'Failed'));
+      if (logsVisible && currentLogService === 'backend') refreshLogs();
+      setTimeout(refreshStatus, 2000);
+    }
+
+    async function stopBackend() {
+      $('btn-stop-backend').disabled = true;
+      const r = await apiCall('/api/stop/backend');
+      toast(r.ok ? r.message : (r.error || 'Failed'));
+      setTimeout(refreshStatus, 1500);
+    }
+
+    async function startFrontend() {
+      $('btn-start-frontend').disabled = true;
+      setStatus('status-frontend', null);
+      const r = await apiCall('/api/start/frontend');
+      toast(r.ok ? r.message : (r.error || 'Failed'));
+      if (logsVisible && currentLogService === 'frontend') refreshLogs();
+      setTimeout(refreshStatus, 2000);
+    }
+
+    async function stopFrontend() {
+      $('btn-stop-frontend').disabled = true;
+      const r = await apiCall('/api/stop/frontend');
+      toast(r.ok ? r.message : (r.error || 'Failed'));
+      setTimeout(refreshStatus, 1500);
+    }
+
+    async function startAll() {
+      const btn = $('btnStartAll');
+      btn.classList.add('loading');
+      btn.disabled = true;
+      toast('Starting all services...');
+      const r = await apiCall('/api/start/all');
+      btn.classList.remove('loading');
+      toast(r.ok ? 'All services starting!' : (r.error || 'Failed'), r.ok ? 'success' : 'error');
+      setTimeout(refreshStatus, 3000);
+    }
+
+    async function stopAll() {
+      const btn = $('btnStopAll');
+      btn.classList.add('loading');
+      btn.disabled = true;
+      toast('Stopping all services...');
+      const r = await apiCall('/api/stop/all');
+      btn.classList.remove('loading');
+      toast(r.ok ? 'All services stopped' : (r.error || 'Failed'), r.ok ? 'success' : 'error');
+      setTimeout(refreshStatus, 1500);
+    }
+
+    // ── Init ──
+    refreshStatus();
+    setInterval(refreshStatus, 5000);
+  </script>
+</body>
+</html>
