@@ -62,11 +62,11 @@ if errorlevel 1 (
 ) else (
     echo   [OK] WSL ready
     :: Check Docker in WSL
-    wsl docker info >nul 2>&1
+    wsl bash -lc "docker info" >nul 2>&1
     if errorlevel 1 (
         echo   [WARN] Docker not running in WSL. DB container may not start.
     ) else (
-        for /f "tokens=*" %%v in ('wsl docker -v') do set "DOCKER_VER=%%v"
+        for /f "tokens=*" %%v in ('wsl bash -lc "docker -v"') do set "DOCKER_VER=%%v"
         echo   [OK] !DOCKER_VER! ^(in WSL^)
     )
 )
@@ -84,10 +84,10 @@ echo.
 
 :: ---- Step 2: MariaDB via Docker (WSL) ----
 echo [Step 2] Starting MariaDB ^(Docker in WSL^)...
-wsl docker ps 2>nul | findstr /c:"mariadb" >nul
+wsl bash -lc "docker ps" 2>nul | findstr /c:"mariadb" >nul
 if errorlevel 1 (
     echo   Starting MariaDB container...
-    wsl docker compose -f "%WSL_BACKEND%/docker-compose.yml" up -d 2>&1
+    wsl bash -lc "docker compose -f %WSL_BACKEND%/docker-compose.yml up -d" 2>&1
     if errorlevel 1 (
         echo   [FAIL] Could not start MariaDB. Is WSL running?
     ) else (
