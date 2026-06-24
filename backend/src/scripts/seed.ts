@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import AppDataSource from '../data-source';
 import { BuildingType } from '../entities/BuildingType';
 import { Criterion } from '../entities/Criterion';

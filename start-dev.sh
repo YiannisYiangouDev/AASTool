@@ -45,6 +45,16 @@ echo -e "${BLUE}  AAS — Development Environment${NC}"
 echo -e "${BLUE}════════════════════════════════════════════════════${NC}"
 echo ""
 
+# Auto-create .env and load it — required for fresh clones
+echo -e "${YELLOW}Step 0: Loading environment...${NC}"
+if [ ! -f "$BACKEND_DIR/.env" ]; then
+  print_info "No .env found — copying from .env.example"
+  cp "$BACKEND_DIR/.env.example" "$BACKEND_DIR/.env"
+fi
+export $(grep -v '^#' "$BACKEND_DIR/.env" | xargs)
+print_status "Environment loaded"
+echo ""
+
 port_in_use() {
   netstat -tuln 2>/dev/null | grep -q ":$1 " && return 0 || return 1
 }
