@@ -149,7 +149,7 @@ if [ ! -d node_modules ]; then
 fi
 
 print_info "Starting frontend on port 3000..."
-npm run dev > /tmp/frontend.log 2>&1 &
+PORT=3000 npm run dev > /tmp/frontend.log 2>&1 &
 FRONTEND_PID=$!
 echo $FRONTEND_PID > /tmp/frontend.pid
 for i in {1..30}; do
