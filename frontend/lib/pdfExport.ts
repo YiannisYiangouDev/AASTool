@@ -73,7 +73,7 @@ function addPageHeader(doc: jsPDF, pageNum: number, totalPages: number) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7);
   doc.setTextColor(BRAND.primaryLight);
-  doc.text("AASTOOL — CERTIFICATION REPORT", 15, 9);
+  doc.text("AASTOOL - CERTIFICATION REPORT", 15, 9);
   doc.setFont("helvetica", "normal");
   doc.setTextColor("#94a3b8");
   doc.text(`Page ${pageNum} of ${totalPages}`, 180, 9, { align: "right" });
@@ -88,7 +88,7 @@ function addPageFooter(doc: jsPDF, pageNum: number) {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(6);
   doc.setTextColor("#64748b");
-  doc.text("AASTool — Accessibility Assessment Scheme | EN 17210 Aligned | Confidential", 105, 292, { align: "center" });
+  doc.text("AASTool - Accessibility Assessment Scheme | EN 17210 Aligned | Confidential", 105, 292, { align: "center" });
 }
 
 // ── Cover page ──────────────────────────────────────────────────────────
@@ -123,7 +123,7 @@ function buildCoverPage(doc: jsPDF, results: EvaluationResult, buildingType: str
   doc.setFont("helvetica", "normal");
   doc.setFontSize(13);
   doc.setTextColor("#94a3b8");
-  doc.text("EN 17210 — Accessibility Assessment Scheme", 105, 118, { align: "center" });
+  doc.text("EN 17210 - Accessibility Assessment Scheme", 105, 118, { align: "center" });
 
   // Divider
   doc.setDrawColor(BRAND.primary);
@@ -147,7 +147,7 @@ function buildCoverPage(doc: jsPDF, results: EvaluationResult, buildingType: str
   doc.setFont("helvetica", "bold");
   doc.text("NEB CLASSIFICATION", 105, cy + 2, { align: "center" });
   doc.setFontSize(22);
-  doc.text(results.nebClass || "—", 105, cy + 23, { align: "center" });
+  doc.text(results.nebClass || "-", 105, cy + 23, { align: "center" });
 
   // OBS
   doc.setFont("helvetica", "normal");
@@ -199,7 +199,7 @@ function buildExecutiveSummary(doc: jsPDF, results: EvaluationResult, buildingTy
   // KPI Cards — draw as boxes
   const kpis = [
     { label: "Overall Score", value: `${results.obs}%`, color: BRAND.primary },
-    { label: "NEB Class", value: results.nebClass || "—", color: nebColor(results.nebClass) },
+    { label: "NEB Class", value: results.nebClass || "-", color: nebColor(results.nebClass) },
     { label: "Average Score", value: `${results.averageRawScore}`, color: BRAND.accent },
     { label: "Criteria", value: `${results.criteria?.length || 0}`, color: BRAND.slate },
   ];
@@ -389,7 +389,7 @@ function buildStrengthsWeaknesses(doc: jsPDF, results: EvaluationResult) {
     for (const s of strengths) {
       doc.setTextColor("#1e293b");
       doc.text(s.code, 20, y);
-      doc.text(s.name.length > 60 ? s.name.substring(0, 58) + "…" : s.name, 50, y);
+      doc.text(s.name.length > 60 ? s.name.substring(0, 58) + ".." : s.name, 50, y);
       doc.setTextColor(BRAND.success);
       doc.text(`${s.score}`, 175, y, { align: "right" });
       doc.setTextColor(BRAND.slateLight);
@@ -431,7 +431,7 @@ function buildStrengthsWeaknesses(doc: jsPDF, results: EvaluationResult) {
     for (const w of weaknesses) {
       doc.setTextColor("#1e293b");
       doc.text(w.code, 20, y);
-      doc.text(w.name.length > 60 ? w.name.substring(0, 58) + "…" : w.name, 50, y);
+      doc.text(w.name.length > 60 ? w.name.substring(0, 58) + ".." : w.name, 50, y);
       doc.setTextColor(BRAND.danger);
       doc.text(`${w.score}`, 175, y, { align: "right" });
       doc.setTextColor(BRAND.slateLight);
@@ -518,7 +518,7 @@ function buildCriteriaTable(doc: jsPDF, criteria: Criterion[]) {
     doc.setTextColor("#1e293b");
     doc.text(c.code, cols[0].x, y + 2);
 
-    const name = c.name.length > 50 ? c.name.substring(0, 48) + "…" : c.name;
+    const name = c.name.length > 50 ? c.name.substring(0, 48) + ".." : c.name;
     doc.text(name, cols[1].x, y + 2);
 
     doc.setTextColor(BRAND.primary);
@@ -536,7 +536,7 @@ function buildCriteriaTable(doc: jsPDF, criteria: Criterion[]) {
     doc.text(`${c.score}`, cols[5].x, y + 2);
 
     doc.setTextColor(BRAND.primary);
-    doc.text(`${c.is?.toFixed(4) || "—"}`, cols[6].x, y + 2);
+    doc.text(`${c.is?.toFixed(4) || "-"}`, cols[6].x, y + 2);
 
     y += 9;
     row++;
@@ -577,7 +577,7 @@ export async function exportCertificationPDF(
     doc.setFont("helvetica", "bold");
     doc.setFontSize(7);
     doc.setTextColor(BRAND.primaryLight);
-    doc.text("AASTOOL — CERTIFICATION REPORT", x1, y1);
+    doc.text("AASTOOL - CERTIFICATION REPORT", x1, y1);
     doc.setFont("helvetica", "normal");
     doc.setTextColor("#94a3b8");
     doc.text(`Page ${i} of ${finalPages}`, 180, y1, { align: "right" });
