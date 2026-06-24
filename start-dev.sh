@@ -184,5 +184,9 @@ echo -e "${BLUE}Stop all services:${NC}"
 echo "  • Run: ${YELLOW}./stop-dev.sh${NC}"
 echo "  • Or press Ctrl+C"
 echo ""
+echo -e "${BLUE}────────────────────────────────────────────────${NC}"
+echo -e "  © $(date +%Y) AAS Tool — All Rights Reserved"
+echo -e "${BLUE}────────────────────────────────────────────────${NC}"
+echo ""
 
 wait
