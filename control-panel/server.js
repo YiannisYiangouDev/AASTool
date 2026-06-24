@@ -295,20 +295,13 @@ app.post('/api/db/setup', (_req, res) => {
   appendLog('db', `[${new Date().toISOString()}] This will prompt for MySQL credentials in the terminal where control-panel is running.\n`);
 
   try {
+    appendLog('db', `[${new Date().toISOString()}] ${script} started (interactive — switch to the control-panel terminal to provide input)\n`);
     const child = spawn(IS_WINDOWS ? 'cmd.exe' : 'bash', IS_WINDOWS ? ['/c', script] : [scriptPath], {
       cwd: PROJECT_ROOT,
-      stdio: 'pipe',
+      stdio: 'inherit',  // inherit stdin so user can type credentials when prompted
       shell: false
     });
 
-    child.stdout.on('data', d => {
-      appendLog('db', d.toString());
-      process.stdout.write(`[setup-db] ${d}`);
-    });
-    child.stderr.on('data', d => {
-      appendLog('db', d.toString());
-      process.stderr.write(`[setup-db] ${d}`);
-    });
     child.on('close', code => {
       appendLog('db', `[${new Date().toISOString()}] ${script} exited with code ${code}\n`);
     });
