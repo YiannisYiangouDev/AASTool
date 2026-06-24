@@ -22,6 +22,10 @@ set "WSL_ROOT=%WSL_ROOT:E:=/mnt/e%"
 set "WSL_BACKEND=%WSL_ROOT%/backend"
 set "WSL_FRONTEND=%WSL_ROOT%/frontend"
 
+set "HAS_WSL=0"
+wsl exit 0 >nul 2>&1
+if errorlevel 1 ( set "HAS_WSL=0" ) else ( set "HAS_WSL=1" )
+
 echo.
 echo ════════════════════════════════════════════════════
 echo   AAS Tool — Development Environment ^(Windows^)
@@ -56,10 +60,7 @@ echo   [OK] npm v%NPM_VER%
 
 :: Check WSL
 echo   Checking WSL...
-wsl exit 0 >nul 2>&1
-if errorlevel 1 (
-    echo   [WARN] WSL not available. Make sure WSL is installed.
-) else (
+if "%HAS_WSL%"=="1" (
     echo   [OK] WSL ready
     :: Check Docker in WSL
     wsl bash -lc "docker info" >nul 2>&1
@@ -69,6 +70,10 @@ if errorlevel 1 (
         for /f "tokens=*" %%v in ('wsl bash -lc "docker -v"') do set "DOCKER_VER=%%v"
         echo   [OK] !DOCKER_VER! ^(in WSL^)
     )
+) else (
+    echo   [WARN] WSL not available.
+    echo   [INFO] Services will run natively on Windows.
+    echo   [INFO] Make sure MariaDB/MySQL is running on localhost:3306.
 )
 
 echo.
@@ -82,32 +87,45 @@ if not exist "%BACKEND_DIR%\.env" (
 echo   [OK] Environment ready
 echo.
 
-:: ---- Step 2: MariaDB via Docker (WSL) ----
-echo [Step 2] Starting MariaDB ^(Docker in WSL^)...
-wsl bash -lc "docker ps" 2>nul | findstr /c:"mariadb" >nul
-if errorlevel 1 (
-    echo   Starting MariaDB container...
-    wsl bash -lc "docker compose -f %WSL_BACKEND%/docker-compose.yml up -d" 2>&1
+:: ---- Step 2: MariaDB via Docker (WSL) or assume local ----
+echo [Step 2] Starting MariaDB...
+if "%HAS_WSL%"=="1" (
+    wsl bash -lc "docker ps" 2>nul | findstr /c:"mariadb" >nul
     if errorlevel 1 (
-        echo   [FAIL] Could not start MariaDB. Is WSL running?
+        echo   Starting MariaDB container...
+        wsl bash -lc "docker compose -f %WSL_BACKEND%/docker-compose.yml up -d" 2>&1
+        if errorlevel 1 (
+            echo   [FAIL] Could not start MariaDB via Docker.
+            echo   [INFO] Make sure MariaDB/MySQL is running on localhost:3306.
+        ) else (
+            echo   [OK] MariaDB container started
+        )
     ) else (
-        echo   [OK] MariaDB container started
+        echo   [OK] MariaDB container already running
     )
 ) else (
-    echo   [OK] MariaDB container already running
+    echo   [SKIP] WSL not available — assuming DB on localhost:3306
 )
 echo.
 
-:: ---- Step 3: Backend (via WSL) ----
-echo [Step 3] Starting Backend ^(Express in WSL^)...
+:: ---- Step 3: Backend ----
+echo [Step 3] Starting Backend...
 echo   Starting backend on http://localhost:4000 ...
-start "AAS Backend" wsl bash -c "cd %WSL_BACKEND% && node dist/index.js"
+if "%HAS_WSL%"=="1" (
+    start "AAS Backend" wsl bash -c "cd %WSL_BACKEND% && node dist/index.js"
+) else (
+    start "AAS Backend" cmd /c "cd /d %BACKEND_DIR% && node dist\index.js"
+)
 echo   [OK] Backend starting in new window
 
-:: ---- Step 4: Frontend (via WSL) ----
-echo [Step 4] Starting Frontend ^(Next.js in WSL^)...
+:: ---- Step 4: Frontend ----
+echo [Step 4] Starting Frontend ^(Next.js^)...
 echo   Starting frontend on http://localhost:3000 ...
-start "AAS Frontend" wsl bash -c "cd %WSL_FRONTEND% && PORT=3000 npm run dev"
+if "%HAS_WSL%"=="1" (
+    start "AAS Frontend" wsl bash -c "cd %WSL_FRONTEND% && PORT=3000 npm run dev"
+) else (
+    start "AAS Frontend" cmd /c "cd /d %FRONTEND_DIR% && set PORT=3000 && npm run dev"
+)
 echo   [OK] Frontend starting in new window
 
 :: ---- Done ----
