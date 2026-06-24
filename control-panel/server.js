@@ -166,7 +166,7 @@ function getFullLogPath(service) {
 }
 
 // Clear logs on startup
-['backend', 'frontend', 'db'].forEach(s => {
+['backend', 'frontend', 'db', 'adminer'].forEach(s => {
   try { fs.writeFileSync(getLogPath(s), ''); } catch {}
 });
 
@@ -175,6 +175,7 @@ function getFullLogPath(service) {
 app.get('/api/status', (_req, res) => {
   const backendUp = isPortOpen(4000);
   const frontendUp = isPortOpen(3000);
+  const adminerUp = isPortOpen(8080);
   const dbUp = getDbStatus();
   const docker = getDockerStatus();
 
@@ -210,6 +211,11 @@ app.get('/api/status', (_req, res) => {
         running: frontendUp,
         url: frontendUp ? 'http://localhost:3000' : null,
         pid: processes.frontend?.pid || null
+      },
+      adminer: {
+        port: 8080,
+        running: adminerUp,
+        url: adminerUp ? 'http://localhost:8080' : null
       }
     }
   });

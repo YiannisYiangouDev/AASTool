@@ -8,9 +8,11 @@ color 0B
 ::  Starts MariaDB (Docker), Backend, and Frontend
 :: ============================================================
 
-set "PROJECT_ROOT=%~dp0"
-set "BACKEND_DIR=%PROJECT_ROOT%backend"
-set "FRONTEND_DIR=%PROJECT_ROOT%frontend"
+pushd "%~dp0.."
+set "PROJECT_ROOT=%CD%"
+popd
+set "BACKEND_DIR=%PROJECT_ROOT%\backend"
+set "FRONTEND_DIR=%PROJECT_ROOT%\frontend"
 
 echo.
 echo ════════════════════════════════════════════════════

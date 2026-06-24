@@ -7,8 +7,10 @@ title AAS Tool — Database Setup
 ::  Creates the database, user, and seeds all tables
 :: ============================================================
 
-set "PROJECT_ROOT=%~dp0"
-set "BACKEND_DIR=%PROJECT_ROOT%backend"
+pushd "%~dp0.."
+set "PROJECT_ROOT=%CD%"
+popd
+set "BACKEND_DIR=%PROJECT_ROOT%\backend"
 
 echo.
 echo ════════════════════════════════════════════════════

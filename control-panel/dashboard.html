@@ -126,6 +126,7 @@
     .card-icon.db { background: rgba(59,130,246,0.1); }
     .card-icon.backend { background: rgba(34,197,94,0.1); }
     .card-icon.frontend { background: rgba(168,85,247,0.1); }
+    .card-icon.adminer { background: rgba(249,115,22,0.1); }
     .card-info { flex: 1; min-width: 0; }
     .card-name { font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; }
     .card-detail { font-size: 0.85rem; color: var(--muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -299,6 +300,19 @@
         <span class="status-badge" id="status-db"><span class="status-dot"></span> Checking...</span>
       </div>
 
+      <!-- Adminer -->
+      <div class="card" id="card-adminer">
+        <div class="card-icon adminer">🗃️</div>
+        <div class="card-info">
+          <div class="card-name">Adminer (DB Manager)</div>
+          <div class="card-url"><a href="http://localhost:8080" target="_blank" id="link-adminer">localhost:8080</a></div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-sm open" onclick="window.open('http://localhost:8080')">↗ Open</button>
+        </div>
+        <span class="status-badge" id="status-adminer"><span class="status-dot"></span> Checking...</span>
+      </div>
+
       <!-- Backend -->
       <div class="card" id="card-backend">
         <div class="card-icon backend">⚙️</div>
@@ -435,6 +449,10 @@
         setStatus('status-backend', be.running);
         $('btn-start-backend').disabled = be.running;
         $('btn-stop-backend').disabled = !be.running;
+
+        // Adminer
+        const adm = data.services.adminer;
+        setStatus('status-adminer', adm.running);
 
         // Frontend
         const fe = data.services.frontend;
