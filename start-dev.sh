@@ -104,6 +104,16 @@ if port_in_use 4000; then
   sleep 1
 fi
 cd "$BACKEND_DIR"
+
+# Auto-install deps + build if dist/ missing (fresh clone)
+if [ ! -f dist/index.js ]; then
+  print_info "dist/ not found — installing dependencies..."
+  npm install --silent 2>&1 | tail -1
+  print_info "Building TypeScript..."
+  npm run build 2>&1 | tail -1
+  print_status "Backend built successfully"
+fi
+
 export DATABASE_URL="${DATABASE_URL:-mysql://myuser:mypassword@127.0.0.1:3306/mydb}"
 print_info "Starting backend on port 4000..."
 npm start > /tmp/backend.log 2>&1 &
@@ -130,6 +140,14 @@ if port_in_use 3000; then
   sleep 1
 fi
 cd "$FRONTEND_DIR"
+
+# Auto-install deps if node_modules missing (fresh clone)
+if [ ! -d node_modules ]; then
+  print_info "node_modules/ not found — installing dependencies..."
+  npm install --silent 2>&1 | tail -1
+  print_status "Frontend dependencies installed"
+fi
+
 print_info "Starting frontend on port 3000..."
 npm run dev > /tmp/frontend.log 2>&1 &
 FRONTEND_PID=$!
