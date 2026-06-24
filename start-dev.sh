@@ -51,7 +51,7 @@ if [ ! -f "$BACKEND_DIR/.env" ]; then
   print_info "No .env found — copying from .env.example"
   cp "$BACKEND_DIR/.env.example" "$BACKEND_DIR/.env"
 fi
-export $(grep -v '^#' "$BACKEND_DIR/.env" | xargs)
+export $(grep -v '^#' "$BACKEND_DIR/.env" | tr -d '\r' | xargs)
 print_status "Environment loaded"
 echo ""
 
