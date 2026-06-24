@@ -14,6 +14,14 @@ popd
 set "BACKEND_DIR=%PROJECT_ROOT%\backend"
 set "FRONTEND_DIR=%PROJECT_ROOT%\frontend"
 
+:: Convert Windows paths to WSL paths (e.g. C:\foo\bar -> /mnt/c/foo/bar)
+set "WSL_ROOT=%PROJECT_ROOT:\=/%"
+set "WSL_ROOT=%WSL_ROOT:C:=/mnt/c%"
+set "WSL_ROOT=%WSL_ROOT:D:=/mnt/d%"
+set "WSL_ROOT=%WSL_ROOT:E:=/mnt/e%"
+set "WSL_BACKEND=%WSL_ROOT%/backend"
+set "WSL_FRONTEND=%WSL_ROOT%/frontend"
+
 echo.
 echo ════════════════════════════════════════════════════
 echo   AAS Tool — Development Environment ^(Windows^)
@@ -46,50 +54,22 @@ if %errorlevel% neq 0 (
 for /f "tokens=*" %%v in ('npm -v') do set "NPM_VER=%%v"
 echo   [OK] npm v%NPM_VER%
 
-:: Check Docker
-set "DOCKER_OK=0"
-where docker >nul 2>&1
-if %errorlevel% equ 0 (
-    docker info >nul 2>&1
+:: Check WSL
+echo   Checking WSL...
+wsl echo ok >nul 2>&1
+if !errorlevel! neq 0 (
+    echo   [WARN] WSL not available. Make sure WSL is installed.
+    echo   Services will be started via Windows Node (may not work with Docker DB).
+) else (
+    echo   [OK] WSL ready
+    :: Check Docker in WSL
+    wsl docker info >nul 2>&1
     if !errorlevel! equ 0 (
-        set "DOCKER_OK=1"
-        for /f "tokens=*" %%v in ('docker -v') do set "DOCKER_VER=%%v"
-        echo   [OK] !DOCKER_VER!
+        for /f "tokens=*" %%v in ('wsl docker -v') do set "DOCKER_VER=%%v"
+        echo   [OK] !DOCKER_VER! ^(in WSL^)
+    ) else (
+        echo   [WARN] Docker not running in WSL. DB container may not start.
     )
-)
-
-if "!DOCKER_OK!"=="0" (
-    echo.
-    echo   [WARN] Docker not found or not running.
-    echo.
-    echo   How would you like to set up the database?
-    echo     [1] Open Docker Desktop download page
-    echo     [2] Use local MySQL/MariaDB ^(run setup-db.bat first^)
-    echo     [3] Continue — DB already running on localhost:3306
-    echo     [4] Exit
-    echo.
-    echo   Tip: Run setup-db.bat to install a local MariaDB & seed data
-    echo        without needing Docker.
-    echo.
-    choice /c 1234 /n /m "  Choose [1/2/3/4]: "
-    if !errorlevel! equ 1 (
-        start "" "https://www.docker.com/products/docker-desktop/"
-        echo   Opening Docker Desktop download page...
-        echo   After installing, re-run this script.
-        pause
-        exit /b 0
-    )
-    if !errorlevel! equ 2 (
-        echo.
-        echo   Launching setup-db.bat ...
-        start "" /wait cmd /c "%~dp0setup-db.bat"
-        echo.
-        echo   Database setup complete. Continuing...
-    )
-    if !errorlevel! equ 4 (
-        exit /b 0
-    )
-    echo   Continuing — assuming DB is already running...
 )
 
 echo.
@@ -103,64 +83,33 @@ if not exist "%BACKEND_DIR%\.env" (
 echo   [OK] Environment ready
 echo.
 
-:: ---- Step 2: MariaDB via Docker ----
-echo [Step 2] Starting MariaDB ^(Docker^)...
-if "!DOCKER_OK!"=="1" (
-    docker ps 2>nul | findstr /c:"mariadb" >nul
-    if !errorlevel! equ 0 (
-        echo   [OK] MariaDB container already running
-    ) else (
-        echo   Starting MariaDB container...
-        cd /d "%BACKEND_DIR%"
-        docker compose up -d 2>nul || docker-compose up -d 2>nul
-        if !errorlevel! neq 0 (
-            echo   [FAIL] Could not start MariaDB. Check Docker Desktop.
-        ) else (
-            echo   [OK] MariaDB container started
-        )
-        cd /d "%PROJECT_ROOT%"
-    )
+:: ---- Step 2: MariaDB via Docker (WSL) ----
+echo [Step 2] Starting MariaDB ^(Docker in WSL^)...
+wsl docker ps 2>nul | findstr /c:"mariadb" >nul
+if !errorlevel! equ 0 (
+    echo   [OK] MariaDB container already running
 ) else (
-    echo   [SKIP] Docker not available — assuming DB on localhost:3306
+    echo   Starting MariaDB container...
+    wsl docker compose -f "%WSL_BACKEND%/docker-compose.yml" up -d 2>&1
+    if !errorlevel! neq 0 (
+        echo   [FAIL] Could not start MariaDB. Is WSL running?
+    ) else (
+        echo   [OK] MariaDB container started
+    )
 )
 echo.
 
-:: ---- Step 3: Backend ----
-echo [Step 3] Starting Backend ^(Express^)...
-cd /d "%BACKEND_DIR%"
-
-:: Auto-install + build if needed
-if not exist "dist\index.js" (
-    echo   dist\ not found — installing dependencies...
-    call npm install --silent 2>&1
-    echo   Building TypeScript...
-    call npm run build 2>&1
-    echo   [OK] Backend built
-)
-
+:: ---- Step 3: Backend (via WSL) ----
+echo [Step 3] Starting Backend ^(Express in WSL^)...
 echo   Starting backend on http://localhost:4000 ...
-start "AAS Backend" cmd /c "cd /d %BACKEND_DIR% && node dist\index.js"
+start "AAS Backend" wsl bash -c "cd %WSL_BACKEND% && node dist/index.js"
 echo   [OK] Backend starting in new window
-cd /d "%PROJECT_ROOT%"
-echo.
 
-:: ---- Step 4: Frontend ----
-echo [Step 4] Starting Frontend ^(Next.js^)...
-cd /d "%FRONTEND_DIR%"
-
-:: Auto-install if needed
-if not exist "node_modules\" (
-    echo   node_modules\ not found — installing dependencies...
-    call npm install --silent 2>&1
-    echo   [OK] Frontend dependencies installed
-)
-
+:: ---- Step 4: Frontend (via WSL) ----
+echo [Step 4] Starting Frontend ^(Next.js in WSL^)...
 echo   Starting frontend on http://localhost:3000 ...
-set "PORT=3000"
-start "AAS Frontend" cmd /c "cd /d %FRONTEND_DIR% && set PORT=3000 && npm run dev"
+start "AAS Frontend" wsl bash -c "cd %WSL_FRONTEND% && PORT=3000 npm run dev"
 echo   [OK] Frontend starting in new window
-cd /d "%PROJECT_ROOT%"
-echo.
 
 :: ---- Done ----
 echo ════════════════════════════════════════════════════
