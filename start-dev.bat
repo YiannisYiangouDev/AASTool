@@ -60,13 +60,16 @@ if "!DOCKER_OK!"=="0" (
     echo.
     echo   [WARN] Docker not found or not running.
     echo.
-    echo   Docker Desktop is required to run MariaDB.
-    echo   Would you like to:
+    echo   How would you like to set up the database?
     echo     [1] Open Docker Desktop download page
-    echo     [2] Continue without Docker ^(DB must already be running^)
-    echo     [3] Exit
+    echo     [2] Use local MySQL/MariaDB ^(run setup-db.bat first^)
+    echo     [3] Continue — DB already running on localhost:3306
+    echo     [4] Exit
     echo.
-    choice /c 123 /n /m "  Choose [1/2/3]: "
+    echo   Tip: Run setup-db.bat to install a local MariaDB & seed data
+    echo        without needing Docker.
+    echo.
+    choice /c 1234 /n /m "  Choose [1/2/3/4]: "
     if !errorlevel! equ 1 (
         start "" "https://www.docker.com/products/docker-desktop/"
         echo   Opening Docker Desktop download page...
@@ -74,10 +77,17 @@ if "!DOCKER_OK!"=="0" (
         pause
         exit /b 0
     )
-    if !errorlevel! equ 3 (
+    if !errorlevel! equ 2 (
+        echo.
+        echo   Launching setup-db.bat ...
+        start "" /wait cmd /c "%~dp0setup-db.bat"
+        echo.
+        echo   Database setup complete. Continuing...
+    )
+    if !errorlevel! equ 4 (
         exit /b 0
     )
-    echo   Continuing without Docker — assuming DB is already running...
+    echo   Continuing — assuming DB is already running...
 )
 
 echo.

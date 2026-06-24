@@ -1,8 +1,16 @@
 #!/bin/bash
 # Start all services for AAS
-# MariaDB in Docker, Backend + Frontend via npm
+# Usage: ./start-dev.sh [--no-docker]
+#   --no-docker  Skip Docker — use locally installed MySQL/MariaDB
 
 set -e
+
+USE_DOCKER=true
+for arg in "$@"; do
+  case "$arg" in
+    --no-docker) USE_DOCKER=false ;;
+  esac
+done
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKEND_DIR="$PROJECT_ROOT/backend"
@@ -50,6 +58,11 @@ echo -e "${YELLOW}Step 0: Loading environment...${NC}"
 if [ ! -f "$BACKEND_DIR/.env" ]; then
   print_info "No .env found — copying from .env.example"
   cp "$BACKEND_DIR/.env.example" "$BACKEND_DIR/.env"
+  echo ""
+  echo -e "  ${BLUE}Tip:${NC} To use a local MySQL (no Docker), run:"
+  echo -e "       ${YELLOW}./setup-db.sh${NC}     (creates DB + seeds data)"
+  echo -e "       ${YELLOW}./start-dev.sh --no-docker${NC}"
+  echo ""
 fi
 export $(grep -v '^#' "$BACKEND_DIR/.env" | tr -d '\r' | xargs)
 print_status "Environment loaded"
@@ -60,7 +73,16 @@ port_in_use() {
 }
 
 echo -e "${YELLOW}Step 1: Starting MariaDB (Docker)...${NC}"
-if port_in_use 3306; then
+if [ "$USE_DOCKER" = false ]; then
+  print_info "Skipping Docker (--no-docker flag)"
+  if ! port_in_use 3306; then
+    print_error "No MariaDB detected on port 3306."
+    print_info "Run './setup-db.sh' first to set up a local MySQL/MariaDB,"
+    print_info "or start this script without --no-docker to use Docker."
+    exit 1
+  fi
+  print_status "Using existing MariaDB on port 3306"
+elif port_in_use 3306; then
   print_status "MariaDB already running on port 3306"
 else
   cd "$BACKEND_DIR"
