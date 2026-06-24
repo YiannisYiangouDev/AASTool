@@ -55,8 +55,8 @@ docs_oldeasd/
 #scripts
 
 
-#az
-azure/
+# Azure Bicep deployment templates ARE tracked
+#azure/
 
 #hc
 /types/

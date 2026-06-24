@@ -1,8 +1,9 @@
 // Quick seed of config keys into running DB
-const { DataSource } = require('typeorm');
-const ds = new DataSource(require('../src/data-source').default);
-ds.initialize().then(async () => {
-  const repo = ds.getRepository('Config');
+// Must run AFTER `npm run build` (requires compiled JS in dist/)
+const { AppDataSource } = require('../dist/data-source');
+
+AppDataSource.initialize().then(async () => {
+  const repo = AppDataSource.getRepository('Config');
   const keys = [
     { key: 'DEFAULT_SCORE', value: '3' },
     { key: 'STRENGTH_THRESHOLD', value: '5' },

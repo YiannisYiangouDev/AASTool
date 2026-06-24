@@ -56,6 +56,70 @@ function isPortOpen(port) {
   }
 }
 
+function getPidsOnPort(port) {
+  // Returns array of PIDs listening on the given port
+  try {
+    if (IS_WINDOWS) {
+      const out = execSync(`netstat -ano | findstr ":${port}.*LISTENING"`, { encoding: 'utf8', timeout: 3000 });
+      const pids = [];
+      out.split('\n').forEach(line => {
+        const m = line.trim().match(/(\d+)\s*$/);
+        if (m) pids.push(parseInt(m[1]));
+      });
+      return [...new Set(pids)];
+    }
+    // Try fuser (most reliable across WSL)
+    try {
+      const out = execSync(`fuser ${port}/tcp 2>/dev/null`, { encoding: 'utf8', timeout: 3000 }).trim();
+      if (out) return out.split(/\s+/).map(s => parseInt(s)).filter(n => !isNaN(n));
+    } catch {}
+    // Try lsof
+    try {
+      const out = execSync(`lsof -ti :${port} 2>/dev/null`, { encoding: 'utf8', timeout: 3000 }).trim();
+      if (out) return out.split('\n').map(s => parseInt(s)).filter(n => !isNaN(n));
+    } catch {}
+    // Try ss
+    try {
+      const out = execSync(`ss -tlnp 'sport = :${port}' 2>/dev/null`, { encoding: 'utf8', timeout: 3000 });
+      const pids = [];
+      out.split('\n').forEach(line => {
+        const m = line.match(/pid=(\d+)/);
+        if (m) pids.push(parseInt(m[1]));
+      });
+      if (pids.length) return [...new Set(pids)];
+    } catch {}
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+function killPort(port) {
+  const pids = getPidsOnPort(port);
+  if (IS_WINDOWS) {
+    // On Windows, use taskkill
+    pids.forEach(pid => {
+      try { execSync(`taskkill /f /pid ${pid} >nul 2>&1`, { stdio: 'ignore', timeout: 5000 }); } catch {}
+    });
+    return;
+  }
+  // Linux/WSL: kill each PID
+  pids.forEach(pid => {
+    try { process.kill(pid, 'SIGTERM'); } catch {}
+    // Wait a bit then force kill
+    try {
+      const check = require('child_process').execSync(`kill -0 ${pid} 2>/dev/null && echo alive || echo dead`, { encoding: 'utf8', timeout: 2000 }).trim();
+      if (check === 'alive') {
+        try { process.kill(pid, 'SIGKILL'); } catch {}
+      }
+    } catch {}
+  });
+  // Also try fuser -k as last resort
+  try {
+    execSync(`fuser -k ${port}/tcp 2>/dev/null`, { stdio: 'ignore', timeout: 5000 });
+  } catch {}
+}
+
 function getDockerStatus() {
   try {
     const out = execSync('docker ps --format "{{.Names}}" 2>/dev/null', { encoding: 'utf8', timeout: 3000 });
@@ -433,13 +497,9 @@ app.post('/api/stop/backend', (_req, res) => {
     killed = true;
   }
 
-  try {
-    const cmd = IS_WINDOWS
-      ? `for /f "tokens=5" %a in ('netstat -ano ^| findstr ":4000.*LISTENING"') do taskkill /f /pid %a >nul 2>&1`
-      : `lsof -ti :4000 | xargs kill -9 2>/dev/null`;
-    execSync(cmd, { stdio: 'ignore' });
-    killed = true;
-  } catch {}
+  // Use the robust killPort helper that works in WSL
+  killPort(4000);
+  killed = true;
 
   appendLog('backend', `[${new Date().toISOString()}] Backend stopped\n`);
   res.json({ ok: true, message: killed ? 'Backend stopped' : 'Backend was not running' });
@@ -504,13 +564,9 @@ app.post('/api/stop/frontend', (_req, res) => {
     killed = true;
   }
 
-  try {
-    const cmd = IS_WINDOWS
-      ? `for /f "tokens=5" %a in ('netstat -ano ^| findstr ":3000.*LISTENING"') do taskkill /f /pid %a >nul 2>&1`
-      : `lsof -ti :3000 | xargs kill -9 2>/dev/null`;
-    execSync(cmd, { stdio: 'ignore' });
-    killed = true;
-  } catch {}
+  // Use the robust killPort helper that works in WSL
+  killPort(3000);
+  killed = true;
 
   appendLog('frontend', `[${new Date().toISOString()}] Frontend stopped\n`);
   res.json({ ok: true, message: killed ? 'Frontend stopped' : 'Frontend was not running' });
@@ -579,16 +635,8 @@ app.post('/api/start/all', async (_req, res) => {
 });
 
 app.post('/api/stop/all', (_req, res) => {
-  try {
-    execSync(IS_WINDOWS
-      ? `for /f "tokens=5" %a in ('netstat -ano ^| findstr ":4000.*LISTENING"') do taskkill /f /pid %a >nul 2>&1`
-      : `lsof -ti :4000 | xargs kill -9 2>/dev/null`, { stdio: 'ignore' });
-  } catch {}
-  try {
-    execSync(IS_WINDOWS
-      ? `for /f "tokens=5" %a in ('netstat -ano ^| findstr ":3000.*LISTENING"') do taskkill /f /pid %a >nul 2>&1`
-      : `lsof -ti :3000 | xargs kill -9 2>/dev/null`, { stdio: 'ignore' });
-  } catch {}
+  killPort(4000);
+  killPort(3000);
 
   appendLog('backend', `[${new Date().toISOString()}] Stopped (stop all)\n`);
   appendLog('frontend', `[${new Date().toISOString()}] Stopped (stop all)\n`);
