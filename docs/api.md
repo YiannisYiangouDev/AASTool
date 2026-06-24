@@ -6,6 +6,25 @@
 
 ---
 
+## Quick Start
+
+```bash
+# Windows — start only the API:
+scripts\start-api.bat
+
+# Linux / WSL:
+./scripts/start-api.sh
+```
+
+The API starts on `http://localhost:4000`. Verify with:
+```bash
+curl http://localhost:4000/health
+```
+
+> Requires MariaDB/MySQL on `localhost:3306`. Run `scripts/setup-db.bat` first if needed.
+
+---
+
 ## Table of Contents
 
 1. [Conventions](#conventions)

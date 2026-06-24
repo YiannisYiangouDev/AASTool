@@ -573,6 +573,28 @@ $$OBS = \frac{\sum_{i=1}^{5} DW_i \times TIS_i}{MAX\_OBS} \times 100$$
 - OBS ≥ 35 → NEB Class C (Fair, Score 2)
 - OBS ≥ 0 → NEB Class D (Poor, Score 1)
 
+## Quick Start — API Only
+
+If you just want to run the backend API (no frontend, no DB setup):
+
+**Windows** — double-click or run:
+```
+scripts\start-api.bat
+```
+
+**Linux / WSL** — run:
+```bash
+./scripts/start-api.sh
+```
+
+These scripts:
+1. Check that Node.js and the `.env` file are ready
+2. Build TypeScript if `dist/` is missing
+3. Start the Express API on `http://localhost:4000`
+
+> **Note**: Assumes MariaDB/MySQL is already running on `localhost:3306`.
+> Use `scripts/setup-db.bat` (Windows) or `./setup-db.sh` (WSL) to set up the database first if needed.
+
 ---
 
 ## Migrations
