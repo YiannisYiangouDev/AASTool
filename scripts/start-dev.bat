@@ -26,6 +26,15 @@ set "HAS_WSL=0"
 wsl exit 0 >nul 2>&1
 if errorlevel 1 ( set "HAS_WSL=0" ) else ( set "HAS_WSL=1" )
 
+set "HAS_DOCKER=0"
+if "%HAS_WSL%"=="1" (
+    wsl bash -lc "docker info" >nul 2>&1
+    if not errorlevel 1 set "HAS_DOCKER=1"
+) else (
+    docker info >nul 2>&1
+    if not errorlevel 1 set "HAS_DOCKER=1"
+)
+
 echo.
 echo ════════════════════════════════════════════════════
 echo   AAS Tool — Development Environment ^(Windows^)
@@ -58,22 +67,28 @@ if %errorlevel% neq 0 (
 for /f "tokens=*" %%v in ('npm -v') do set "NPM_VER=%%v"
 echo   [OK] npm v%NPM_VER%
 
-:: Check WSL
-echo   Checking WSL...
+:: Check WSL + Docker
+echo   Checking environment...
 if "%HAS_WSL%"=="1" (
     echo   [OK] WSL ready
-    :: Check Docker in WSL
-    wsl bash -lc "docker info" >nul 2>&1
-    if errorlevel 1 (
-        echo   [WARN] Docker not running in WSL. DB container may not start.
-    ) else (
+    if "%HAS_DOCKER%"=="1" (
         for /f "tokens=*" %%v in ('wsl bash -lc "docker -v"') do set "DOCKER_VER=%%v"
         echo   [OK] !DOCKER_VER! ^(in WSL^)
+    ) else (
+        echo   [WARN] Docker not available in WSL.
+        echo   [INFO] Start Docker Desktop in Windows, or install Docker in WSL.
+        echo   [INFO] Without Docker, you need MariaDB/MySQL on localhost:3306.
     )
 ) else (
     echo   [WARN] WSL not available.
-    echo   [INFO] Services will run natively on Windows.
-    echo   [INFO] Make sure MariaDB/MySQL is running on localhost:3306.
+    if "%HAS_DOCKER%"=="1" (
+        for /f "tokens=*" %%v in ('docker -v') do set "DOCKER_VER=%%v"
+        echo   [OK] !DOCKER_VER!
+    ) else (
+        echo   [WARN] Docker Desktop not found.
+        echo   [INFO] Services will run natively on Windows.
+        echo   [INFO] Make sure MariaDB/MySQL is running on localhost:3306.
+    )
 )
 
 echo.
@@ -87,13 +102,22 @@ if not exist "%BACKEND_DIR%\.env" (
 echo   [OK] Environment ready
 echo.
 
-:: ---- Step 2: MariaDB via Docker (WSL) or assume local ----
+:: ---- Step 2: MariaDB via Docker or assume local ----
 echo [Step 2] Starting MariaDB...
-if "%HAS_WSL%"=="1" (
-    wsl bash -lc "docker ps" 2>nul | findstr /c:"mariadb" >nul
+if "%HAS_DOCKER%"=="1" (
+    echo   Checking Docker for MariaDB container...
+    if "%HAS_WSL%"=="1" (
+        wsl bash -lc "docker ps --format '{{.Names}}'" 2>nul | findstr /c:"mariadb" >nul
+    ) else (
+        docker ps --format "{{.Names}}" 2>nul | findstr /c:"mariadb" >nul
+    )
     if errorlevel 1 (
         echo   Starting MariaDB container...
-        wsl bash -lc "docker compose -f %WSL_BACKEND%/docker-compose.yml up -d" 2>&1
+        if "%HAS_WSL%"=="1" (
+            wsl bash -lc "docker compose -f %WSL_BACKEND%/docker-compose.yml up -d" 2>&1
+        ) else (
+            docker compose -f "%BACKEND_DIR%\docker-compose.yml" up -d 2>&1
+        )
         if errorlevel 1 (
             echo   [FAIL] Could not start MariaDB via Docker.
             echo   [INFO] Make sure MariaDB/MySQL is running on localhost:3306.
@@ -104,7 +128,7 @@ if "%HAS_WSL%"=="1" (
         echo   [OK] MariaDB container already running
     )
 ) else (
-    echo   [SKIP] WSL not available — assuming DB on localhost:3306
+    echo   [SKIP] Docker not available — assuming DB on localhost:3306
 )
 echo.
 
@@ -139,8 +163,10 @@ echo     * Backend:    http://localhost:4000
 echo     * Frontend:   http://localhost:3000
 echo.
 echo   Stop services:
+if "%HAS_DOCKER%"=="1" (
+    echo     * docker stop mariadb  ^(or use Docker Desktop^)
+)
 echo     * Close the "AAS Backend" and "AAS Frontend" windows
-echo     * docker stop mariadb  ^(or use Docker Desktop^)
 echo.
 echo ─────────────────────────────────────────────────
 echo   (c) %date:~10,4% AAS Tool — All Rights Reserved
