@@ -56,19 +56,18 @@ echo   [OK] npm v%NPM_VER%
 
 :: Check WSL
 echo   Checking WSL...
-wsl echo ok >nul 2>&1
-if !errorlevel! neq 0 (
+wsl exit 0 >nul 2>&1
+if errorlevel 1 (
     echo   [WARN] WSL not available. Make sure WSL is installed.
-    echo   Services will be started via Windows Node (may not work with Docker DB).
 ) else (
     echo   [OK] WSL ready
     :: Check Docker in WSL
     wsl docker info >nul 2>&1
-    if !errorlevel! equ 0 (
+    if errorlevel 1 (
+        echo   [WARN] Docker not running in WSL. DB container may not start.
+    ) else (
         for /f "tokens=*" %%v in ('wsl docker -v') do set "DOCKER_VER=%%v"
         echo   [OK] !DOCKER_VER! ^(in WSL^)
-    ) else (
-        echo   [WARN] Docker not running in WSL. DB container may not start.
     )
 )
 
@@ -86,16 +85,16 @@ echo.
 :: ---- Step 2: MariaDB via Docker (WSL) ----
 echo [Step 2] Starting MariaDB ^(Docker in WSL^)...
 wsl docker ps 2>nul | findstr /c:"mariadb" >nul
-if !errorlevel! equ 0 (
-    echo   [OK] MariaDB container already running
-) else (
+if errorlevel 1 (
     echo   Starting MariaDB container...
     wsl docker compose -f "%WSL_BACKEND%/docker-compose.yml" up -d 2>&1
-    if !errorlevel! neq 0 (
+    if errorlevel 1 (
         echo   [FAIL] Could not start MariaDB. Is WSL running?
     ) else (
         echo   [OK] MariaDB container started
     )
+) else (
+    echo   [OK] MariaDB container already running
 )
 echo.
 
