@@ -23,7 +23,7 @@ case "$SERVICE" in
         ;;
     database)
         echo "=== MariaDB Logs (tail -f) ==="
-        docker logs -f mariadb 2>/dev/null || echo "MariaDB not running. Start it first."
+        docker logs -f mariadb 2>/dev/null || docker logs -f aastool-db 2>/dev/null || echo "MariaDB not running. Start it first."
         ;;
     all|*)
         echo "=== Last 20 lines of all service logs ==="
@@ -43,7 +43,7 @@ case "$SERVICE" in
         fi
         echo ""
         echo "--- MariaDB ---"
-        docker logs --tail 20 mariadb 2>/dev/null || echo "(not available)"
+        docker logs --tail 20 mariadb 2>/dev/null || docker logs --tail 20 aastool-db 2>/dev/null || echo "(not available)"
         ;;
 esac
 

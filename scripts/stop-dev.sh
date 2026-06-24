@@ -52,10 +52,10 @@ else
 fi
 
 # Stop MariaDB
-PROJ_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-if docker ps 2>/dev/null | grep -q mariadb; then
-  cd "$PROJ_DIR/backend"
-  docker-compose stop 2>/dev/null
+PROJ_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if docker ps 2>/dev/null | grep -qE 'mariadb|aastool-db'; then
+  docker stop aastool-db mariadb adminer 2>/dev/null
+  docker rm aastool-db mariadb adminer 2>/dev/null
   echo -e "${GREEN}✓${NC} MariaDB stopped"
 else
   echo -e "${YELLOW}ℹ${NC} MariaDB not running"

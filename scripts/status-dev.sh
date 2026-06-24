@@ -14,9 +14,9 @@ echo ""
 
 # Database
 echo -e "${BLUE}Database (MariaDB):${NC}"
-if docker ps 2>/dev/null | grep -q mariadb; then
+if docker ps 2>/dev/null | grep -qE 'mariadb|aastool-db'; then
   echo -e "  ${GREEN}✓${NC} Running on localhost:3306"
-  docker ps --filter "name=mariadb" --format "table {{.Names}}\t{{.Status}}" 2>/dev/null
+  docker ps --filter "name=mariadb" --filter "name=aastool-db" --format "table {{.Names}}\t{{.Status}}" 2>/dev/null
 else
   echo -e "  ${RED}✗${NC} Not running"
 fi
