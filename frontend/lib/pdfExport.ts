@@ -336,7 +336,8 @@ function buildExecutiveSummary(doc: jsPDF, results: EvaluationResult, buildingTy
   doc.setTextColor(BRAND.slateLight);
   doc.text(`NEB Classification: ${results.nebClass} - ${nebLabel(results.nebClass)}`, 25, y + 19);
   // NEB color bar at right
-  doc.setFillColor(nc);
+  const nebCol = nebColor(results.nebClass);
+  doc.setFillColor(nebCol);
   doc.roundedRect(165, y + 4, 22, 17, 3, 3, "F");
   doc.setFont("helvetica", "bold");
   doc.setFontSize(12);
