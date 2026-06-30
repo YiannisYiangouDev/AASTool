@@ -116,25 +116,72 @@ check "Metadata static checks" bash -c "export DATABASE_URL=mysql://myuser:mypas
 
 # DB-dependent tests (only if backend is running)
 if [ "$BACKEND_RUNNING" = true ]; then
-  # Write test scripts to temp file to avoid quoting issues
-  cat > /tmp/check-evaluate.sh << 'TESTEOF'
-#!/bin/bash
-RESULT=$(curl -s http://localhost:4000/api/v1/evaluate -X POST -H "Content-Type: application/json" \
-  -d '{"buildingType":"Commercial Buildings"}' 2>/dev/null)
-echo "$RESULT" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('ok')==True; assert 'result' in d; print('OK: obs=' + str(d['result']['obs']))"
-TESTEOF
-  chmod +x /tmp/check-evaluate.sh
-  check "Evaluate API (POST /api/v1/evaluate)" bash /tmp/check-evaluate.sh
+  check "Evaluate API (POST /api/v1/evaluate)" bash -c "
+    RESULT=\$(curl -s http://localhost:4000/api/v1/evaluate -X POST -H 'Content-Type: application/json' \
+      -d '{\"buildingType\":\"Commercial Buildings\"}' 2>/dev/null)
+    echo \"\$RESULT\" | python3 -c \"import sys,json; d=json.load(sys.stdin); assert d.get('ok')==True; assert 'result' in d; print('OK: obs=' + str(d['result']['obs']))\"
+  "
 
-  cat > /tmp/check-meta.sh << 'TESTEOF'
-#!/bin/bash
-DT=$(curl -s http://localhost:4000/api/v1/disability-types 2>/dev/null)
-AD=$(curl -s http://localhost:4000/api/v1/assessment-dimensions 2>/dev/null)
-echo "$DT" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('ok')==True; assert len(d.get('data',[]))==5; print('OK: 5 DT')"
-echo "$AD" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('ok')==True; assert len(d.get('data',[]))==5; print('OK: 5 AD')"
-TESTEOF
-  chmod +x /tmp/check-meta.sh
-  check "Metadata API (disability-types + dimensions)" bash /tmp/check-meta.sh
+  check "Metadata API (disability-types + dimensions)" bash -c "
+    DT=\$(curl -s http://localhost:4000/api/v1/disability-types 2>/dev/null)
+    AD=\$(curl -s http://localhost:4000/api/v1/assessment-dimensions 2>/dev/null)
+    echo \"\$DT\" | python3 -c \"import sys,json; d=json.load(sys.stdin); assert d.get('ok')==True; assert len(d.get('data',[]))==5; print('OK: 5 DT')\"
+    echo \"\$AD\" | python3 -c \"import sys,json; d=json.load(sys.stdin); assert d.get('ok')==True; assert len(d.get('data',[]))==5; print('OK: 5 AD')\"
+  "
+
+  check "Smoke test: Health + Criteria + Buildings + Login" bash -c "
+    STATUS=0
+    # 1. Health check
+    H=\$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4000/health 2>/dev/null)
+    [ \"\$H\" != \"200\" ] && echo 'FAIL: health' && STATUS=1
+
+    # 2. List criteria (63 items)
+    C=\$(curl -s http://localhost:4000/api/v1/criteria 2>/dev/null)
+    echo \"\$C\" | python3 -c \"import sys,json; d=json.load(sys.stdin); assert len(d['data'])==63; assert d['data'][0]['code'].startswith('EC'); print('OK: 63 criteria')\" 2>/dev/null || { echo 'FAIL: criteria count'; STATUS=1; }
+
+    # 3. Single criterion
+    C1=\$(curl -s http://localhost:4000/api/v1/criteria/EC1.1.1 2>/dev/null)
+    echo \"\$C1\" | python3 -c \"import sys,json; d=json.load(sys.stdin); assert d['data']['code']=='EC1.1.1'; assert len(d['data']['levels'])==5; print('OK: EC1.1.1 with 5 levels')\" 2>/dev/null || { echo 'FAIL: single criterion'; STATUS=1; }
+
+    # 4. Building types (7 types, each with 5 weights)
+    B=\$(curl -s http://localhost:4000/api/v1/building-types 2>/dev/null)
+    echo \"\$B\" | python3 -c \"import sys,json; d=json.load(sys.stdin); assert len(d['data'])==7; assert len(d['data'][0]['disability_weights'])==5; print('OK: 7 building types')\" 2>/dev/null || { echo 'FAIL: building types'; STATUS=1; }
+
+    # 5. NEB thresholds
+    N=\$(curl -s http://localhost:4000/api/v1/neb-thresholds 2>/dev/null)
+    echo \"\$N\" | python3 -c \"import sys,json; d=json.load(sys.stdin); assert len(d['data'])==5; assert d['data'][0]['neb_class'] is not None; print('OK: 5 NEB thresholds')\" 2>/dev/null || { echo 'FAIL: NEB thresholds'; STATUS=1; }
+
+    # 6. Config
+    CFG=\$(curl -s http://localhost:4000/api/v1/config 2>/dev/null)
+    echo \"\$CFG\" | python3 -c \"import sys,json; d=json.load(sys.stdin); keys=[k['key'] for k in d['data']]; assert 'MAX_OBS' in keys; assert 'DEFAULT_SCORE' in keys; print('OK: config with MAX_OBS + DEFAULT_SCORE')\" 2>/dev/null || { echo 'FAIL: config'; STATUS=1; }
+
+    # 7. Login (success)
+    L=\$(curl -s http://localhost:4000/api/v1/login -X POST -H 'Content-Type: application/json' -d '{\"email\":\"test@test.com\",\"password\":\"test123\"}' 2>/dev/null)
+    echo \"\$L\" | python3 -c \"import sys,json; d=json.load(sys.stdin); assert d.get('ok')==True; assert 'accessToken' in d; print('OK: login token received')\" 2>/dev/null || { echo 'FAIL: login'; STATUS=1; }
+
+    # 8. Login (error — no password)
+    LE=\$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4000/api/v1/login -X POST -H 'Content-Type: application/json' -d '{\"email\":\"test@test.com\"}' 2>/dev/null)
+    [ \"\$LE\" != \"400\" ] && echo 'FAIL: login validation' && STATUS=1
+
+    # 9. Evaluate with custom scores (strengths + weaknesses)
+    E2=\$(curl -s http://localhost:4000/api/v1/evaluate -X POST -H 'Content-Type: application/json' -d '{\"buildingType\":\"Commercial Buildings\",\"scores\":{\"EC1.1.1\":5,\"EC2.5.3\":1}}' 2>/dev/null)
+    echo \"\$E2\" | python3 -c \"import sys,json; d=json.load(sys.stdin); assert len(d['result']['strengths'])>0; assert len(d['result']['weaknesses'])>0; print('OK: eval with strengths=' + str(len(d['result']['strengths'])) + ' weaknesses=' + str(len(d['result']['weaknesses'])))\" 2>/dev/null || { echo 'FAIL: evaluate custom'; STATUS=1; }
+
+    # 10. Reports list (should exist after previous assessments)
+    R=\$(curl -s http://localhost:4000/api/v1/reports 2>/dev/null)
+    echo \"\$R\" | python3 -c \"import sys,json; d=json.load(sys.stdin); assert d.get('ok')==True; assert isinstance(d.get('data'), list); print('OK: reports accessible')\" 2>/dev/null || { echo 'FAIL: reports'; STATUS=1; }
+
+    # 11. Invalid criterion (404)
+    C404=\$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4000/api/v1/criteria/NONEXISTENT 2>/dev/null)
+    [ \"\$C404\" != \"404\" ] && echo 'FAIL: 404 on invalid criterion' && STATUS=1
+
+    # 12. Evaluate with no buildingType (400)
+    E400=\$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4000/api/v1/evaluate -X POST -H 'Content-Type: application/json' -d '{}' 2>/dev/null)
+    [ \"\$E400\" != \"400\" ] && echo 'FAIL: 400 on empty evaluate' && STATUS=1
+
+    [ \"\$STATUS\" = \"0\" ] && echo 'All 12 smoke tests passed'
+    exit \$STATUS
+  "
 else
   echo -e "  ${YELLOW}  SKIP: API-dependent tests (backend not running)${NC}"
   echo -e "  ${YELLOW}  Start the backend first with: bash start-dev.sh${NC}"
