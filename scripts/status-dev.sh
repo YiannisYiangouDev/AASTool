@@ -53,23 +53,29 @@ fi
 echo ""
 
 # Port overview
+PORT_SCAN=""
+if command -v ss &>/dev/null; then
+  PORT_SCAN="ss -tlnp 2>/dev/null"
+elif command -v netstat &>/dev/null; then
+  PORT_SCAN="netstat -tuln 2>/dev/null"
+fi
+
 echo -e "${BLUE}Port Status:${NC}"
-for port in 3000 3306 4000; do
+for port in 3000 3306 4000 4040 8080; do
   case $port in
     3000) label="Frontend" ;;
     3306) label="Database" ;;
     4000) label="Backend" ;;
+    4040) label="Control Panel" ;;
+    8080) label="Adminer" ;;
   esac
   printf "  %-20s : " "$port ($label)"
-  if netstat -tuln 2>/dev/null | grep -q ":$port "; then
+  if [ -n "$PORT_SCAN" ] && eval "$PORT_SCAN" | grep -q ":$port "; then
     echo -e "${GREEN}IN USE${NC}"
   else
     echo -e "${RED}FREE${NC}"
   fi
 done
-echo ""
-  echo -e "${RED}FREE${NC}"
-fi
 
 echo ""
 echo -e "${BLUE}Commands:${NC}"
