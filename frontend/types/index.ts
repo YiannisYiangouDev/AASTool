@@ -11,6 +11,8 @@ export interface Criterion {
   dimension: number;
   score: number;
   levels: string[];
+  /** Computed impact score (value * score) — returned by evaluate endpoint */
+  is?: number;
 }
 
 export interface EvaluationResult {
