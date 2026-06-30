@@ -50,6 +50,19 @@ const processes = {
   frontend: null
 };
 
+// ── Load docker .env file if present ─────────────────────────
+function loadDockerEnv() {
+  const envPath = path.join(PROJECT_ROOT, 'backend', '.env');
+  if (fs.existsSync(envPath)) {
+    const content = fs.readFileSync(envPath, 'utf8');
+    for (const line of content.split('\n')) {
+      const m = line.match(/^MYSQL_([A-Z_]+)=["']?(.+?)["']?\s*$/);
+      if (m) process.env[`MYSQL_${m[1]}`] = m[2];
+    }
+  }
+}
+loadDockerEnv();
+
 // ── Helpers ──────────────────────────────────────────
 
 function isPortOpen(port) {
