@@ -1,5 +1,6 @@
 #!/bin/bash
 # Stop all services for AAS
+# Also kills Control Panel (port 4040) and Adminer
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -10,56 +11,52 @@ NC='\033[0m'
 echo -e "${BLUE}Stopping development services...${NC}"
 echo ""
 
-# Stop Backend
-if [ -f /tmp/backend.pid ]; then
-  PID=$(cat /tmp/backend.pid)
-  if kill -0 $PID 2>/dev/null; then
-    kill $PID
-    echo -e "${GREEN}✓${NC} Backend stopped (PID: $PID)"
-  else
-    echo -e "${YELLOW}ℹ${NC} Backend PID stale — cleaning up"
-  fi
-  rm /tmp/backend.pid
-else
-  # Fallback: kill by port
-  PORT_PID=$(lsof -ti :4000 2>/dev/null)
-  if [ -n "$PORT_PID" ]; then
-    kill $PORT_PID 2>/dev/null
-    echo -e "${GREEN}✓${NC} Backend stopped (port 4000, PID: $PORT_PID)"
-  else
-    echo -e "${YELLOW}ℹ${NC} Backend not running"
-  fi
+DOCKER_CMD="docker"
+if ! command -v docker &>/dev/null && command -v /snap/bin/docker &>/dev/null; then
+  DOCKER_CMD="/snap/bin/docker"
 fi
+
+# Helper: kill process by port using lsof or ss
+kill_port() {
+  local port=$1
+  local name=$2
+  local pid=""
+  if command -v lsof &>/dev/null; then
+    pid=$(lsof -ti :$port 2>/dev/null)
+  elif command -v ss &>/dev/null; then
+    pid=$(ss -tlnp "sport = :$port" 2>/dev/null | grep -oP 'pid=\K\d+' | head -1)
+  fi
+  if [ -n "$pid" ]; then
+    kill $pid 2>/dev/null
+    echo -e "${GREEN}✓${NC} $name stopped (PID: $pid)"
+  else
+    echo -e "${YELLOW}ℹ${NC} $name not running"
+  fi
+}
+
+# Stop Backend
+kill_port 4000 "Backend"
 
 # Stop Frontend
-if [ -f /tmp/frontend.pid ]; then
-  PID=$(cat /tmp/frontend.pid)
-  if kill -0 $PID 2>/dev/null; then
-    kill $PID
-    echo -e "${GREEN}✓${NC} Frontend stopped (PID: $PID)"
-  else
-    echo -e "${YELLOW}ℹ${NC} Frontend PID stale — cleaning up"
-  fi
-  rm /tmp/frontend.pid
+kill_port 3000 "Frontend"
+
+# Stop Control Panel
+kill_port 4040 "Control Panel"
+
+# Stop Docker containers
+echo -e "${BLUE}Stopping Docker containers...${NC}"
+if $DOCKER_CMD ps 2>/dev/null | grep -qE 'mariadb|aastool-db|adminer'; then
+  $DOCKER_CMD stop aastool-db mariadb adminer 2>/dev/null
+  $DOCKER_CMD rm aastool-db mariadb adminer 2>/dev/null
+  echo -e "${GREEN}✓${NC} Docker containers removed"
 else
-  PORT_PID=$(lsof -ti :3000 2>/dev/null)
-  if [ -n "$PORT_PID" ]; then
-    kill $PORT_PID 2>/dev/null
-    echo -e "${GREEN}✓${NC} Frontend stopped (port 3000, PID: $PORT_PID)"
-  else
-    echo -e "${YELLOW}ℹ${NC} Frontend not running"
-  fi
+  echo -e "${YELLOW}ℹ${NC} No Docker containers running"
 fi
 
-# Stop MariaDB
-PROJ_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-if docker ps 2>/dev/null | grep -qE 'mariadb|aastool-db'; then
-  docker stop aastool-db mariadb adminer 2>/dev/null
-  docker rm aastool-db mariadb adminer 2>/dev/null
-  echo -e "${GREEN}✓${NC} MariaDB stopped"
-else
-  echo -e "${YELLOW}ℹ${NC} MariaDB not running"
-fi
+# Kill any leftover node processes by these project paths
+pkill -f "node dist/index.js" 2>/dev/null && echo -e "${GREEN}✓${NC} Stale backend killed" || true
+pkill -f "next-server" 2>/dev/null && echo -e "${GREEN}✓${NC} Stale frontend killed" || true
+pkill -f "node server.js" 2>/dev/null && echo -e "${GREEN}✓${NC} Stale CP killed" || true
 
 echo ""
 echo -e "${GREEN}All services stopped${NC}"
