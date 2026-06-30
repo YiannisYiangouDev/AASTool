@@ -22,17 +22,21 @@ curl http://localhost:4000/health
 
 Then import the collection into Postman:
 
-**Option A — Import from GitHub URL (easiest):**
+**Option A — Run in Postman (easiest):**
+1. Click: [![Run in Postman](https://run.pstmn.io/button.svg)](https://www.postman.co/workspace/My-Workspace~b4dff02b-afb4-4513-8ca4-21b9afd99b4b/run/56274532-3f4b1953-6b2a-4216-ab2e-c06b47325ad0?action=share&creator=56274532)
+2. Opens Postman with the collection ready to import
+
+**Option B — Import from GitHub URL:**
 1. Open Postman → **Import** → **Link**
 2. Paste: `https://raw.githubusercontent.com/YiannisYiangouDev/AASTool/main/docs/AASTool-API.postman_collection.json`
 3. Click **Import**
 
-**Option B — Import from file:**
+**Option C — Import from file:**
 1. Open Postman → **Import** → **Files**
 2. Select `docs/AASTool-API.postman_collection.json` from the project folder
 3. Click **Import**
 
-**Option C — Copy-paste raw text:**
+**Option D — Copy-paste raw text:**
 1. Open Postman → **Import** → **Raw text**
 2. Paste the collection JSON from the section below
 3. Click **Import**
