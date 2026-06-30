@@ -9,6 +9,16 @@ dist/
 build/
 *.tsbuildinfo
 
+# Environment files with secrets
+.env.docker
+.env
+backend/.env
+backend/.env.docker
+
+# OS
+.DS_Store
+Thumbs.db
+
 # Environment
 .env
 .env.local

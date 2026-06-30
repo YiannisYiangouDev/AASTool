@@ -1,7 +1,6 @@
-CREATE DATABASE IF NOT EXISTS mydb;
-CREATE USER IF NOT EXISTS 'myuser'@'%' IDENTIFIED BY 'mypassword';
-GRANT ALL PRIVILEGES ON mydb.* TO 'myuser'@'%';
-FLUSH PRIVILEGES;
+-- Database and user are created automatically by MariaDB container
+-- via MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD env vars.
+-- This script only creates tables and grants permissions.
 
 USE mydb;
 

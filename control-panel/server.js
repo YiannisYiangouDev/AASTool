@@ -231,7 +231,7 @@ app.get('/api/status', (_req, res) => {
         type: docker.running ? 'docker' : 'local',
         dockerAvailable: docker.available,
         dockerRunning: docker.running,
-        url: dbUrl || 'mysql://myuser:mypassword@127.0.0.1:3306/mydb'
+        url: dbUrl || `mysql://${process.env.MYSQL_USER || 'myuser'}:${process.env.MYSQL_PASSWORD || 'mypassword'}@127.0.0.1:3306/${process.env.MYSQL_DATABASE || 'mydb'}`
       },
       backend: {
         port: 4000,
@@ -296,10 +296,10 @@ app.post('/api/db/install-docker', (_req, res) => {
 
     execSync(
       `docker run -d --name aastool-db ` +
-      `-e MYSQL_ROOT_PASSWORD=rootpassword ` +
-      `-e MYSQL_DATABASE=mydb ` +
-      `-e MYSQL_USER=myuser ` +
-      `-e MYSQL_PASSWORD=mypassword ` +
+      `-e MYSQL_ROOT_PASSWORD=${process.env.MYSQL_ROOT_PASSWORD || 'rootpass'} ` +
+      `-e MYSQL_DATABASE=${process.env.MYSQL_DATABASE || 'mydb'} ` +
+      `-e MYSQL_USER=${process.env.MYSQL_USER || 'myuser'} ` +
+      `-e MYSQL_PASSWORD=${process.env.MYSQL_PASSWORD || 'mypassword'} ` +
       `-p 3306:3306 mariadb:10.11`,
       { stdio: 'pipe', timeout: 30000 }
     );
@@ -375,7 +375,7 @@ app.post('/api/db/seed', (_req, res) => {
         if (m) env[m[1]] = m[2];
       });
     }
-    env.DATABASE_URL = env.DATABASE_URL || 'mysql://myuser:mypassword@127.0.0.1:3306/mydb';
+    env.DATABASE_URL = env.DATABASE_URL || `mysql://${process.env.MYSQL_USER || 'myuser'}:${process.env.MYSQL_PASSWORD || 'mypassword'}@127.0.0.1:3306/${process.env.MYSQL_DATABASE || 'mydb'}`;
 
     appendLog('db', `[${new Date().toISOString()}] Seeding database...\n`);
     const out = execSync('node dist/scripts/seed.js', {
@@ -502,7 +502,7 @@ app.post('/api/start/backend', (_req, res) => {
     });
   }
   env.PORT = '4000';
-  env.DATABASE_URL = env.DATABASE_URL || 'mysql://myuser:mypassword@127.0.0.1:3306/mydb';
+  env.DATABASE_URL = env.DATABASE_URL || `mysql://${process.env.MYSQL_USER || 'myuser'}:${process.env.MYSQL_PASSWORD || 'mypassword'}@127.0.0.1:3306/${process.env.MYSQL_DATABASE || 'mydb'}`;
   env.DB_TYPE = env.DB_TYPE || 'mariadb';
 
   const child = spawn('node', ['dist/index.js'], {
@@ -646,7 +646,7 @@ app.post('/api/start/all', async (_req, res) => {
         try { execSync('npm run build', { cwd: backendDir, stdio: 'pipe', timeout: 30000 }); } catch {}
       }
       const env = { ...process.env, PORT: '4000' };
-      env.DATABASE_URL = env.DATABASE_URL || 'mysql://myuser:mypassword@127.0.0.1:3306/mydb';
+      env.DATABASE_URL = env.DATABASE_URL || `mysql://${process.env.MYSQL_USER || 'myuser'}:${process.env.MYSQL_PASSWORD || 'mypassword'}@127.0.0.1:3306/${process.env.MYSQL_DATABASE || 'mydb'}`;
       env.DB_TYPE = env.DB_TYPE || 'mariadb';
 
       const envFile = path.join(backendDir, '.env');
