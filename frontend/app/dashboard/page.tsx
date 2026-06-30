@@ -527,8 +527,8 @@ export default function DashboardPage() {
                         className="w-full h-20 bg-slate-800 rounded-lg overflow-hidden"
                       >
                         <div
-                          className={`w-full ${colors[s - 1]} rounded-lg transition-all duration-500 dash-bar-fill-v`}
-                          style={{ '--bar-h': `${pct}%`, '--bar-mt': `${100 - pct}%` } as React.CSSProperties}
+                          className={`w-full ${colors[s - 1]} rounded-lg transition-all duration-500`}
+                          style={{ height: `${pct}%`, marginTop: `${100 - pct}%` }}
                         />
                       </div>
                       <span className="text-[10px] text-slate-500 font-mono">L{s}</span>
@@ -573,8 +573,8 @@ export default function DashboardPage() {
                   </div>
                   <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
                     <div
-                      className={`h-full bg-gradient-to-r ${DT_GRADIENT[dt]} rounded-full transition-all duration-500 dash-bar-fill-h`}
-                      style={{ '--bar-w': `${pctOfMax}%` } as React.CSSProperties}
+                      className={`h-full bg-gradient-to-r ${DT_GRADIENT[dt]} rounded-full transition-all duration-500`}
+                      style={{ width: `${pctOfMax}%` }}
                     />
                   </div>
                 </div>
@@ -614,8 +614,8 @@ export default function DashboardPage() {
                   </div>
                   <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
                     <div
-                      className={`h-full bg-gradient-to-r ${AD_GRADIENT[ad]} rounded-full transition-all duration-500 dash-bar-fill-h`}
-                      style={{ '--bar-w': `${pctOfMax}%` } as React.CSSProperties}
+                      className={`h-full bg-gradient-to-r ${AD_GRADIENT[ad]} rounded-full transition-all duration-500`}
+                      style={{ width: `${pctOfMax}%` }}
                     />
                   </div>
                 </div>

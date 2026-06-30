@@ -243,16 +243,7 @@
         font-size: 1.6rem !important;
       }
 
-      /* dashboard dynamic bar fills (avoids inline style lint) */
-      .dash-bar-fill-v {
-        height: var(--bar-h);
-        margin-top: var(--bar-mt);
-      }
-      .dash-bar-fill-h {
-        width: var(--bar-w);
-      }
-
-      /* filter selects full width */
+            /* filter selects full width */
       #filterDT,
       #filterAD,
       #filterScore {
