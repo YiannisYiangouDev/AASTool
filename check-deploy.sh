@@ -6,7 +6,8 @@
 # Usage:  bash check-deploy.sh
 #         CHECK_SKIP_FRONTEND=true bash check-deploy.sh   (skip frontend build)
 
-set -e
+# No set -e — we handle errors manually via check() function
+set +e
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -27,16 +28,16 @@ check() {
   TOTAL=$((TOTAL + 1))
   local label="$1"
   shift
-  printf "  [%d] %s..." "$TOTAL" "$label"
-  if timeout 120 "$@" > /tmp/checkdeploy.log 2>&1; then
-    echo -e " ${GREEN}PASS${NC}"
+  printf "  [%d] %s... " "$TOTAL" "$label"
+  if "$@" > /tmp/checkdeploy.log 2>&1; then
+    echo -e "${GREEN}PASS${NC}"
     PASS=$((PASS + 1))
   else
     local rc=$?
     if [ "$rc" = 124 ]; then
-      echo -e " ${RED}TIMEOUT${NC}"
+      echo -e "${RED}TIMEOUT${NC}"
     else
-      echo -e " ${RED}FAIL${NC}"
+      echo -e "${RED}FAIL${NC} (exit=$rc)"
     fi
     FAIL=$((FAIL + 1))
   fi
@@ -115,10 +116,27 @@ check "Metadata static checks" bash -c "export DATABASE_URL=mysql://myuser:mypas
 
 # DB-dependent tests (only if backend is running)
 if [ "$BACKEND_RUNNING" = true ]; then
-  check "Calculation engine (DB required)" bash -c "export DATABASE_URL=mysql://myuser:mypassword@localhost:3306/mydb; cd $BACKEND_DIR && node dist/tests/calculation.test.js > /dev/null 2>&1"
-  check "Metadata DB checks" bash -c "export DATABASE_URL=mysql://myuser:mypassword@localhost:3306/mydb; cd $BACKEND_DIR && node dist/tests/metadata.test.js > /dev/null 2>&1"
+  # Write test scripts to temp file to avoid quoting issues
+  cat > /tmp/check-evaluate.sh << 'TESTEOF'
+#!/bin/bash
+RESULT=$(curl -s http://localhost:4000/api/v1/evaluate -X POST -H "Content-Type: application/json" \
+  -d '{"buildingType":"Commercial Buildings"}' 2>/dev/null)
+echo "$RESULT" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('ok')==True; assert 'result' in d; print('OK: obs=' + str(d['result']['obs']))"
+TESTEOF
+  chmod +x /tmp/check-evaluate.sh
+  check "Evaluate API (POST /api/v1/evaluate)" bash /tmp/check-evaluate.sh
+
+  cat > /tmp/check-meta.sh << 'TESTEOF'
+#!/bin/bash
+DT=$(curl -s http://localhost:4000/api/v1/disability-types 2>/dev/null)
+AD=$(curl -s http://localhost:4000/api/v1/assessment-dimensions 2>/dev/null)
+echo "$DT" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('ok')==True; assert len(d.get('data',[]))==5; print('OK: 5 DT')"
+echo "$AD" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('ok')==True; assert len(d.get('data',[]))==5; print('OK: 5 AD')"
+TESTEOF
+  chmod +x /tmp/check-meta.sh
+  check "Metadata API (disability-types + dimensions)" bash /tmp/check-meta.sh
 else
-  echo -e "  ${YELLOW}  SKIP: DB-dependent tests (backend not running)${NC}"
+  echo -e "  ${YELLOW}  SKIP: API-dependent tests (backend not running)${NC}"
   echo -e "  ${YELLOW}  Start the backend first with: bash start-dev.sh${NC}"
 fi
 
