@@ -3,7 +3,8 @@
 # Usage: ./start-dev.sh [--no-docker]
 #   --no-docker  Skip Docker — use locally installed MySQL/MariaDB
 
-set -e
+set +e
+shopt -s expand_aliases
 
 USE_DOCKER=true
 for arg in "$@"; do
@@ -21,6 +22,12 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
+
+# Detect Docker command (snap path fallback for WSL)
+DOCKER_CMD="docker"
+if ! command -v docker &>/dev/null && command -v /snap/bin/docker &>/dev/null; then
+  DOCKER_CMD="/snap/bin/docker"
+fi
 
 cleanup() {
   echo ""
@@ -65,11 +72,32 @@ if [ ! -f "$BACKEND_DIR/.env" ]; then
   echo ""
 fi
 export $(grep -v '^#' "$BACKEND_DIR/.env" | tr -d '\r' | xargs)
+DATABASE_URL="${DATABASE_URL:-mysql://myuser:mypassword@127.0.0.1:3306/mydb}"
 print_status "Environment loaded"
 echo ""
 
 port_in_use() {
-  netstat -tuln 2>/dev/null | grep -q ":$1 " && return 0 || return 1
+  local port=$1
+  if command -v ss &>/dev/null; then
+    ss -tlnp 2>/dev/null | grep -q ":$port " && return 0
+  elif command -v netstat &>/dev/null; then
+    netstat -tuln 2>/dev/null | grep -q ":$port " && return 0
+  fi
+  return 1
+}
+
+kill_port() {
+  local port=$1
+  local pid=""
+  if command -v lsof &>/dev/null; then
+    pid=$(lsof -ti :$port 2>/dev/null)
+  fi
+  if [ -n "$pid" ]; then
+    kill $pid 2>/dev/null
+    sleep 1
+    return 0
+  fi
+  return 1
 }
 
 echo -e "${YELLOW}Step 1: Starting MariaDB (Docker)...${NC}"
@@ -87,27 +115,27 @@ elif port_in_use 3306; then
 else
   cd "$BACKEND_DIR"
 
-  if ! docker ps 2>/dev/null | grep -q mariadb; then
+  if ! $DOCKER_CMD ps 2>/dev/null | grep -q mariadb; then
     print_info "Starting MariaDB container..."
-    if command -v docker &> /dev/null; then
-      docker-compose up -d 2>/dev/null || {
-        print_error "Docker Compose failed. Run from PowerShell instead:"
-        echo "  cd backend && docker-compose up -d"
+    if command -v $DOCKER_CMD &> /dev/null; then
+      $DOCKER_CMD compose up -d 2>/dev/null || docker-compose up -d 2>/dev/null || {
+        print_error "Docker Compose failed."
+        echo "  Try: cd backend && $DOCKER_CMD compose up -d"
         exit 1
       }
     else
-      print_error "Docker not found. Please install Docker Desktop."
+      print_error "Docker not found."
       exit 1
     fi
 
     print_info "Waiting for MariaDB to be ready..."
     sleep 3
-    for i in {1..10}; do
-      if nc -z 127.0.0.1 3306 2>/dev/null; then
+    for i in {1..15}; do
+      if port_in_use 3306; then
         print_status "MariaDB is ready"
         break
       fi
-      if [ $i -eq 10 ]; then
+      if [ $i -eq 15 ]; then
         print_error "MariaDB failed to start — check docker logs mariadb"
         exit 1
       fi
@@ -119,11 +147,10 @@ else
 fi
 echo ""
 
-echo -e "${YELLOW}Step 2: Starting Backend (Express/ts-node)...${NC}"
+echo -e "${YELLOW}Step 2: Starting Backend (Express)...${NC}"
 if port_in_use 4000; then
   print_info "Port 4000 in use — killing stale process..."
-  lsof -ti :4000 | xargs kill -9 2>/dev/null || true
-  sleep 1
+  kill_port 4000
 fi
 cd "$BACKEND_DIR"
 
@@ -140,7 +167,7 @@ export DATABASE_URL="${DATABASE_URL:-mysql://myuser:mypassword@127.0.0.1:3306/my
 print_info "Starting backend on port 4000..."
 npm start > /tmp/backend.log 2>&1 &
 BACKEND_PID=$!
-echo $BACKEND_PID > /tmp/backend.pid
+echo $BACKEND_PID > /tmp/backend.pid 2>/dev/null
 for i in {1..30}; do
   if curl -s http://localhost:4000/health > /dev/null 2>&1; then
     print_status "Backend running on http://localhost:4000"
@@ -148,7 +175,7 @@ for i in {1..30}; do
   fi
   if [ $i -eq 30 ]; then
     print_error "Backend failed to start. Check /tmp/backend.log"
-    cat /tmp/backend.log
+    tail -20 /tmp/backend.log
     exit 1
   fi
   sleep 1
@@ -158,8 +185,7 @@ echo ""
 echo -e "${YELLOW}Step 3: Starting Frontend (Next.js)...${NC}"
 if port_in_use 3000; then
   print_info "Port 3000 in use — killing stale process..."
-  lsof -ti :3000 | xargs kill -9 2>/dev/null || true
-  sleep 1
+  kill_port 3000
 fi
 cd "$FRONTEND_DIR"
 
