@@ -126,7 +126,7 @@ app.get('/api/v1/buildings/:id', getBuilding);
 app.post('/api/v1/assessments', createAssessment);
 app.get('/api/v1/assessments/:id', getAssessment);
 app.get('/api/v1/reports', getReports);
-app.post('/api/v1/auth/login', login);
+app.post('/api/v1/login', login);
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(`Backend listening on ${port}`));

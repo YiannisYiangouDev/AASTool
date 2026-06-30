@@ -7,7 +7,8 @@ function approxEqual(a: number, b: number, eps = 0.01) {
 
 async function run() {
   const res = await calc.evaluate('Commercial Buildings', {});
-  console.log('Evaluation result sample:', res);
+  // Don't print full result — too verbose for CI
+  console.log(`OBS: ${res.obs}, NEB: ${res.nebClass}, Avg: ${res.averageRawScore}, Criteria: ${res.criteria?.length}`);
 
   assert(typeof res.obs === 'number', 'obs is number');
   assert(res.averageRawScore >= 1 && res.averageRawScore <= 5, 'avg raw in range');

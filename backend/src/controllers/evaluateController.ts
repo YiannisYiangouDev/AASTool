@@ -17,8 +17,12 @@ export default async function evaluateController(req: Request, res: Response) {
     }
     const result = await calc.evaluate(buildingType, scores as Record<string, number> | undefined);
     res.json({ ok: true, result });
-  } catch (err) {
+  } catch (err: any) {
     console.error('Evaluate error', err);
+    const msg = err?.message || 'Internal error';
+    if (msg.includes('Missing or invalid') || msg.includes('building type')) {
+      return res.status(400).json({ ok: false, error: msg });
+    }
     res.status(500).json({ ok: false, error: 'Internal error' });
   }
 }
