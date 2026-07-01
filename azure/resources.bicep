@@ -31,16 +31,31 @@ resource backendApp 'Microsoft.Web/sites@2022-03-01' = {
     serverFarmId: appServicePlan.id
     httpsOnly: true
     siteConfig: {
-      linuxFxVersion: 'NODE|20-lts'
+      linuxFxVersion: 'NODE|22-lts'
       alwaysOn: true
+      healthCheckPath: '/ready'
       appSettings: [
         { name: 'PORT', value: '4000' }
         { name: 'WEBSITES_PORT', value: '4000' }
+        { name: 'NODE_ENV', value: 'production' }
+        { name: 'APP_VERSION', value: '1.0.0' }
         { name: 'DATABASE_URL', value: 'mysql://myuser:${dbPassword}@${mariadbServer.properties.fullyQualifiedDomainName}:3306/mydb' }
         { name: 'DB_TYPE', value: 'mariadb' }
         { name: 'TYPEORM_SYNCHRONIZE', value: 'false' }
+        { name: 'CORS_ORIGIN', value: 'https://stapp-aas-frontend-${environment}.azurestaticapps.net' }
+        { name: 'JWT_SECRET', value: '@Microsoft.KeyVault(SecretUri=https://kv-aas-${environment}.vault.azure.net/secrets/JWT-Secret/)' }
+        { name: 'JWT_EXPIRES_IN', value: '3600' }
+        { name: 'LOG_LEVEL', value: 'info' }
+        { name: 'TRUST_PROXY', value: 'true' }
+        { name: 'RATE_LIMIT_WINDOW_MS', value: '900000' }
+        { name: 'RATE_LIMIT_MAX', value: '100' }
+        { name: 'REPORT_LOCALE', value: 'en-GB' }
+        { name: 'REPORT_TITLE_PREFIX', value: 'Accessibility Report' }
+        { name: 'ASSESSMENT_STATUS', value: 'Completed' }
+        { name: 'LOGIN_REDIRECT', value: '/dashboard' }
+        { name: 'FRONTEND_URL', value: 'https://stapp-aas-frontend-${environment}.azurestaticapps.net' }
+        { name: 'REQUEST_LIMIT', value: '1mb' }
       ]
-      healthCheckPath: '/health'
     }
   }
 }

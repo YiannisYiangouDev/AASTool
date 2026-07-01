@@ -1,11 +1,20 @@
 import axios from "axios";
 
-const baseURL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
+if (!baseURL) {
+  if (typeof window !== "undefined") {
+    console.warn(
+      "[AASTool] NEXT_PUBLIC_API_URL is not set. The frontend will not function correctly.",
+      "Set NEXT_PUBLIC_API_URL to the backend API base URL.",
+      "Example: NEXT_PUBLIC_API_URL=https://api.example.com/api/v1",
+    );
+  }
+}
 
 export const api = axios.create({
-  baseURL,
-  timeout: 15000,
+  baseURL: baseURL || "/api/v1",
+  timeout: parseInt(process.env.NEXT_PUBLIC_API_TIMEOUT || "15000", 10),
   headers: {
     "Content-Type": "application/json",
   },
