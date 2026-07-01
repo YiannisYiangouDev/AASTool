@@ -1,7 +1,7 @@
 services:
   mariadb:
     image: mariadb:10.11
-    container_name: mariadb
+    container_name: aastool-db
     restart: unless-stopped
     env_file: .env
     environment:
@@ -13,7 +13,13 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
-      - ./docker-initdb.d:/docker-entrypoint-initdb.d:ro
+      - ./docker/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   adminer:
     image: adminer:latest
@@ -24,7 +30,8 @@ services:
     environment:
       ADMINER_DEFAULT_SERVER: mariadb
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
 
 volumes:
   db_data:

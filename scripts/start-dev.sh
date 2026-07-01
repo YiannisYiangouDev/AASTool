@@ -113,7 +113,7 @@ if [ "$USE_DOCKER" = false ]; then
 elif port_in_use 3306; then
   print_status "MariaDB already running on port 3306"
 else
-  cd "$BACKEND_DIR"
+  cd "$PROJECT_ROOT/database"
 
   if ! $DOCKER_CMD ps 2>/dev/null | grep -q mariadb; then
     print_info "Starting MariaDB container..."
