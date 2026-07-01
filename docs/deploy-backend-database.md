@@ -13,6 +13,7 @@ Internet
 Azure App Service (Linux / Node 22)
     │  Backend API — https://api.yourdomain.com
     │  PORT=4000, NODE_ENV=production
+    │  Health: GET /health, GET /ready
     │
     ▼
 Azure Database for MariaDB
@@ -20,13 +21,35 @@ Azure Database for MariaDB
     │  SSL-enabled, firewall-restricted
     │
     ▼
-Azure Key Vault (optional)
+Azure Key Vault (recommended)
      JWT_SECRET, DB passwords
 ```
 
 **Only the backend is deployed here. The frontend (Next.js) is a separate deployment.**
 
 ---
+
+## Project Structure
+
+The deployment uses two projects from the repository:
+
+```
+/proj/
+├── backend/         → Deploys to Azure App Service
+│   ├── src/         → Express API (TypeScript)
+│   ├── Dockerfile   → Multi-stage build
+│   └── .env.example → Environment template
+│
+├── database/        → Standalone database project (local dev)
+│   ├── docker/      → MariaDB + Adminer Docker config
+│   ├── scripts/     → backup, restore, export-schema
+│   ├── verify-database.sh → Data integrity checks
+│   └── docs/        → Architecture documentation
+│
+└── azure/           → Azure infrastructure (Bicep)
+    ├── main.bicep   → Subscription-level deployment
+    └── resources.bicep → Resource group resources
+```
 
 ## Prerequisites
 
@@ -49,6 +72,28 @@ az account set --subscription "your-subscription-id"
 az provider register --namespace Microsoft.Web
 az provider register --namespace Microsoft.DBforMariaDB
 ```
+
+---
+
+## Pre-Deployment Checks
+
+Before deploying, run the pre-deployment check script from the project root:
+
+```bash
+# Full check (requires running backend + DB locally)
+bash check-deploy.sh
+
+# Skip frontend build (faster — only back-end relevant)
+CHECK_SKIP_FRONTEND=true bash check-deploy.sh
+```
+
+This runs **13 automated checks** across 5 phases:
+1. **Environment** — Node.js, npm, git, DATABASE_URL
+2. **Backend Compile** — TypeScript check + full build
+3. **Automated Tests** — Static, workbook mapping, metadata, evaluate API, smoke test (12 API calls)
+4. **Code Quality** — No .env staged, no hardcoded secrets
+
+If any check fails, fix the issue before proceeding to deployment.
 
 ---
 
@@ -252,22 +297,46 @@ az containerapp create \
 
 ## Step 5: Run Migrations & Seed
 
+After the backend is deployed, SSH into the App Service and run:
+
 ```bash
-# SSH into App Service
 az webapp ssh \
   --resource-group rg-aas-production \
   --name app-aas-backend-production
 ```
 
 ```bash
-# Inside the SSH session
-cd site/wwwroot
+# Inside the SSH session — navigate to the deployed app
+cd /home/site/wwwroot
 
-# Run migrations
+# Run pending TypeORM migrations
 node dist/scripts/runMigrations.js
 
-# Seed the database (only if first deployment)
+# Seed reference data (first deployment only — preserves existing data)
 node dist/scripts/seed.js
+```
+
+### Local Database Verification
+
+After seeding, verify the data from your local machine:
+
+```bash
+# Using the standalone database verification script
+cd database
+bash verify-database.sh
+```
+
+Expected output:
+```
+✓ Database connection successful
+✓ criteria (63 rows)
+✓ building_types (7 rows)
+✓ neb_thresholds (5 rows)
+✓ config (5 rows)
+✓ disability_types (5 rows)
+✓ assessment_dimensions (5 rows)
+✓ Foreign keys: N
+✓ Indexes: N
 ```
 
 ---
@@ -409,17 +478,20 @@ az webapp log download \
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
-| `/ready` returns 503 | DB not reachable | Check firewall rules, verify `DATABASE_URL` |
+| `/ready` returns 503 | DB not reachable | Check firewall rules, verify `DATABASE_URL`; or run `cd database && bash verify-database.sh` locally |
 | Backend starts but returns 404 on all routes | Wrong startup command | Verify `npm start` → `node dist/index.js` |
-| CORS errors in browser | `CORS_ORIGIN` not set | Set the exact frontend URL (with https://) |
+| CORS errors in browser | `CORS_ORIGIN` not set | Set the exact frontend URL (with `https://`) |
 | `ETIMEOUT` connecting to MariaDB | SSL required | Add `?ssl=true` to `DATABASE_URL` |
 | `Cannot find module` | `node_modules` missing | Run `npm ci --omit=dev` before deploy |
 | App Service keeps restarting | Startup timeout | Set `WEBSITES_PORT=4000`, check health endpoint |
+| Seed script fails | DATABASE_URL wrong | Verify connection string in App Service settings |
+| Database data lost | Volume removed | Restore from `database/backups/` using `bash database/scripts/restore.sh` |
 
 ---
 
 ## Quick Deploy Checklist
 
+- [ ] Pre-deployment checks pass (`bash check-deploy.sh`)
 - [ ] Azure subscription active
 - [ ] Resource group created
 - [ ] MariaDB server created + firewall configured
@@ -432,11 +504,13 @@ az webapp log download \
 - [ ] Code pushed to GitHub
 - [ ] GitHub Actions pipeline passes
 - [ ] Migrations run
+- [ ] Database verified (`cd database && bash verify-database.sh`)
 - [ ] `/health` returns 200
 - [ ] `/ready` returns 200 with `database: "connected"`
 - [ ] API endpoints return expected data
 - [ ] CORS headers present in responses
 - [ ] App Service logs show no errors
+- [ ] Database backup configured (optional but recommended: `cron` + `database/scripts/backup.sh`)
 
 ---
 
