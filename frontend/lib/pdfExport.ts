@@ -1,8 +1,11 @@
 import { jsPDF } from "jspdf";
 import type { EvaluationResult, Criterion } from "@/types";
 
-// ── Helper: access jsPDF internal page count reliably ───────────────────
+// ── Helper: get page count reliably across jsPDF versions ──────────────
 function getPageCount(doc: jsPDF): number {
+  if (typeof (doc as any).getNumberOfPages === 'function') {
+    return (doc as any).getNumberOfPages();
+  }
   return (doc.internal as any).getNumberOfPages();
 }
 
