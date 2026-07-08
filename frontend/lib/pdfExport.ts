@@ -671,13 +671,13 @@ function buildCriteriaTable(doc: jsPDF, criteria: Criterion[]) {
 
   const cols = [
     { x: 14, w: 18, label: "Code" },
-    { x: 34, w: 55, label: "Criterion" },
-    { x: 93, w: 16, label: "DT" },
-    { x: 111, w: 16, label: "AD" },
-    { x: 129, w: 18, label: "Weight" },
-    { x: 149, w: 14, label: "Score" },
-    { x: 165, w: 14, label: "IS" },
-    { x: 181, w: 18, label: "Level" },
+    { x: 34, w: 65, label: "Criterion" },
+    { x: 100, w: 13, label: "DT" },
+    { x: 114, w: 13, label: "AD" },
+    { x: 128, w: 16, label: "Weight" },
+    { x: 145, w: 14, label: "Score" },
+    { x: 160, w: 16, label: "IS" },
+    { x: 177, w: 20, label: "Level" },
   ];
 
   // Header
@@ -719,7 +719,7 @@ function buildCriteriaTable(doc: jsPDF, criteria: Criterion[]) {
 
     doc.setTextColor("#1e293b");
     doc.text(c.code, cols[0].x, y + 2);
-    doc.text(c.name.length > 42 ? c.name.substring(0, 40) + ".." : c.name, cols[1].x, y + 2);
+    doc.text(c.name.length > 55 ? c.name.substring(0, 53) + ".." : c.name, cols[1].x, y + 2);
     doc.setTextColor(DT_COLORS[(c.disability - 1) % DT_COLORS.length]);
     doc.text(`DT${c.disability}`, cols[2].x, y + 2);
     doc.setTextColor(AD_COLORS[(c.dimension - 1) % AD_COLORS.length]);
@@ -735,7 +735,7 @@ function buildCriteriaTable(doc: jsPDF, criteria: Criterion[]) {
     doc.text(`${(c as any).is?.toFixed(4) || "-"}`, cols[6].x, y + 2);
 
     doc.setTextColor(BRAND.slateLight);
-    doc.text((c.levels?.[c.score - 1] || "").substring(0, 18), cols[7].x, y + 2);
+    doc.text((c.levels?.[c.score - 1] || "").substring(0, 22), cols[7].x, y + 2);
 
     y += 8;
     row++;
