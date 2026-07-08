@@ -388,15 +388,15 @@ function buildDTAnalysis(doc: jsPDF, results: EvaluationResult) {
 
   const dtAvg = results.avgRawScoreByDT || {};
   const tis = results.tisByDT || {};
-  const barMaxW = 140;
+  const barMaxW = 55;
 
   // Table header
   const cols = [
     { x: 15, w: 6, label: "" },
     { x: 23, w: 50, label: "Disability Type" },
-    { x: 80, w: 20, label: "Avg Score", align: "center" as const },
-    { x: 105, w: 20, label: "TIS", align: "center" as const },
-    { x: 130, w: 60, label: "Performance Bar", align: "center" as const },
+    { x: 78, w: 15, label: "Avg", align: "center" as const },
+    { x: 95, w: 15, label: "TIS", align: "center" as const },
+    { x: 115, w: 75, label: "Performance Bar" },
   ];
 
   doc.setFillColor(BRAND.darkBg);
@@ -431,14 +431,14 @@ function buildDTAnalysis(doc: jsPDF, results: EvaluationResult) {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
     doc.setTextColor(BRAND.darkBg);
-    doc.text(`${avg}`, 90, y + 4, { align: "center" });
-    doc.text(`${tisVal.toFixed?.(2) || tisVal}`, 115, y + 4, { align: "center" });
+    doc.text(`${avg}`, 86, y + 4, { align: "center" });
+    doc.text(`${tisVal.toFixed?.(2) || tisVal}`, 103, y + 4, { align: "center" });
 
     doc.setFillColor("#f1f5f9");
-    doc.roundedRect(130, y + 1, barMaxW, 7, 3, 3, "F");
+    doc.roundedRect(115, y + 1, barMaxW, 7, 3, 3, "F");
     if (barW > 0) {
       doc.setFillColor(DT_COLORS[idx] || BRAND.slate);
-      doc.roundedRect(130, y + 1, Math.max(barW, 3), 7, 3, 3, "F");
+      doc.roundedRect(115, y + 1, Math.max(barW, 3), 7, 3, 3, "F");
     }
 
     y += 14;
@@ -470,14 +470,14 @@ function buildADAnalysis(doc: jsPDF, results: EvaluationResult) {
 
   const adAvg = results.avgRawScoreByAD || {};
   const cis = results.cisByAD || {};
-  const barMaxW = 140;
+  const barMaxW = 55;
 
   const cols = [
     { x: 15, w: 6, label: "" },
     { x: 23, w: 55, label: "Assessment Dimension" },
-    { x: 82, w: 20, label: "Avg Score", align: "center" as const },
-    { x: 107, w: 20, label: "CIS", align: "center" as const },
-    { x: 132, w: 60, label: "Performance Bar", align: "center" as const },
+    { x: 80, w: 15, label: "Avg", align: "center" as const },
+    { x: 97, w: 15, label: "CIS", align: "center" as const },
+    { x: 115, w: 75, label: "Performance Bar" },
   ];
 
   doc.setFillColor(BRAND.darkBg);
@@ -511,14 +511,14 @@ function buildADAnalysis(doc: jsPDF, results: EvaluationResult) {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
     doc.setTextColor(BRAND.darkBg);
-    doc.text(`${avg}`, 92, y + 4, { align: "center" });
-    doc.text(`${cisVal.toFixed?.(2) || cisVal}`, 117, y + 4, { align: "center" });
+    doc.text(`${avg}`, 88, y + 4, { align: "center" });
+    doc.text(`${cisVal.toFixed?.(2) || cisVal}`, 105, y + 4, { align: "center" });
 
     doc.setFillColor("#f1f5f9");
-    doc.roundedRect(132, y + 1, barMaxW, 7, 3, 3, "F");
+    doc.roundedRect(115, y + 1, barMaxW, 7, 3, 3, "F");
     if (barW > 0) {
       doc.setFillColor(AD_COLORS[idx] || BRAND.slate);
-      doc.roundedRect(132, y + 1, Math.max(barW, 3), 7, 3, 3, "F");
+      doc.roundedRect(115, y + 1, Math.max(barW, 3), 7, 3, 3, "F");
     }
 
     y += 14;
