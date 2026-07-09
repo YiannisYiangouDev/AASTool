@@ -10,16 +10,6 @@ build/
 *.tsbuildinfo
 
 # Environment files with secrets
-.env.docker
-.env
-backend/.env
-backend/.env.docker
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Environment
 .env
 .env.local
 .env.development.local
@@ -59,16 +49,5 @@ coverage/
 *.xlsx
 *.xls
 
-# Docs — tracked separately
-docs_oldeasd/
-#scripts
-
-
-# Azure Bicep deployment templates ARE tracked
-#azure/
-
-#hc
-/types/
-/scripts
+# Playwright
 .playwright-mcp/
-azure/
